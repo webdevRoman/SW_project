@@ -3,18 +3,27 @@ div
   Header
   Navigation
   .image
-    img(src="../assets/img/dish.png", alt="Dish image")
+    img(src="../assets/img/top-dish.png", alt="Dish image")
+  Weekdays
+  Dishes
+  Footer
 </template>
 
 <script>
 import Header from '../components/Header'
 import Navigation from '../components/Navigation'
+import Weekdays from '../components/Weekdays'
+import Dishes from '../components/Dishes'
+import Footer from '../components/Footer'
 
 export default {
   name: 'home',
   components: {
     Header,
-    Navigation
+    Navigation,
+    Weekdays,
+    Dishes,
+    Footer
   }
 }
 </script>

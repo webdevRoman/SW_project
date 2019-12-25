@@ -23,13 +23,17 @@ table
   border-spacing: 0
 img, svg
   width: 100%
-*
+*, div
   font-family: $font
 button
   background-color: transparent
   border: none
   padding: 0
-  cursor: pointer
 a
   text-decoration: none
   color: #000
+select, button
+  outline: none
+  cursor: pointer
+select[disabled], button[disabled]
+  cursor: default

@@ -13,7 +13,13 @@
 @import "./assets/sass/reset"
 
 // Common
+body, button, input, a
+  color: $c-dark
 .container
   width: 1140px
   margin: 0 auto
+.logo
+  font-size: 40px
+  font-weight: bold
+  text-transform: uppercase
 </style>

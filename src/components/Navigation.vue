@@ -30,10 +30,6 @@ export default {
     display: flex
     justify-content: space-between
     align-items: center
-    .logo
-      font-size: 40px
-      font-weight: bold
-      text-transform: uppercase
     .right
       display: flex
       justify-content: flex-end
