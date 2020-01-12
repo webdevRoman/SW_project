@@ -1,9 +1,9 @@
 <template lang="pug">
 .dishes
   .container
-    select.select(name="category", v-model="selectCategory")
-      option.select-option(value="Все категории") Все категории
-      option.select-option(v-for="category in categories", :value="category.name") {{ category.name }}
+    //- select.select(name="category", v-model="selectCategory")
+    //-   option.select-option(value="Все категории") Все категории
+    //-   option.select-option(v-for="category in categories", :value="category.name") {{ category.name }}
       //- option.select-option(value="all") Все категории
       //- option.select-option(value="salads") Салаты и закуски
       //- option.select-option(value="soups") Супы
@@ -15,6 +15,10 @@
       //- option.select-option(value="other") Прочее
       //- option.select-option(value="complexes") Комплексные обеды
       //- option.select-option(value="buns") Пирожки и булочки
+    .select-container
+      v-select.select(v-model="selectCategory", label="name", index="name", :options="selectCategories", :clearable="false", :searchable="false")
+        template(v-slot:option="option")
+          span.select-option {{ option.name }}
   .container
     .category(v-for="category in currentCategories")
       .category-title {{ category.name }}
@@ -45,7 +49,7 @@
 export default {
   data() {
     return {
-      selectCategory: 'Все категории',
+      selectCategory: { name: 'Все категории' },
       categories: [{
         name: 'Название категории 1',
         dishes: [{
@@ -128,10 +132,15 @@ export default {
   },
   computed: {
     currentCategories() {
-      if (this.selectCategory == 'Все категории')
+      if (this.selectCategory.name == 'Все категории')
         return this.categories
       else
-        return this.categories.filter(c => c.name == this.selectCategory)
+        return this.categories.filter(c => c.name == this.selectCategory.name)
+    },
+    selectCategories() {
+      let selectCategories = this.categories.slice()
+      selectCategories.unshift({ name: 'Все категории' })
+      return selectCategories
     }
   }
 }
@@ -140,14 +149,13 @@ export default {
 <style scoped lang="sass">
 @import "../assets/sass/vars"
 
+.select-container
+  height: 50px
+  margin-bottom: 50px
 .select
   width: 360px
-  padding: 15px 24px
-  background-color: transparent
-  border: 3px solid $c-middle
-  font-size: 15px
-  color: darken($c-middle, 40)
-  margin-bottom: 50px
+  background-color: $c-bg
+  font-size: 16px
 
 .category
   margin-bottom: 80px

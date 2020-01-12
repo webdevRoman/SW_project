@@ -25,6 +25,15 @@ export default {
     }
   }
 }
+
+window.addEventListener('scroll', () => {
+  const btn = document.querySelector('.btn-up')
+  if (window.pageYOffset > document.documentElement.clientHeight / 2) {
+    btn.style.display = 'flex'
+  } else {
+    btn.style.display = 'none'
+  }
+})
 </script>
 
 <style scoped lang="sass">
@@ -72,7 +81,7 @@ export default {
   position: fixed
   bottom: 30px
   right: 55px
-  display: flex
+  display: none
   justify-content: center
   align-items: center
   width: 45px

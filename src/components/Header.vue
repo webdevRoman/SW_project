@@ -30,7 +30,7 @@ export default {
         width: 32px
         height: 32px
         padding: 5px
-        background-color: #FAFAFA
+        background-color: $c-bg
         border-radius: 50%
         overflow: hidden
         margin-right: 13px
