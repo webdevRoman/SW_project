@@ -12,116 +12,57 @@
           button.cart
             .cart-img
               img(src="../assets/img/cart.svg", alt="Cart image")
-            .cart-sum 100 Р
+            .cart-sum {{ currentSum }} Р
   .cart-popup
     .cart-close
       button.cart-close__btn(@click.prevent="hideCart()") &times;
-    // .cart-items__no Ваша корзина пуста
-    .cart-items
-      .cart-item
+    .cart-items__confirmed(v-if="isConfirmed") Заказ подтвержден
+    .cart-items__no(v-else-if="Object.keys(cartItems).length < 1") Ваша корзина пуста
+    .cart-items(v-else)
+      .cart-item(v-for="dish in cartItems")
         .cart-item__block
           .cart-item__main
             .cart-item__img
               img(src="../assets/img/dish.svg", alt="Dish image")
             .cart-item__text
               .cart-item__info
-                .cart-item__price 25 Р
-                .cart-item__name Название
+                .cart-item__price {{ dish.price }} Р
+                .cart-item__name {{ dish.name }}
                 .cart-item__number
-                  //- button.cart-number__btn(@click.prevent="dish.orderNumber--", :disabled="dish.orderNumber <= 1") -
-                  //- input.cart-number__value(type="text", v-model="dish.orderNumber", v-mask="'##'", @focusout="checkOrderNumber(dish)")
-                  //- button.cart-number__btn(@click.prevent="dish.orderNumber++", :disabled="dish.orderNumber >= 99") +
-                  button.cart-number__btn -
-                  input.cart-number__value(type="text", v-mask="'##'", value="2")
-                  button.cart-number__btn +
-                //- button.cart-item__fav(@click.prevent="dish.favourite = !dish.favourite")
-                //-   img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
-                //-   img(src="../assets/img/star.svg", alt="Star image", v-else)
-                button.cart-item__fav
+                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.order <= 1") -
+                  input.cart-number__value(type="text", v-model="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
+                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99") +
+                button.cart-item__fav(@click.prevent="toggleFavourite(dish)", v-if="dish.favourite")
+                  .cart-fav__img
+                    img(src="../assets/img/star-active.svg", alt="Star image")
+                  .cart-fav__text В избранном
+                button.cart-item__fav.cart-item__fav_active(@click.prevent="toggleFavourite(dish)", v-else)
                   .cart-fav__img
                     img(src="../assets/img/star.svg", alt="Star image")
                   .cart-fav__text В избранное
-                //- button.cart-item__fav.cart-item__fav_active
-                //-   .cart-fav__img
-                //-     img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
-                //-   .cart-fav__text В избранном
-          button.cart-item__delete &times;
+          button.cart-item__delete(@click.prevent="deleteOrder(dish)") &times;
         .cart-item__sum
-          div Всего: <span class="cart-sum__value">50</span> Р
-      .cart-item
-        .cart-item__block
-          .cart-item__main
-            .cart-item__img
-              img(src="../assets/img/dish.svg", alt="Dish image")
-            .cart-item__text
-              .cart-item__info
-                .cart-item__price 25 Р
-                .cart-item__name Название
-                .cart-item__number
-                  //- button.cart-number__btn(@click.prevent="dish.orderNumber--", :disabled="dish.orderNumber <= 1") -
-                  //- input.cart-number__value(type="text", v-model="dish.orderNumber", v-mask="'##'", @focusout="checkOrderNumber(dish)")
-                  //- button.cart-number__btn(@click.prevent="dish.orderNumber++", :disabled="dish.orderNumber >= 99") +
-                  button.cart-number__btn -
-                  input.cart-number__value(type="text", v-mask="'##'", value="2")
-                  button.cart-number__btn +
-                //- button.cart-item__fav(@click.prevent="dish.favourite = !dish.favourite")
-                //-   img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
-                //-   img(src="../assets/img/star.svg", alt="Star image", v-else)
-                button.cart-item__fav
-                  .cart-fav__img
-                    img(src="../assets/img/star.svg", alt="Star image")
-                  .cart-fav__text В избранное
-                //- button.cart-item__fav.cart-item__fav_active
-                //-   .cart-fav__img
-                //-     img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
-                //-   .cart-fav__text В избранном
-          button.cart-item__delete &times;
-        .cart-item__sum
-          div Всего: <span class="cart-sum__value">50</span> Р
-      .cart-item
-        .cart-item__block
-          .cart-item__main
-            .cart-item__img
-              img(src="../assets/img/dish.svg", alt="Dish image")
-            .cart-item__text
-              .cart-item__info
-                .cart-item__price 25 Р
-                .cart-item__name Название
-                .cart-item__number
-                  //- button.cart-number__btn(@click.prevent="dish.orderNumber--", :disabled="dish.orderNumber <= 1") -
-                  //- input.cart-number__value(type="text", v-model="dish.orderNumber", v-mask="'##'", @focusout="checkOrderNumber(dish)")
-                  //- button.cart-number__btn(@click.prevent="dish.orderNumber++", :disabled="dish.orderNumber >= 99") +
-                  button.cart-number__btn -
-                  input.cart-number__value(type="text", v-mask="'##'", value="2")
-                  button.cart-number__btn +
-                //- button.cart-item__fav(@click.prevent="dish.favourite = !dish.favourite")
-                //-   img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
-                //-   img(src="../assets/img/star.svg", alt="Star image", v-else)
-                button.cart-item__fav
-                  .cart-fav__img
-                    img(src="../assets/img/star.svg", alt="Star image")
-                  .cart-fav__text В избранное
-                //- button.cart-item__fav.cart-item__fav_active
-                //-   .cart-fav__img
-                //-     img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
-                //-   .cart-fav__text В избранном
-          button.cart-item__delete &times;
-        .cart-item__sum
-          div Всего: <span class="cart-sum__value">50</span> Р
-    .cart-price
+          div Всего: <span class="cart-sum__value">{{ dish.price * dish.order }}</span> Р
+    .cart-price(v-if="!isConfirmed")
       .cart-price__line.cart-price__sum
         .cart-price__text Итого
-        .cart-price__value <span class="cart-value__value">100</span> Р
-      .cart-price__line.cart-price__left
+        .cart-price__value <span class="cart-value__value">{{ currentSum }}</span> Р
+      .cart-price__line.cart-price__left(:class="{'cart-price__left_minus': currentSum > priceLimit}")
         .cart-price__text Оставшийся лимит
-        .cart-price__value <span class="cart-value__value">100</span> Р
-    .cart-buttons
-      button.btn.btn_o Очистить корзину
-      button.btn Подтвердить заказ
+        .cart-price__value <span class="cart-value__value">{{ priceLimit - currentSum }}</span> Р
+    .cart-buttons(v-if="!isConfirmed")
+      button.btn.btn_o(@click.prevent="clearCart()", :disabled="Object.keys(cartItems).length < 1") Очистить корзину
+      button.btn(@click.prevent="confirmOrder()", :disabled="Object.keys(cartItems).length < 1") Подтвердить заказ
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      priceLimit: 200,
+      isConfirmed: false
+    }
+  },
   methods: {
     showCart() {
       const cart = document.querySelector('.cart-popup')
@@ -130,6 +71,62 @@ export default {
     hideCart() {
       const cart = document.querySelector('.cart-popup')
       cart.style.display = 'none'
+    },
+    incrementOrder(dish) {
+      dish.order++
+      this.$store.dispatch('SET_OREDER', dish)
+    },
+    decrementOrder(dish) {
+      dish.order--
+      this.$store.dispatch('DECREMENT_OREDER', dish)
+    },
+    deleteOrder(dish) {
+      dish.order = 0
+      this.$store.dispatch('DECREMENT_OREDER', dish)
+    },
+    checkOrder(dish) {
+      if (dish.order == '' || !dish.order.match(/\d+/)) {
+        dish.order = 0
+        this.$store.dispatch('DECREMENT_OREDER', dish)
+      } else if (dish.order.length > 1 && dish.order[0] == '0') {
+        dish.order = dish.order[1]
+        dish.order = parseInt(dish.order)
+        this.$store.dispatch('SET_OREDER', dish)
+      } else {
+        this.$store.dispatch('SET_OREDER', dish)
+      }
+    },
+    toggleFavourite(dish) {
+      if (!dish.favourite) {
+        this.$store.dispatch('ADD_FAVOURITE', dish)
+        dish.favourite = true
+      } else {
+        this.$store.dispatch('REMOVE_FAVOURITE', dish)
+        dish.favourite = false
+      }
+    },
+    clearCart() {
+      for (const key in this.cartItems) {
+        const dish = this.cartItems[key]
+        dish.order = 0
+        this.$store.dispatch('DECREMENT_OREDER', dish)
+      }
+    },
+    confirmOrder() {
+      // dispatch some confirming method
+      this.isConfirmed = true
+    }
+  },
+  computed: {
+    cartItems() {
+      return this.$store.getters.cart
+    },
+    currentSum() {
+      let sum = 0
+      for (const key in this.cartItems) {
+        sum += this.cartItems[key].price * this.cartItems[key].order
+      }
+      return sum
     }
   }
 }
@@ -226,6 +223,12 @@ export default {
     &::-webkit-resizer
       background-color: $c-dark
     &__no
+      height: calc(100vh - 350px)
+      padding: 50px 0
+      font-weight: bold
+      font-size: 24px
+      text-align: center
+    &__confirmed
       padding: 50px 0
       font-weight: bold
       font-size: 24px
@@ -331,6 +334,8 @@ export default {
       .cart-price__text
       .cart-price__value
         font-weight: bold
+      &_minus
+        color: #D84315
   &-buttons
     padding: 26px 38px 38px 38px
     display: flex

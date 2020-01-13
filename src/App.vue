@@ -34,12 +34,20 @@ body, button, input, a
   &:hover
     background-color: transparent
     color: $c-dark
+  &[disabled]
+    filter: opacity(50%)
+    &:hover
+      background-color: $c-dark
+      color: $c-light
   &_o
     background-color: transparent
     color: $c-dark
     &:hover
       background-color: $c-dark
       color: $c-light
+    &[disabled]:hover
+      background-color: transparent
+      color: $c-dark
 
 .v-select
   cursor: pointer

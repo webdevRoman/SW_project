@@ -1,4 +1,4 @@
-// import Vue from 'vue'
+import Vue from 'vue'
 
 export default {
   state: {
@@ -53,13 +53,13 @@ export default {
         order: 0,
         favourite: false
       }, {
-        id: 2,
-        name: 'Салат "Витаминный"',
-        price: 32,
-        weight: 150,
+        id: 5,
+        name: 'Вок с курицей',
+        price: 135,
+        weight: 250,
         weighty: 0,
         single: 1,
-        description: 'Lorem ipsum, or lipsum as it is sometimes known',
+        description: 'Лапша удон, куриное филе, лук репчатый, лук зеленый, перец болгарский, морковь, капуста, чеснок, кунжут',
         hide: 0,
         image: '/images/delivery/items/199.jpg',
         order: 0,
@@ -68,37 +68,25 @@ export default {
     }, {
       name: 'Название категории 2',
       dishes: [{
-        id: 1,
-        name: 'Бигус',
-        price: 85,
-        weight: 250,
+        id: 6,
+        name: 'Салат "Овощное попурри"',
+        price: 36,
+        weight: 100,
         weighty: 0,
         single: 1,
-        description: 'Капуста тушеная со свининой',
+        description: 'Капуста, помидор, огурцы, масло',
         hide: 0,
         image: '/images/delivery/items/199.jpg',
         order: 0,
         favourite: true
       }, {
-        id: 2,
-        name: 'Салат "Витаминный"',
-        price: 32,
-        weight: 150,
-        weighty: 0,
-        single: 1,
-        description: 'Lorem ipsum, or lipsum as it is sometimes known',
-        hide: 0,
-        image: '/images/delivery/items/199.jpg',
-        order: 0,
-        favourite: false
-      }, {
-        id: 3,
-        name: 'Овощи на пару',
-        price: 53,
+        id: 7,
+        name: 'Салат "Цезарь" с пекинской капустой',
+        price: 66,
         weight: 100,
         weighty: 1,
         single: 0,
-        description: 'Зеленый горошек, брокколи, цветная капуста, картофель, морковь, перец болгарский, стручковая фасоль, чеснок',
+        description: 'Помидоры, сыр, курица, пекинская капуста, соус "Цезарь"',
         hide: 0,
         image: '/images/delivery/items/199.jpg',
         order: 0,
@@ -107,61 +95,79 @@ export default {
     }, {
       name: 'Название категории 3',
       dishes: [{
-        id: 1,
-        name: 'Бигус',
-        price: 85,
+        id: 8,
+        name: 'Суп "Том Ям" с морепродуктами',
+        price: 154,
         weight: 250,
-        weighty: 0,
-        single: 1,
-        description: 'Капуста тушеная со свининой',
-        hide: 0,
-        image: '/images/delivery/items/199.jpg',
-        order: 0,
-        favourite: false
-      }, {
-        id: 3,
-        name: 'Овощи на пару',
-        price: 53,
-        weight: 100,
         weighty: 1,
         single: 0,
-        description: 'Зеленый горошек, брокколи, цветная капуста, картофель, морковь, перец болгарский, стручковая фасоль, чеснок',
+        description: 'Морепродукты, корень галангала, лемонграсс, сливки, кокосовое молоко, шампиньоны, красный лук, помидоры, кинза, соус Том Ям. Подается с рисом.',
         hide: 0,
         image: '/images/delivery/items/199.jpg',
         order: 0,
         favourite: false
       }]
     }],
-    favourites: new Map(),
-    cart: new Map()
+    favourites: {},
+    cart: {}
+    // favourites: new Map(),
+    // cart: new Map()
   },
   mutations: {
     SET_FAVOURITES(state) {
-      let favourites = new Map()
       state.categories.forEach(category => {
         category.dishes.forEach(dish => {
           if (dish.favourite)
-            favourites.set(dish.id, dish)
+            Vue.set(state.favourites, dish.id, dish)
         })
       })
-      state.favourites = favourites
     },
     ADD_FAVOURITE(state, dish) {
-      // Vue.set(state.favourites, dish.id, dish)
-      state.favourites.set(dish.id, dish)
+      Vue.set(state.favourites, dish.id, dish)
     },
     REMOVE_FAVOURITE(state, dish) {
-      state.favourites.delete(dish.id)
+      let newFavs = state.favourites
+      delete newFavs[dish.id]
+      state.favourites = newFavs
     },
     DECREMENT_OREDER(state, dish) {
-      if (dish.order < 1)
-        state.cart.delete(dish.id)
-      else
-        state.cart.set(dish.id, dish)
+      if (dish.order < 1) {
+        let newCart = state.cart
+        delete newCart[dish.id]
+        state.cart = newCart
+      } else {
+        Vue.set(state.cart, dish.id, dish)
+      }
     },
     SET_OREDER(state, dish) {
-      state.cart.set(dish.id, dish)
+      Vue.set(state.cart, dish.id, dish)
     }
+    // SET_FAVOURITES(state) {
+    //   let favourites = new Map()
+    //   state.categories.forEach(category => {
+    //     category.dishes.forEach(dish => {
+    //       if (dish.favourite)
+    //         favourites.set(dish.id, dish)
+    //     })
+    //   })
+    //   state.favourites = favourites
+    // },
+    // ADD_FAVOURITE(state, dish) {
+    //   // Vue.set(state.favourites, dish.id, dish)
+    //   state.favourites.set(dish.id, dish)
+    // },
+    // REMOVE_FAVOURITE(state, dish) {
+    //   state.favourites.delete(dish.id)
+    // },
+    // DECREMENT_OREDER(state, dish) {
+    //   if (dish.order < 1)
+    //     state.cart.delete(dish.id)
+    //   else
+    //     state.cart.set(dish.id, dish)
+    // },
+    // SET_OREDER(state, dish) {
+    //   state.cart.set(dish.id, dish)
+    // }
   },
   actions: {
     SET_FAVOURITES({commit}) {

@@ -67,21 +67,22 @@ export default {
     incrementOrder(dish) {
       dish.order++
       this.$store.dispatch('SET_OREDER', dish)
-      console.log(this.$store.getters.cart)
     },
     decrementOrder(dish) {
       dish.order--
       this.$store.dispatch('DECREMENT_OREDER', dish)
-      console.log(this.$store.getters.cart)
     },
     checkOrder(dish) {
-      if (dish.order == '' || !dish.order.match(/\d+/))
+      if (dish.order == '' || !dish.order.match(/\d+/)) {
         dish.order = 0
-      if (dish.order.length > 1 && dish.order[0] == '0')
+        this.$store.dispatch('DECREMENT_OREDER', dish)
+      } else if (dish.order.length > 1 && dish.order[0] == '0') {
         dish.order = dish.order[1]
-      dish.order = parseInt(dish.order)
-      this.$store.dispatch('SET_OREDER', dish)
-      console.log(this.$store.getters.cart)
+        dish.order = parseInt(dish.order)
+        this.$store.dispatch('SET_OREDER', dish)
+      } else {
+        this.$store.dispatch('SET_OREDER', dish)
+      }
     }
   },
   computed: {
