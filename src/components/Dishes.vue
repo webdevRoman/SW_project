@@ -24,113 +24,70 @@
       .category-title {{ category.name }}
       .category-dishes
         .dish(v-for="dish in category.dishes")
-          .dish-img
-            img(src="../assets/img/dish.svg", alt="Dish image")
-          .dish-title {{ dish.name }}
-          .dish-descr {{ dish.descr }}
-          .dish-info
-            span.dish-info__price {{ dish.price }} Р
-            span.dish-info__weight {{ dish.weight }} г
-          .dish-footer
-            div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.orderNumber > 0}")
-              button.cart-btn(@click.prevent="dish.orderNumber++", :disabled="dish.orderNumber >= 99")
-                img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.orderNumber > 0")
-                img(src="../assets/img/cart.svg", alt="Cart image", v-else)
-              div(:class="{'cart-number': true, 'cart-number_active': dish.orderNumber > 0}")
-                button.cart-number__btn(@click.prevent="dish.orderNumber--", :disabled="dish.orderNumber <= 0") -
-                input.cart-number__value(type="text", v-model="dish.orderNumber", v-mask="'##'", @focusout="checkOrderNumber(dish)")
-                button.cart-number__btn(@click.prevent="dish.orderNumber++", :disabled="dish.orderNumber >= 99") +
-            button.dish-footer__favourite(@click.prevent="dish.favourite = !dish.favourite")
-              img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
-              img(src="../assets/img/star.svg", alt="Star image", v-else)
+          .dish-top
+            .dish-img
+              img(src="../assets/img/dish.svg", alt="Dish image")
+            .dish-title {{ dish.name }}
+            .dish-descr {{ dish.description }}
+          .dish-bottom
+            .dish-info
+              span.dish-info__price {{ dish.price }} Р
+              span.dish-info__weight {{ dish.weight }} г
+            .dish-footer
+              div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.order > 0}")
+                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99")
+                  img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.order > 0")
+                  img(src="../assets/img/cart.svg", alt="Cart image", v-else)
+                div(:class="{'cart-number': true, 'cart-number_active': dish.order > 0}")
+                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.order <= 0") -
+                  input.cart-number__value(type="text", v-model="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
+                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99") +
+              button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
+                img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
+                img(src="../assets/img/star.svg", alt="Star image", v-else)
 </template>
 
 <script>
 export default {
   data() {
     return {
-      selectCategory: { name: 'Все категории' },
-      categories: [{
-        name: 'Название категории 1',
-        dishes: [{
-          name: 'Салат "Витаминный"',
-          descr: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.',
-          price: 31,
-          weight: '100/20',
-          orderNumber: 2,
-          favourite: true
-        }, {
-          name: 'Салат "Витаминный"',
-          descr: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.',
-          price: 31,
-          weight: '100/20',
-          orderNumber: 0,
-          favourite: false
-        }, {
-          name: 'Салат "Витаминный"',
-          descr: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.',
-          price: 31,
-          weight: '100/20',
-          orderNumber: 0,
-          favourite: true
-        }, {
-          name: 'Салат "Витаминный"',
-          descr: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.',
-          price: 31,
-          weight: '100/20',
-          orderNumber: 1,
-          favourite: false
-        }, {
-          name: 'Салат "Витаминный"',
-          descr: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.',
-          price: 31,
-          weight: '100/20',
-          orderNumber: 0,
-          favourite: false
-        }, {
-          name: 'Салат "Витаминный"',
-          descr: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.',
-          price: 31,
-          weight: '100/20',
-          orderNumber: 0,
-          favourite: true
-        }]
-      }, {
-        name: 'Название категории 2',
-        dishes: [{
-          name: 'Салат "Витаминный"',
-          descr: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.',
-          price: 31,
-          weight: '100/20',
-          orderNumber: 0,
-          favourite: false
-        }, {
-          name: 'Салат "Витаминный"',
-          descr: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.',
-          price: 31,
-          weight: '100/20',
-          orderNumber: 1,
-          favourite: true
-        }, {
-          name: 'Салат "Витаминный"',
-          descr: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.',
-          price: 31,
-          weight: '100/20',
-          orderNumber: 3,
-          favourite: false
-        }]
-      }]
+      selectCategory: { name: 'Все категории' }
     }
   },
   methods: {
-    checkOrderNumber(dish) {
-      if (dish.orderNumber == '' || !dish.orderNumber.match(/\d+/))
-        dish.orderNumber = 0
-      if (dish.orderNumber.length > 1 && dish.orderNumber[0] == '0')
-        dish.orderNumber = dish.orderNumber[1]
+    toggleFavourite(dish) {
+      if (!dish.favourite) {
+        this.$store.dispatch('ADD_FAVOURITE', dish)
+        dish.favourite = true
+      } else {
+        this.$store.dispatch('REMOVE_FAVOURITE', dish)
+        dish.favourite = false
+      }
+    },
+    incrementOrder(dish) {
+      dish.order++
+      this.$store.dispatch('SET_OREDER', dish)
+      console.log(this.$store.getters.cart)
+    },
+    decrementOrder(dish) {
+      dish.order--
+      this.$store.dispatch('DECREMENT_OREDER', dish)
+      console.log(this.$store.getters.cart)
+    },
+    checkOrder(dish) {
+      if (dish.order == '' || !dish.order.match(/\d+/))
+        dish.order = 0
+      if (dish.order.length > 1 && dish.order[0] == '0')
+        dish.order = dish.order[1]
+      dish.order = parseInt(dish.order)
+      this.$store.dispatch('SET_OREDER', dish)
+      console.log(this.$store.getters.cart)
     }
   },
   computed: {
+    categories() {
+      return this.$store.getters.categories
+    },
     currentCategories() {
       if (this.selectCategory.name == 'Все категории')
         return this.categories
@@ -142,6 +99,9 @@ export default {
       selectCategories.unshift({ name: 'Все категории' })
       return selectCategories
     }
+  },
+  mounted() {
+    this.$store.dispatch('SET_FAVOURITES')
   }
 }
 </script>
@@ -174,6 +134,9 @@ export default {
       flex: auto
     .dish
       flex-basis: 262px
+      display: flex
+      justify-content: space-between
+      flex-direction: column
       border: 2px solid $c-middle
       box-sizing: border-box
       text-align: center
