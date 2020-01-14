@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import SignIn from '../views/SignIn.vue'
 
 Vue.use(VueRouter)
 
@@ -9,7 +10,13 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
-    alias: '/index.html'
+    // alias: '/index.html'
+  },
+  {
+    path: '/signin',
+    name: 'signin',
+    component: SignIn,
+    // alias: '/signin.html'
   },
   // {
   //   path: '/about',
@@ -19,10 +26,10 @@ const routes = [
   //   // which is lazy-loaded when the route is visited.
   //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   // },
-  {
-    path: '*',
-    redirect: '/'
-  }
+  // {
+  //   path: '*',
+  //   redirect: '/'
+  // }
 ]
 
 const router = new VueRouter({

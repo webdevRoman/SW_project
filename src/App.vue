@@ -1,9 +1,5 @@
 <template lang="pug">
 #app
-  //- #nav
-  //-   router-link(to="/") Home
-  //-   span |
-  //-   router-link(to="/about") About
   router-view
 </template>
 
@@ -21,6 +17,10 @@ body, button, input, a
 .logo
   font-size: 40px
   font-weight: bold
+  text-transform: uppercase
+.title
+  font-weight: bold
+  font-size: 24px
   text-transform: uppercase
 .btn
   width: 184px

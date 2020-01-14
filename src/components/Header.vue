@@ -1,6 +1,7 @@
 <template lang="pug">
 .header
   .container
+    router-link(tag="button", to="/signin", style="margin-right: 30px; color: #fff") Выход
     button.user
       .user-img
         img(src="../assets/img/user.svg", alt="User Image")

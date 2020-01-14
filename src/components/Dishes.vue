@@ -21,7 +21,7 @@
           span.select-option {{ option.name }}
   .container
     .category(v-for="category in currentCategories")
-      .category-title {{ category.name }}
+      .title.category-title {{ category.name }}
       .category-dishes
         .dish(v-for="dish in category.dishes")
           .dish-top

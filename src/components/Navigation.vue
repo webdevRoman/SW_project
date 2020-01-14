@@ -223,7 +223,7 @@ export default {
     &::-webkit-resizer
       background-color: $c-dark
     &__no
-      height: calc(100vh - 350px)
+      height: calc(100vh - 250px)
       padding: 50px 0
       font-weight: bold
       font-size: 24px
@@ -331,7 +331,6 @@ export default {
     &__left
       font-size: 20px
       color: $c-active
-      .cart-price__text
       .cart-price__value
         font-weight: bold
       &_minus
