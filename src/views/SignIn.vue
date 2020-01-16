@@ -2,7 +2,7 @@
 .signin-container
   .signin
     .logo Логотип
-    .title.signin-title Войти
+    .title.signin-title Вход
     form.signin-form(action="#", @submit.prevent="checkForm()")
       .signin-form__block
         label.signin-form__label(for="signin-email") Корпоративная почта SmartWorld
@@ -10,7 +10,9 @@
       .signin-form__block
         label.signin-form__label(for="signin-password") Пароль
         input.signin-form__input(type="password", id="signin-password")
-      button.signin-form__btn(type="submit") Вход
+        router-link.signin-form__forget(to="/password") Забыли пароль?
+      button.signin-form__btn(type="submit") Войти
+      router-link.signin-form__signup(to="/signup") Еще нет аккаунта?
 </template>
 
 <script>
@@ -74,5 +76,27 @@ export default {
       color: $c-light
       transition: 0.2s
       &:hover
-        background-color: darken($c-active, 10)
+        background-color: darken($c-active, 15)
+    &__forget
+      display: block
+      font-weight: 500
+      font-size: 13px
+      color: lighten($c-dark, 40)
+      text-decoration: underline
+      margin-top: 12px
+      transition: 0.2s
+      &:hover
+        color: lighten($c-dark, 20)
+    &__signup
+      display: block
+      font-weight: 500
+      font-size: 13px
+      color: lighten($c-dark, 40)
+      text-transform: uppercase
+      text-decoration: underline
+      text-align: center
+      margin-top: 30px
+      transition: 0.2s
+      &:hover
+        color: lighten($c-dark, 20)
 </style>

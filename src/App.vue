@@ -32,8 +32,8 @@ body, button, input, a
   text-align: center
   transition: 0.2s
   &:hover
-    background-color: transparent
-    color: $c-dark
+    background-color: lighten($c-dark, 10)
+    border: 1px solid lighten($c-dark, 10)
   &[disabled]
     filter: opacity(50%)
     &:hover
@@ -43,8 +43,7 @@ body, button, input, a
     background-color: transparent
     color: $c-dark
     &:hover
-      background-color: $c-dark
-      color: $c-light
+      background-color: lighten($c-middle, 10)
     &[disabled]:hover
       background-color: transparent
       color: $c-dark

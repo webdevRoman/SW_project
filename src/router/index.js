@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+// import Favourites from '../views/Favourites.vue'
+import Account from '../views/Account.vue'
 import SignIn from '../views/SignIn.vue'
+import SignUp from '../views/SignUp.vue'
 
 Vue.use(VueRouter)
 
@@ -12,11 +15,25 @@ const routes = [
     component: Home,
     // alias: '/index.html'
   },
+  // {
+  //   path: '/favourites',
+  //   name: 'favourites',
+  //   component: Favourites
+  // },
+  {
+    path: '/account',
+    name: 'account',
+    component: Account
+  },
   {
     path: '/signin',
     name: 'signin',
-    component: SignIn,
-    // alias: '/signin.html'
+    component: SignIn
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: SignUp
   },
   // {
   //   path: '/about',

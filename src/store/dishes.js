@@ -110,8 +110,6 @@ export default {
     }],
     favourites: {},
     cart: {}
-    // favourites: new Map(),
-    // cart: new Map()
   },
   mutations: {
     SET_FAVOURITES(state) {
@@ -127,6 +125,7 @@ export default {
     },
     REMOVE_FAVOURITE(state, dish) {
       let newFavs = state.favourites
+      Vue.set(state.favourites, dish.id, null)
       delete newFavs[dish.id]
       state.favourites = newFavs
     },
