@@ -58,20 +58,12 @@
 export default {
   methods: {
     toggleFavourite(dish) {
-      // const dishNode = event.target
       if (!dish.favourite) {
         this.$store.dispatch('ADD_FAVOURITE', dish)
         dish.favourite = true
       } else {
         this.$store.dispatch('REMOVE_FAVOURITE', dish)
         dish.favourite = false
-        // let favs = this.favourites
-        // delete favs[dish.id]
-        // this.favourites = favs
-        // if (dishNode.parentNode.parentNode.parentNode.classList.contains('dish'))
-        //   dishNode.parentNode.parentNode.parentNode.remove()
-        // else
-        //   dishNode.parentNode.parentNode.parentNode.parentNode.remove()
       }
     },
     incrementOrder(dish) {

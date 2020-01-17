@@ -14,6 +14,12 @@ body, button, input, a
 .container
   width: 1140px
   margin: 0 auto
+  &_center
+    display: flex
+    justify-content: center
+    align-items: center
+    height: 100vh
+    width: 100vw
 .logo
   font-size: 40px
   font-weight: bold
@@ -47,6 +53,40 @@ body, button, input, a
     &[disabled]:hover
       background-color: transparent
       color: $c-dark
+.form
+  &-block
+    margin-bottom: 65px
+  &-label
+    display: block
+    font-weight: 500
+    font-size: 13px
+    text-transform: uppercase
+    color: lighten($c-dark, 40)
+    margin-bottom: 5px
+    transition: 0.2s
+    cursor: pointer
+    &:hover
+      color: $c-active
+  &-input
+    width: 100%
+    padding: 10px 5px
+    border: none
+    background-color: transparent
+    border-bottom: 2px solid lighten($c-dark, 40)
+    font-size: 15px
+    transition: 0.2s
+    &:focus
+      border-bottom: 2px solid $c-active
+  &-submit
+    width: 100%
+    padding: 20px
+    background-color: $c-active
+    font-weight: 500
+    font-size: 18px
+    color: $c-light
+    transition: 0.2s
+    &:hover
+      background-color: darken($c-active, 15)
 
 .v-select
   cursor: pointer

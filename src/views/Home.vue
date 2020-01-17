@@ -16,7 +16,7 @@ div
               .cart-sum {{ currentSum }} Р
     Cart
   .image(:class="{'image_favourites': showFavourites}")
-    img(src="../assets/img/apricot-fruits-on-bowl-1028599 (1) 2.png", alt="Dish image", v-if="showFavourites")
+    img(src="../assets/img/top-dish-1.png", alt="Dish image", v-if="showFavourites")
     img(src="../assets/img/top-dish.png", alt="Dish image", v-else)
   Weekdays
   Favourites(v-if="showFavourites")
