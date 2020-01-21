@@ -17,7 +17,7 @@
               span.dish-info__weight {{ dish.weight }} г
             .dish-footer
               div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.order > 0}")
-                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99")
+                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order > 0")
                   img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.order > 0")
                   img(src="../assets/img/cart.svg", alt="Cart image", v-else)
                 div(:class="{'cart-number': true, 'cart-number_active': dish.order > 0}")
@@ -41,14 +41,13 @@
               span.dish-info__price {{ dish.price }} Р
               span.dish-info__weight {{ dish.weight }} г
             .dish-footer
-              div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.order > 0}")
-                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99")
-                  img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.order > 0")
-                  img(src="../assets/img/cart.svg", alt="Cart image", v-else)
-                div(:class="{'cart-number': true, 'cart-number_active': dish.order > 0}")
-                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.order <= 0") -
-                  input.cart-number__value(type="text", v-model="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
-                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99") +
+              .dish-footer__cart
+                button.cart-btn(disabled)
+                  img(src="../assets/img/cart-inactive.svg", alt="Cart image")
+                .cart-number.cart-number_inactive
+                  button.cart-number__btn(disabled) -
+                  input.cart-number__value(v-model="dish.order", disabled)
+                  button.cart-number__btn(disabled) +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
                 img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
                 img(src="../assets/img/star.svg", alt="Star image", v-else)
@@ -200,6 +199,10 @@ export default {
               display: flex
               align-items: center
               &__btn
+                width: 24px
+                height: 24px
+                border: 1px solid $c-dark
+                border-radius: 50%
                 font-weight: 500
                 font-size: 18px
                 margin-right: 10px
@@ -207,7 +210,7 @@ export default {
                 &:last-child
                   margin-right: 0
                 &:hover
-                  transform: scale(1.8)
+                  transform: scale(1.4)
               &__value
                 width: 20px
                 background-color: transparent
@@ -217,8 +220,15 @@ export default {
                 text-align: center
                 margin-right: 10px
               &_active
+                .cart-number__btn
+                  border: 1px solid $c-light
                 .cart-number__btn, .cart-number__value
                   color: $c-light
+              &_inactive
+                .cart-number__btn
+                  border: 1px solid darken($c-middle, 10)
+                .cart-number__btn, .cart-number__value
+                  color: darken($c-middle, 10)
         &__favourite
           display: flex
           justify-content: center

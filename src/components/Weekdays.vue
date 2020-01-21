@@ -2,32 +2,10 @@
 .weekdays
   .container
     button.weekday(v-for="weekday in weekdays", :class="{'weekday_active': currentDate == weekday.date}")
+      .weekday-tick
+        img(src="../assets/img/tick-success.svg", alt="Tick")
       .weekday-title {{ weekday.day }}
       .weekday-date {{ weekday.date }} {{ weekday.month }}
-  //-   button.weekday.weekday_active
-  //-     .weekday-title Понедельник
-  //-     .weekday-date 23 декабря
-  //-   button.weekday
-  //-     .weekday-title Вторник
-  //-     .weekday-date 24 декабря
-  //-   button.weekday
-  //-     .weekday-title Среда
-  //-     .weekday-date 25 декабря
-  //-   button.weekday
-  //-     .weekday-title Четверг
-  //-     .weekday-date 26 декабря
-  //-   button.weekday
-  //-     .weekday-title Пятница
-  //-     .weekday-date 27 декабря
-  //-   button.weekday
-  //-     .weekday-title Суббота
-  //-     .weekday-date 28 декабря
-  //-   button.weekday
-  //-     .weekday-title Воскресенье
-  //-     .weekday-date 29 декабря
-  //-   button.weekday
-  //-     .weekday-title Понедельник
-  //-     .weekday-date 30 декабря
 </template>
 
 <script>
@@ -136,7 +114,7 @@ export default {
     align-items: stretch
     .weekday
       flex-basis: 12.5%
-      padding: 45px 0
+      padding: 15px 0 45px 0
       border-left: 2px solid $c-middle
       border-right: 2px solid $c-middle
       transition: 0.2s
@@ -144,6 +122,11 @@ export default {
         border-left: 4px solid $c-middle
       &:last-child
         border-right: 4px solid $c-middle
+      &-tick
+        opacity: 1
+        visibility: hidden
+        width: 20px
+        margin: 0 auto 10px auto
       &-title
         font-weight: bold
         font-size: 15px

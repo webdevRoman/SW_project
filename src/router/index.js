@@ -4,7 +4,9 @@ import Home from '../views/Home.vue'
 // import Favourites from '../views/Favourites.vue'
 import Account from '../views/Account.vue'
 import SignIn from '../views/SignIn.vue'
+import Password from '../views/Password.vue'
 import SignUp from '../views/SignUp.vue'
+import EmailConfirmation from '../views/EmailConfirmation.vue'
 
 Vue.use(VueRouter)
 
@@ -15,11 +17,6 @@ const routes = [
     component: Home,
     // alias: '/index.html'
   },
-  // {
-  //   path: '/favourites',
-  //   name: 'favourites',
-  //   component: Favourites
-  // },
   {
     path: '/account',
     name: 'account',
@@ -31,9 +28,19 @@ const routes = [
     component: SignIn
   },
   {
+    path: '/password',
+    name: 'password',
+    component: Password
+  },
+  {
     path: '/signup',
     name: 'signup',
     component: SignUp
+  },
+  {
+    path: '/email-confirmation',
+    name: 'email-confirmation',
+    component: EmailConfirmation
   },
   // {
   //   path: '/about',

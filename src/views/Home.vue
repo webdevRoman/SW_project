@@ -1,10 +1,10 @@
 <template lang="pug">
 div
   Header
-  //- Navigation
   .navigation
     .container
-      .logo Логотип
+      .logo
+        img(src="../assets/img/logo.png", alt="Logo")
       .right
         ul.nav
           li.nav-item(:class="{'nav-item_active': !showFavourites}", @click.prevent="showFavourites = false") Меню
@@ -57,10 +57,12 @@ export default {
       return sum
     }
   },
+  mounted() {
+    this.$store.dispatch('SET_FAVOURITES')
+  },
   components: {
     Header,
     Cart,
-    // Navigation,
     Weekdays,
     Favourites,
     Dishes,
@@ -73,11 +75,14 @@ export default {
 @import "../assets/sass/vars"
 
 .navigation
-  padding: 15px
+  padding: 25px
   .container
     display: flex
     justify-content: space-between
     align-items: center
+    .logo
+      width: 310px
+      margin: 0
     .right
       display: flex
       justify-content: flex-end

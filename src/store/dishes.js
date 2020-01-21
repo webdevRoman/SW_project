@@ -106,6 +106,30 @@ export default {
         image: '/images/delivery/items/199.jpg',
         order: 0,
         favourite: false
+      }, {
+        id: 9,
+        name: 'Салат 9',
+        price: 32,
+        weight: 150,
+        weighty: 0,
+        single: 1,
+        description: 'Lorem ipsum, or lipsum as it is sometimes known',
+        hide: 1,
+        image: '/images/delivery/items/199.jpg',
+        order: 0,
+        favourite: true
+      }, {
+        id: 10,
+        name: 'Салат 10',
+        price: 32,
+        weight: 150,
+        weighty: 0,
+        single: 1,
+        description: 'Lorem ipsum, or lipsum as it is sometimes known',
+        hide: 1,
+        image: '/images/delivery/items/199.jpg',
+        order: 0,
+        favourite: true
       }]
     }],
     favourites: {},
@@ -141,32 +165,6 @@ export default {
     SET_OREDER(state, dish) {
       Vue.set(state.cart, dish.id, dish)
     }
-    // SET_FAVOURITES(state) {
-    //   let favourites = new Map()
-    //   state.categories.forEach(category => {
-    //     category.dishes.forEach(dish => {
-    //       if (dish.favourite)
-    //         favourites.set(dish.id, dish)
-    //     })
-    //   })
-    //   state.favourites = favourites
-    // },
-    // ADD_FAVOURITE(state, dish) {
-    //   // Vue.set(state.favourites, dish.id, dish)
-    //   state.favourites.set(dish.id, dish)
-    // },
-    // REMOVE_FAVOURITE(state, dish) {
-    //   state.favourites.delete(dish.id)
-    // },
-    // DECREMENT_OREDER(state, dish) {
-    //   if (dish.order < 1)
-    //     state.cart.delete(dish.id)
-    //   else
-    //     state.cart.set(dish.id, dish)
-    // },
-    // SET_OREDER(state, dish) {
-    //   state.cart.set(dish.id, dish)
-    // }
   },
   actions: {
     SET_FAVOURITES({commit}) {

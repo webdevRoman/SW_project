@@ -1,19 +1,15 @@
 <template lang="pug">
-.container_center.signin-container
+.container_center.signup-container
   .logo
     img(src="../assets/img/logo.png", alt="Logo")
-  .signin
-    .title.signin-title Вход
-    form.signin-form(action="#", @submit.prevent="checkForm()")
-      .form-block
-        label.form-label(for="signin-email") Корпоративная почта SmartWorld
-        input.form-input(type="text", id="signin-email")
-      .form-block
-        label.form-label(for="signin-password") Пароль
-        input.form-input(type="password", id="signin-password")
-        router-link.signin-form__forget(to="/password") Забыли пароль?
-      button.form-submit(type="submit") Войти
-      router-link.signin-form__signup(to="/signup") Еще нет аккаунта?
+  .signup
+    .title.signup-title Регистрация
+    form.signup-form(action="#", @submit.prevent="checkForm()")
+      .form-block.signup-form__block
+        label.form-label(for="signup-code") Введите код подтверждения
+        input.form-input(type="text", id="signup-code")
+      button.form-submit.signup-form__submit(type="submit") Подтвердить
+      button.btn.btn_o.signup-form__repeat(@click.prevent="sendCode()") Отправить новый код
 </template>
 
 <script>
@@ -21,6 +17,9 @@ export default {
   methods: {
     checkForm() {
       this.$router.push('/')
+    },
+    sendCode() {
+      alert('New code was sent')
     }
   }
 }
@@ -29,7 +28,7 @@ export default {
 <style scoped lang="sass">
 @import "../assets/sass/vars"
 
-.signin
+.signup
   width: 262px
   &-container
     flex-direction: column
@@ -62,4 +61,8 @@ export default {
       transition: 0.2s
       &:hover
         color: lighten($c-dark, 20)
+    &__repeat
+      width: 100%
+      padding: 20px
+      margin-top: 20px
 </style>

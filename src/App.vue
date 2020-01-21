@@ -21,9 +21,8 @@ body, button, input, a
     height: 100vh
     width: 100vw
 .logo
-  font-size: 40px
-  font-weight: bold
-  text-transform: uppercase
+  width: 388px
+  margin: 0 auto
 .title
   font-weight: bold
   font-size: 24px
@@ -62,18 +61,18 @@ body, button, input, a
     font-size: 13px
     text-transform: uppercase
     color: lighten($c-dark, 40)
-    margin-bottom: 5px
     transition: 0.2s
     cursor: pointer
     &:hover
       color: $c-active
   &-input
     width: 100%
-    padding: 10px 5px
+    padding: 10px 0
     border: none
     background-color: transparent
     border-bottom: 2px solid lighten($c-dark, 40)
-    font-size: 15px
+    font-weight: 500
+    font-size: 18px
     transition: 0.2s
     &:focus
       border-bottom: 2px solid $c-active
@@ -81,12 +80,14 @@ body, button, input, a
     width: 100%
     padding: 20px
     background-color: $c-active
+    border: 1px solid $c-active
     font-weight: 500
     font-size: 18px
     color: $c-light
     transition: 0.2s
     &:hover
       background-color: darken($c-active, 15)
+      border: 1px solid darken($c-active, 15)
 
 .v-select
   cursor: pointer
@@ -111,7 +112,6 @@ body, button, input, a
 .v-select.vs--open
   .select-arrow
     transform: rotateX(180deg)
-
 .select
   transition: 0.2s
   .vs
@@ -152,4 +152,118 @@ body, button, input, a
           color: $c-light
 .select.vs--open
   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15)
+
+.calendar
+  .vfc
+    &-main
+      &-container
+        width: 308px
+        height: auto !important
+        background-color: $c-light
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2)
+    &-calendars
+      &-container
+        position: relative
+    &-navigation
+      &-buttons
+        display: flex
+        justify-content: space-between
+        align-items: center
+        width: 100%
+        padding: 13px
+        position: absolute
+        top: 0
+        left: 0
+        & > div
+          display: flex
+          justify-content: center
+          align-items: center
+          width: 22px
+          height: 22px
+          border: 2px solid lighten($c-dark, 40)
+          border-radius: 50%
+          transition: 0.2s
+          .vfc-arrow-left, .vfc-arrow-right
+            width: 8px
+            height: 8px
+            border-top: 2px solid lighten($c-dark, 40)
+            border-right: 2px solid lighten($c-dark, 40)
+            transition: 0.2s
+          .vfc-arrow-right
+            transform: rotate(45deg)
+            margin-right: 3px
+          .vfc-arrow-left
+            transform: rotate(225deg)
+            margin-right: -3px
+        .vfc-cursor
+          &-pointer
+            border: 2px solid $c-dark
+            cursor: pointer
+            &:hover
+              border: 2px solid lighten($c-dark, 40)
+              .vfc-arrow-left, .vfc-arrow-right
+                border-top: 2px solid lighten($c-dark, 40)
+                border-right: 2px solid lighten($c-dark, 40)
+            .vfc-arrow-left, .vfc-arrow-right
+              border-top: 2px solid $c-dark
+              border-right: 2px solid $c-dark
+    &-top
+      &-date
+        padding: 8px
+        text-align: center
+        a
+          font-weight: 500
+          font-size: 18px
+    &-dayNames
+      display: flex
+      justify-content: space-between
+      align-items: center
+      span
+        display: block
+        width: 44px
+        padding: 9px 0
+        background-color: $c-dark
+        font-weight: bold
+        font-size: 13px
+        color: $c-light
+        text-align: center
+        &:last-child
+          background-color: lighten($c-dark, 40)
+    &-week
+      display: flex
+      justify-content: space-between
+      align-items: center
+    &-day
+      width: 44px
+      span
+        display: block
+        width: 100%
+        padding: 9px 0
+        font-size: 13px
+        text-align: center
+        transition: 0.2s
+        cursor: pointer
+        &:hover
+          background-color: $c-active
+          color: $c-light
+      .vfc-today
+        background-color: lighten($c-active, 30)
+      .vfc-cursor-not-allowed
+        color: lighten($c-dark, 40)
+        cursor: default
+        &:hover
+          background-color: transparent
+          color: lighten($c-dark, 40)
+      .vfc-hide
+        color: lighten($c-dark, 40)
+        cursor: default
+        &:hover
+          background-color: transparent
+          color: lighten($c-dark, 40)
+      .vfc-marked
+        background-color: lighten($c-active, 10)
+        color: $c-light
+      .vfc-start-marked, .vfc-end-marked
+        background-color: $c-active
+        color: $c-light
 </style>

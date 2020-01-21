@@ -1,20 +1,6 @@
 <template lang="pug">
 .dishes
   .container
-    //- select.select(name="category", v-model="selectCategory")
-    //-   option.select-option(value="Все категории") Все категории
-    //-   option.select-option(v-for="category in categories", :value="category.name") {{ category.name }}
-      //- option.select-option(value="all") Все категории
-      //- option.select-option(value="salads") Салаты и закуски
-      //- option.select-option(value="soups") Супы
-      //- option.select-option(value="secondDishes") Вторые блюда
-      //- option.select-option(value="sides") Гарниры
-      //- option.select-option(value="gentleDishes") Щадящие блюда
-      //- option.select-option(value="souses") Соусы
-      //- option.select-option(value="drinks") Напитки
-      //- option.select-option(value="other") Прочее
-      //- option.select-option(value="complexes") Комплексные обеды
-      //- option.select-option(value="buns") Пирожки и булочки
     .select-container
       v-select.select(v-model="selectCategory", label="name", index="name", :options="selectCategories", :clearable="false", :searchable="false")
         template(v-slot:option="option")
@@ -35,7 +21,7 @@
               span.dish-info__weight {{ dish.weight }} г
             .dish-footer
               div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.order > 0}")
-                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99")
+                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order > 0")
                   img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.order > 0")
                   img(src="../assets/img/cart.svg", alt="Cart image", v-else)
                 div(:class="{'cart-number': true, 'cart-number_active': dish.order > 0}")
@@ -87,7 +73,20 @@ export default {
   },
   computed: {
     categories() {
-      return this.$store.getters.categories
+      const categories = this.$store.getters.categories
+      let newCategories = []
+      categories.forEach(category => {
+        let filteredDishes = []
+        category.dishes.forEach(dish => {
+          if (dish.hide == 0)
+            filteredDishes.push(dish)
+        })
+        let newCategory = {}
+        newCategory.name = category.name
+        newCategory.dishes = filteredDishes
+        newCategories.push(newCategory)
+      })
+      return newCategories
     },
     currentCategories() {
       if (this.selectCategory.name == 'Все категории')
@@ -100,9 +99,6 @@ export default {
       selectCategories.unshift({ name: 'Все категории' })
       return selectCategories
     }
-  },
-  mounted() {
-    this.$store.dispatch('SET_FAVOURITES')
   }
 }
 </script>
@@ -184,7 +180,7 @@ export default {
           justify-content: space-between
           align-items: center
           flex-basis: 75%
-          padding: 5px 15px
+          padding: 5px 10px
           border-right: 2px solid $c-middle
           &_active
             background-color: $c-active
@@ -197,6 +193,10 @@ export default {
               display: flex
               align-items: center
               &__btn
+                width: 24px
+                height: 24px
+                border: 1px solid $c-dark
+                border-radius: 50%
                 font-weight: 500
                 font-size: 18px
                 margin-right: 10px
@@ -204,7 +204,7 @@ export default {
                 &:last-child
                   margin-right: 0
                 &:hover
-                  transform: scale(1.8)
+                  transform: scale(1.4)
               &__value
                 width: 20px
                 background-color: transparent
@@ -214,6 +214,8 @@ export default {
                 text-align: center
                 margin-right: 10px
               &_active
+                .cart-number__btn
+                  border: 1px solid $c-light
                 .cart-number__btn, .cart-number__value
                   color: $c-light
         &__favourite

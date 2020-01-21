@@ -4,12 +4,13 @@ footer.footer
     .footer-top
       .footer-contacts
         .contacts-item
-          .contacts-item__title доставка:
+          .contacts-item__title Доставка:
           a.contacts-item__contact(href="tel:+73822214111") +7 (3822) 214-111
         .contacts-item
-          .contacts-item__title служба поддержки:
+          .contacts-item__title Служба поддержки:
           a.contacts-item__contact(href="mailto:mail@edatomsk.ru") mail@edatomsk.ru
-      .logo Логотип
+      .logo
+        img(src="../assets/img/logo-white.png", alt="Logo")
     .footer-bot
       a.footer-bot__policy(href="#") Политика конфиденциальности
   button.btn-up(@click.prevent="scrollToTop()")
@@ -28,9 +29,9 @@ export default {
 
 window.addEventListener('scroll', () => {
   const btn = document.querySelector('.btn-up')
-  if (window.pageYOffset > document.documentElement.clientHeight / 2) {
+  if (window.pageYOffset > document.documentElement.clientHeight / 2 && btn != undefined) {
     btn.style.display = 'flex'
-  } else {
+  } else if (btn != undefined) {
     btn.style.display = 'none'
   }
 })
@@ -49,6 +50,9 @@ window.addEventListener('scroll', () => {
     align-items: center
     padding-bottom: 35px
     border-bottom: 1px solid $c-middle
+    .logo
+      width: 225px
+      margin: 0
   &-contacts
     flex-basis: 584px
     display: flex

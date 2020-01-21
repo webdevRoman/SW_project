@@ -34,8 +34,10 @@
       .cart-price__text Итого
       .cart-price__value <span class="cart-value__value">{{ currentSum }}</span> Р
     .cart-price__line.cart-price__left(:class="{'cart-price__left_minus': currentSum > priceLimit}")
-      .cart-price__text Оставшийся лимит
-      .cart-price__value <span class="cart-value__value">{{ priceLimit - currentSum }}</span> Р
+      .cart-price__text(v-if="currentSum > priceLimit") Превышение лимита
+      .cart-price__text(v-else) Оставшийся лимит
+      .cart-price__value(v-if="currentSum > priceLimit") <span class="cart-value__value">{{ currentSum - priceLimit }}</span> Р
+      .cart-price__value(v-else) <span class="cart-value__value">{{ priceLimit - currentSum }}</span> Р
   .cart-buttons(v-if="!isConfirmed")
     button.btn.btn_o(@click.prevent="clearCart()", :disabled="Object.keys(cartItems).length < 1") Очистить корзину
     button.btn(@click.prevent="confirmOrder()", :disabled="Object.keys(cartItems).length < 1") Подтвердить заказ
@@ -231,14 +233,18 @@ export default {
       font-size: 15px
   &-number
     &__btn
+      width: 20px
+      height: 20px
+      border: 1px solid $c-dark
+      border-radius: 50%
       font-weight: 500
       font-size: 15px
-      margin-right: 10px
+      margin-right: 5px
       transition: 0.2s
       &:last-child
         margin-right: 0
       &:hover
-        transform: scale(1.8)
+        transform: scale(1.4)
     &__value
       width: 20px
       background-color: transparent
@@ -246,7 +252,7 @@ export default {
       font-weight: 500
       font-size: 15px
       text-align: center
-      margin-right: 10px
+      margin-right: 5px
   &-fav
     &__img
       width: 23px
@@ -278,7 +284,7 @@ export default {
       .cart-price__value
         font-weight: bold
       &_minus
-        color: #D84315
+        color: $c-warning
   &-buttons
     padding: 26px 38px 38px 38px
     display: flex

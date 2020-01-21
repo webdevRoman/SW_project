@@ -1,7 +1,8 @@
 <template lang="pug">
 .container_center
   .signup
-    .logo Логотип
+    .logo
+      img(src="../assets/img/logo.png", alt="Logo")
     .title.signup-title Регистрация
     form.signup-form(action="#", @submit.prevent="checkForm()")
       .signup-form__inputs
@@ -31,7 +32,7 @@
 export default {
   methods: {
     checkForm() {
-      this.$router.push('/')
+      this.$router.push('/email-confirmation')
     }
   }
 }
@@ -47,8 +48,7 @@ export default {
     text-align: center
     margin-bottom: 90px
   .logo
-    text-align: center
-    margin-bottom: 33px
+    margin-bottom: 50px
   &-form
     &__inputs
       display: flex

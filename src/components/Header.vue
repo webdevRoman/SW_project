@@ -8,8 +8,8 @@
       .user-triangle
         img(src="../assets/img/triangle-down.svg", alt="Triangle down")
       .user-menu
-        router-link(tag="button", to="/account").user-menu__item личный кабинет
-        router-link(tag="button", to="/signin").user-menu__item выход
+        router-link(tag="button", to="/account").user-menu__item Личный кабинет
+        router-link(tag="button", to="/signin").user-menu__item Выход
 </template>
 
 <script>

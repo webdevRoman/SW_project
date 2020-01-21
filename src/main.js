@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import VueMask from 'v-mask'
 import vSelect from 'vue-select'
+import FunctionalCalendar from 'vue-functional-calendar'
 
 Vue.config.productionTip = false
 
@@ -15,6 +16,10 @@ vSelect.props.components.default = () => ({
   }
 })
 Vue.component('v-select', vSelect)
+
+Vue.use(FunctionalCalendar, {
+  dayNames: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+})
 
 new Vue({
   router,
