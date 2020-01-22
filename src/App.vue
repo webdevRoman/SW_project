@@ -55,6 +55,7 @@ body, button, input, a
 .form
   &-block
     margin-bottom: 65px
+    position: relative
   &-label
     display: block
     font-weight: 500
@@ -76,6 +77,28 @@ body, button, input, a
     transition: 0.2s
     &:focus
       border-bottom: 2px solid $c-active
+    &::placeholder
+      font-weight: 500
+      font-size: 18px
+      text-align: right
+      color: $c-middle
+    &[type="password"]
+      padding-right: 30px
+  &-password
+    position: relative
+    &__eye
+      width: 24px
+      position: absolute
+      top: 50%
+      transform: translateY(-50%)
+      right: 0
+  &-error
+    font-weight: 500
+    font-size: 13px
+    color: $c-warning
+    position: absolute
+    top: calc(100% + 10px)
+    left: 0
   &-submit
     width: 100%
     padding: 20px
@@ -88,6 +111,11 @@ body, button, input, a
     &:hover
       background-color: darken($c-active, 15)
       border: 1px solid darken($c-active, 15)
+    &[disabled]
+      opacity: 0.5
+      &:hover
+        background-color: $c-active
+        border: 1px solid $c-active
 
 .v-select
   cursor: pointer

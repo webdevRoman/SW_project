@@ -7,20 +7,100 @@
     form.signin-form(action="#", @submit.prevent="checkForm()")
       .form-block
         label.form-label(for="signin-email") Корпоративная почта SmartWorld
-        input.form-input(type="text", id="signin-email")
+        input.form-input(type="text", id="signin-email", placeholder="@smartworld.team", v-model="email", @focusout="checkEmail()")
+        .form-error(v-if="emailError != ''") {{ emailError }}
       .form-block
         label.form-label(for="signin-password") Пароль
-        input.form-input(type="password", id="signin-password")
+        .form-password
+          input.form-input(type="password", id="signin-password", v-model="password", @focusout="checkPassword()")
+          button.form-password__eye(v-if="passwordFocus && !passwordShow", @click.prevent="togglePasswordShow()")
+            img(src="../assets/img/eye.svg", alt="Eye")
+          button.form-password__eye(v-if="passwordFocus && passwordShow", @click.prevent="togglePasswordShow()")
+            img(src="../assets/img/eye-closed.svg", alt="Closed eye")
         router-link.signin-form__forget(to="/password") Забыли пароль?
-      button.form-submit(type="submit") Войти
+        .form-error(v-if="passwordError != ''") {{ passwordError }}
+      button.form-submit(type="submit", :disabled="errors") Войти
       router-link.signin-form__signup(to="/signup") Еще нет аккаунта?
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      email: '',
+      emailError: '',
+      password: '',
+      passwordError: '',
+      passwordFocus: false,
+      passwordShow: false
+    }
+  },
   methods: {
     checkForm() {
-      this.$router.push('/')
+      if (!this.errors)
+        this.$router.push('/')
+    },
+    checkEmail() {
+      const emailArr = this.email.split('@')
+      if (this.email != '' && emailArr[1] == undefined)
+        this.email = emailArr[0] + '@smartworld.team'
+      this.$store.dispatch('CHECK_EMAIL', this.email)
+      .then(
+        result => {
+          if (result == 'empty')
+            this.emailError = 'Заполните e-mail'
+          else if (result == 'long')
+            this.emailError = 'E-mail должен содержать не более 50 символов'
+          else if (result == 'wrong')
+            this.emailError = 'Невалидный e-mail'
+          else
+            this.emailError = ''
+        },
+        error => console.log("Email checker rejected: " + error.message)
+      )
+    },
+    checkPassword() {
+      this.$store.dispatch('CHECK_PASSWORD', this.password)
+      .then(
+        result => {
+          if (result == 'empty')
+            this.passwordError = 'Заполните пароль'
+          else if (result == 'short')
+            this.passwordError = 'Пароль должен содержать не менее 6 символов'
+          else if (result == 'long')
+            this.passwordError = 'Пароль должен содержать не более 25 символов'
+          else if (result == 'wrong')
+            this.passwordError = 'Пароль должен состоять только из латинских букв и цифр'
+          else
+            this.passwordError = ''
+        },
+        error => console.log("Password checker rejected: " + error.message)
+      )
+    },
+    togglePasswordShow() {
+      const passwordInput = document.getElementById('signin-password')
+      if (passwordInput.type == 'password')
+        passwordInput.type = 'text'
+      else
+        passwordInput.type = 'password'
+      this.passwordShow = !this.passwordShow
+    }
+  },
+  computed: {
+    errors() {
+      const errors = this.$store.getters.errors
+      if (errors.email != undefined || errors.password != undefined)
+        return true
+      else
+        return false
+    }
+  },
+  watch: {
+    password(value) {
+      if (value != '')
+        this.passwordFocus = true
+      else
+        this.passwordFocus = false
     }
   }
 }

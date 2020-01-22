@@ -7,7 +7,7 @@
     form.password-form(action="#", @submit.prevent="checkForm()")
       .form-block(v-if="!isEmailChecked")
         label.form-label(for="password-email") Корпоративная почта SmartWorld
-        input.form-input(type="text", id="password-email")
+        input.form-input(type="text", id="password-email", placeholder="@smartworld.team")
       .form-block(v-if="isEmailChecked")
         label.form-label(for="password-password") Новый пароль
         input.form-input(type="password", id="password-password")
