@@ -7,14 +7,17 @@
     form.signup-form(action="#", @submit.prevent="checkForm()")
       .signup-form__inputs
         .form-block.signup-form__block
-          label.form-label(for="signup-name") Имя
-          input.form-input(type="text", id="signup-name")
-        .form-block.signup-form__block
           label.form-label(for="signup-surname") Фамилия
-          input.form-input(type="text", id="signup-surname")
+          input.form-input(type="text", id="signup-surname", v-model="surname", @focusout="checkSurname()")
+          .form-error(v-if="surnameError != ''") {{ surnameError }}
         .form-block.signup-form__block
-          label.form-label(for="signup-patronymic") Отчество (не обязательно)
-          input.form-input(type="text", id="signup-patronymic")
+          label.form-label(for="signup-name") Имя
+          input.form-input(type="text", id="signup-name", v-model="name", @focusout="checkName()")
+          .form-error(v-if="nameError != ''") {{ nameError }}
+        .form-block.signup-form__block
+          label.form-label(for="signup-middlename") Отчество (не обязательно)
+          input.form-input(type="text", id="signup-middlename", v-model="middlename", @focusout="checkMiddlename()")
+          .form-error(v-if="middlenameError != ''") {{ middlenameError }}
         .form-block.signup-form__block
           label.form-label(for="signup-email") Корпоративная почта SmartWorld
           input.form-input(type="text", id="signup-email", placeholder="@smartworld.team", v-model="email", @focusout="checkEmail()")
@@ -49,6 +52,12 @@
 export default {
   data() {
     return {
+      name: '',
+      nameError: '',
+      surname: '',
+      surnameError: '',
+      middlename: '',
+      middlenameError: '',
       email: '',
       emailError: '',
       password: '',
@@ -64,11 +73,63 @@ export default {
   },
   methods: {
     checkForm() {
+      this.checkName()
+      this.checkSurname()
+      this.checkMiddlename()
       this.checkEmail()
       this.checkPassword()
       this.checkPasswordRepeat()
       if (!this.errors)
         this.$router.push('/email-confirmation')
+    },
+    checkName() {
+      this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1).toLowerCase()
+      this.$store.dispatch('CHECK_NAME', { type: 'name', data: this.name })
+      .then(
+        result => {
+          if (result == 'empty')
+            this.nameError = 'Заполните имя'
+          else if (result == 'long')
+            this.nameError = 'Имя должно содержать не более 35 символов'
+          else if (result == 'wrong')
+            this.nameError = 'Имя должно состоять только из букв русского алфавита'
+          else
+            this.nameError = ''
+        },
+        error => console.log("Name checker rejected: " + error.message)
+      )
+    },
+    checkSurname() {
+      this.surname = this.surname.charAt(0).toUpperCase() + this.surname.slice(1).toLowerCase()
+      this.$store.dispatch('CHECK_NAME', { type: 'surname', data: this.surname })
+      .then(
+        result => {
+          if (result == 'empty')
+            this.surnameError = 'Заполните фамилию'
+          else if (result == 'long')
+            this.surnameError = 'Фамилия должна содержать не более 35 символов'
+          else if (result == 'wrong')
+            this.surnameError = 'Фамилия должна состоять только из букв русского алфавита'
+          else
+            this.surnameError = ''
+        },
+        error => console.log("Name checker rejected: " + error.message)
+      )
+    },
+    checkMiddlename() {
+      this.middlename = this.middlename.charAt(0).toUpperCase() + this.middlename.slice(1).toLowerCase()
+      this.$store.dispatch('CHECK_NAME', { type: 'middlename', data: this.middlename })
+      .then(
+        result => {
+          if (result == 'long')
+            this.middlenameError = 'Отчество должно содержать не более 35 символов'
+          else if (result == 'wrong')
+            this.middlenameError = 'Отчество должно состоять только из букв русского алфавита'
+          else
+            this.middlenameError = ''
+        },
+        error => console.log("Name checker rejected: " + error.message)
+      )
     },
     checkEmail() {
       const emailArr = this.email.split('@')
@@ -144,7 +205,7 @@ export default {
   computed: {
     errors() {
       const errors = this.$store.getters.errors
-      if (errors.email != undefined || errors.password != undefined)
+      if (errors.email != undefined || errors.password != undefined || errors.passwordRepeat != undefined || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined)
         return true
       else
         return false

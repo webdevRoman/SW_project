@@ -3,10 +3,21 @@ import Vue from 'vue'
 export default {
   state: {
     errors: {},
+    nameMask: /^[А-Яа-я]{1,35}$/,
     emailMask: /^[\w.]{1,34}@smartworld.team$/,
     passwordMask: /^[A-Za-z0-9]{6,25}$/
   },
   mutations: {
+    CHECK_NAME(state, payload) {
+      Vue.set(state.errors, payload.type, undefined)
+      if (payload.data.length == 0) {
+        Vue.set(state.errors, payload.type, 'empty')
+      } else if (payload.data.length > 35) {
+        Vue.set(state.errors, payload.type, 'long')
+      } else if (!payload.data.match(state.nameMask)) {
+        Vue.set(state.errors, payload.type, 'wrong')
+      }
+    },
     CHECK_EMAIL(state, email) {
       Vue.set(state.errors, 'email', undefined)
       if (email.length == 0) {
@@ -39,6 +50,15 @@ export default {
     },
   },
   actions: {
+    CHECK_NAME({commit, getters}, payload) {
+      commit('CHECK_NAME', payload)
+      return new Promise((resolve) => {
+        if (getters.errors[payload.type] != '')
+          resolve(getters.errors[payload.type])
+        else
+          resolve('correct')
+      })
+    },
     CHECK_EMAIL({commit, getters}, email) {
       commit('CHECK_EMAIL', email)
       return new Promise((resolve) => {
