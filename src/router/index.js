@@ -7,6 +7,7 @@ import SignIn from '../views/SignIn.vue'
 import Password from '../views/Password.vue'
 import SignUp from '../views/SignUp.vue'
 import EmailConfirmation from '../views/EmailConfirmation.vue'
+import Page404 from '../views/404.vue'
 
 Vue.use(VueRouter)
 
@@ -50,10 +51,10 @@ const routes = [
   //   // which is lazy-loaded when the route is visited.
   //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   // },
-  // {
-  //   path: '*',
-  //   redirect: '/'
-  // }
+  {
+    path: '*',
+    component: Page404
+  }
 ]
 
 const router = new VueRouter({
