@@ -3,14 +3,14 @@ import Vue from 'vue'
 export default {
   state: {
     errors: {},
-    nameMask: /^[А-Яа-я]{1,35}$/,
+    nameMask: /^[А-Яа-я]{0,35}$/,
     emailMask: /^[\w.]{1,34}@smartworld.team$/,
     passwordMask: /^[A-Za-z0-9]{6,25}$/
   },
   mutations: {
     CHECK_NAME(state, payload) {
       Vue.set(state.errors, payload.type, undefined)
-      if (payload.data.length == 0) {
+      if (payload.data.length == 0 && payload.type != 'middlename') {
         Vue.set(state.errors, payload.type, 'empty')
       } else if (payload.data.length > 35) {
         Vue.set(state.errors, payload.type, 'long')
@@ -48,6 +48,12 @@ export default {
         Vue.set(state.errors, 'passwordRepeat', 'wrong')
       }
     },
+    CLEAR_ERRORS(state, errorType) {
+      if (errorType == 'all')
+        Vue.set(state, 'errors', {})
+      else
+        Vue.set(state.errors, errorType, undefined)
+    }
   },
   actions: {
     CHECK_NAME({commit, getters}, payload) {
@@ -85,6 +91,9 @@ export default {
         else
           resolve('correct')
       })
+    },
+    CLEAR_ERRORS({commit}, errorType) {
+      commit('CLEAR_ERRORS', errorType)
     },
   },
   getters: {

@@ -4,7 +4,7 @@
     button.user
       .user-img
         img(src="../assets/img/user.svg", alt="User Image")
-      .user-name Фамилия Имя
+      .user-name {{ surname }} {{ name }}
       .user-triangle
         img(src="../assets/img/triangle-down.svg", alt="Triangle down")
       .user-menu
@@ -14,7 +14,14 @@
 
 <script>
 export default {
-  
+  computed: {
+    name() {
+      return this.$store.getters.name
+    },
+    surname() {
+      return this.$store.getters.surname
+    }
+  }
 }
 </script>
 

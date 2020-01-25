@@ -9,13 +9,13 @@
       .account-form__inputs
         .form-block.account-form__block
           label.form-label(for="account-name") Имя
-          input.form-input(type="text", id="account-name")
+          input.form-input(type="text", id="account-name", v-model="changingName")
         .form-block.account-form__block
           label.form-label(for="account-surname") Фамилия
-          input.form-input(type="text", id="account-surname")
+          input.form-input(type="text", id="account-surname", v-model="changingSurname")
         .form-block.account-form__block
-          label.form-label(for="account-patronymic") Отчество (не обязательно)
-          input.form-input(type="text", id="account-patronymic")
+          label.form-label(for="account-middlename") Отчество (не обязательно)
+          input.form-input(type="text", id="account-middlename", v-model="changingMiddlename")
         .form-block.account-form__block
           label.form-label(for="account-password-old") Ваш действующий пароль
           input.form-input(type="password", id="account-password-old")
@@ -43,6 +43,9 @@
 export default {
   data() {
     return {
+      changingName: '',
+      changingSurname: '',
+      changingMiddlename: '',
       calendarConfig: {
         isDateRange: true,
         dateFormat: 'dd.mm.yyyy',
@@ -72,7 +75,12 @@ export default {
   },
   methods: {
     checkForm() {
-      console.log(this.calendarDates.dateRange)
+      // this.$store.dispatch('LOAD_DATA', 'http://demo7404292.mockable.io/')
+      // .then(
+      //   result => console.log(result),
+      //   error => console.log('error: ' + error)
+      // )
+      // .catch(error => console.log(error))
       // this.$router.push('/')
     },
     getTodayDate() {
@@ -208,9 +216,17 @@ export default {
       return dateArr.join('.')
     }
   },
-  // computed: {
-
-  // },
+  computed: {
+    name() {
+      return this.$store.getters.name
+    },
+    surname() {
+      return this.$store.getters.surname
+    },
+    middlename() {
+      return this.$store.getters.middlename
+    }
+  },
   watch: {
     isChoosingDate(value) {
       const checkbox = document.querySelector('.account-form__checkbox')
@@ -243,19 +259,11 @@ export default {
       },
       deep: true
     },
-    // inputsDates: {
-    //   handler (value) {
-    //     if (value.start == '')
-    //       this.calendarDates.dateRange.start.date = false
-    //     else
-    //       this.calendarDates.dateRange.start.date = this.formatDateCalendar(value.start)
-    //     if (value.start == '')
-    //       this.calendarDates.dateRange.start.date = false
-    //     else
-    //       this.calendarDates.dateRange.start.date = this.formatDateCalendar(value.start)
-    //   },
-    //   deep: true
-    // }
+  },
+  created() {
+    this.changingName = this.name
+    this.changingSurname = this.surname
+    this.changingMiddlename = this.middlename
   }
 }
 </script>

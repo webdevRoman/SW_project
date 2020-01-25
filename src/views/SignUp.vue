@@ -164,6 +164,7 @@ export default {
             this.passwordError = 'Пароль должен состоять только из латинских букв и цифр'
           else
             this.passwordError = ''
+          this.checkPasswordRepeat()
         },
         error => console.log("Password checker rejected: " + error.message)
       )

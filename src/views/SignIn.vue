@@ -37,7 +37,9 @@ export default {
   },
   methods: {
     checkForm() {
-      if (!this.errors)
+      this.checkEmail()
+      this.checkPassword()
+      if (!this.errors || (this.emailError == '' && this.passwordError == ''))
         this.$router.push('/')
     },
     checkEmail() {
@@ -49,12 +51,10 @@ export default {
         result => {
           if (result == 'empty')
             this.emailError = 'Заполните e-mail'
-          else if (result == 'long')
-            this.emailError = 'E-mail должен содержать не более 50 символов'
-          else if (result == 'wrong')
-            this.emailError = 'Невалидный e-mail'
-          else
+          else {
             this.emailError = ''
+            this.$store.dispatch('CLEAR_ERRORS', 'email')
+          }
         },
         error => console.log("Email checker rejected: " + error.message)
       )
@@ -65,14 +65,10 @@ export default {
         result => {
           if (result == 'empty')
             this.passwordError = 'Заполните пароль'
-          else if (result == 'short')
-            this.passwordError = 'Пароль должен содержать не менее 6 символов'
-          else if (result == 'long')
-            this.passwordError = 'Пароль должен содержать не более 25 символов'
-          else if (result == 'wrong')
-            this.passwordError = 'Пароль должен состоять только из латинских букв и цифр'
-          else
+          else {
             this.passwordError = ''
+            this.$store.dispatch('CLEAR_ERRORS', 'password')
+          }
         },
         error => console.log("Password checker rejected: " + error.message)
       )
