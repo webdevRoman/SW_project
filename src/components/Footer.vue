@@ -47,7 +47,6 @@ window.addEventListener('scroll', () => {
   &-top
     display: flex
     justify-content: space-between
-    align-items: center
     padding-bottom: 35px
     border-bottom: 1px solid $c-middle
     .logo
@@ -80,7 +79,6 @@ window.addEventListener('scroll', () => {
       transition: 0.2s
       &:hover
         color: $c-active
-
 .btn-up
   position: fixed
   bottom: 30px
@@ -102,4 +100,52 @@ window.addEventListener('scroll', () => {
     width: auto
     height: 100%
     transition: 0.2s
+
+@media(max-width: 1200px)
+  html
+    .footer
+      &-top
+        .logo
+          width: 200px
+
+@media(max-width: 992px)
+  html
+    .footer
+      &-contacts
+        flex-basis: 380px
+        .contacts-item
+          flex-basis: 155px
+          &__contact
+            &:hover
+              color: $c-light
+      &-bot
+        &__policy
+          &:hover
+            color: $c-light
+    .btn-up
+      right: 30px
+      width: 40px
+      height: 40px
+      padding: 6px
+      &:hover
+        transform: rotate(0)
+        .btn-up__arrow
+          transform: rotate(0)
+
+@media(max-width: 768px)
+  html
+    .footer
+      &-top
+        .logo
+          display: none
+      &-contacts
+        flex-basis: 100%
+        .contacts-item
+          flex-basis: 250px
+          margin-right: 40px
+          &:last-child
+            margin-right: 0
+    .btn-up
+      right: 15px
+      bottom: 15px
 </style>

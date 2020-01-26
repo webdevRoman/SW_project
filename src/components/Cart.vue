@@ -139,6 +139,7 @@ export default {
     top: 0
     right: 0
     overflow: hidden
+    z-index: 10
   &-close
     height: 30px
     padding: 0 13px
@@ -292,4 +293,64 @@ export default {
     align-items: center
     .btn:first-child
       margin-right: 20px
+
+@media(max-width: 992px)
+  html
+    .cart
+      &-popup
+        &-item
+          &__fav
+            &:hover
+              .cart-fav__img
+                transform: scale(1)
+        &-number
+          &__btn
+            &:hover
+              transform: scale(1)
+
+@media(max-width: 768px)
+  html
+    .cart
+      &-popup
+        top: -50px
+
+@media(max-width: 576px)
+  html
+    .cart
+      &-popup
+        width: 100%
+      &-items
+        height: calc(100vh - 215px)
+        &__no
+          height: calc(100vh - 215px)
+      &-item
+        padding: 10px
+        &__main
+          margin-bottom: 10px
+        &__img
+          flex-basis: 100px
+          padding: 10px
+          margin-right: 25px
+        &__price
+          margin-bottom: 3px
+        &__name
+          margin-bottom: 15px
+        &__number
+          margin-bottom: 15px
+        &__fav
+          padding: 2px 4px
+      &-price
+        padding: 15px 20px
+        &__sum
+          margin-bottom: 8px
+          .cart-price__text
+            font-size: 20px
+          .cart-price__value
+            font-size: 18px
+        &__left
+          font-size: 18px
+      &-buttons
+        padding: 15px 20px
+        .btn:first-child
+          margin-right: 10px
 </style>

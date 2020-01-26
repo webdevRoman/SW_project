@@ -7,6 +7,7 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap')
 @import "./assets/sass/vars"
 @import "./assets/sass/reset"
+@import "./assets/sass/media-common"
 
 // Common
 body, button, input, a

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+// import Store from '../store/index'
 import Home from '../views/Home.vue'
 // import Favourites from '../views/Favourites.vue'
 import Account from '../views/Account.vue'
@@ -16,12 +17,13 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
-    // alias: '/index.html'
+    meta: { authRequired: true }
   },
   {
     path: '/account',
     name: 'account',
-    component: Account
+    component: Account,
+    meta: { authRequired: true }
   },
   {
     path: '/signin',
@@ -62,5 +64,14 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+// router.beforeEach((to, from, next) => {
+//   if (to.matched.some(route => route.meta.authRequired)) {
+//     if (Store.getters.isUserAuthenticated)
+//       next()
+//     else
+//       next('/signin')
+//   }
+// })
 
 export default router

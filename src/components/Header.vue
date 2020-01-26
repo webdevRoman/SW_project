@@ -9,11 +9,17 @@
         img(src="../assets/img/triangle-down.svg", alt="Triangle down")
       .user-menu
         router-link(tag="button", to="/account").user-menu__item Личный кабинет
-        router-link(tag="button", to="/signin").user-menu__item Выход
+        button(@click.prevent="signout()").user-menu__item Выход
 </template>
 
 <script>
 export default {
+  methods: {
+    signout() {
+      this.$store.dispatch('SET_USER_AUTH', false)
+      this.$router.push('/signin')
+    }
+  },
   computed: {
     name() {
       return this.$store.getters.name
@@ -78,4 +84,29 @@ export default {
           &:hover
             background-color: $c-active
             color: $c-light
+
+@media(max-width: 1200px)
+  html
+    .header
+      .container
+        .user
+          &-menu
+            width: 100%
+            left: auto
+            right: 0
+            margin-left: 0
+
+@media(max-width: 992px)
+  html
+    .header
+      .container
+        .user
+          &:hover
+            .user-name
+              color: $c-light
+          &-menu
+            &__item
+              &:hover
+                background-color: $c-bg
+                color: $c-dark
 </style>

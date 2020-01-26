@@ -16,6 +16,7 @@
 export default {
   methods: {
     checkForm() {
+      this.$store.dispatch('SET_USER_AUTH', true)
       this.$router.push('/')
     },
     sendCode() {

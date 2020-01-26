@@ -17,8 +17,11 @@
             .dish-descr {{ dish.description }}
           .dish-bottom
             .dish-info
-              span.dish-info__price {{ dish.price }} Р
-              span.dish-info__weight {{ dish.weight }} г
+              .dish-info__text
+                span.dish-info__price {{ dish.price }} Р
+                span.dish-info__weight {{ dish.weight }} г
+              button.dish-info__show(@click.prevent="toggleDescr()")
+                .dish-info__figure
             .dish-footer
               div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.order > 0}")
                 button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order > 0")
@@ -105,6 +108,7 @@ export default {
 
 <style scoped lang="sass">
 @import "../assets/sass/vars"
+@import "../assets/sass/media-dishes"
 
 .select-container
   height: 50px
@@ -170,6 +174,39 @@ export default {
         &__weight
           font-size: 13px
           vertical-align: middle
+        &__show
+          display: none
+          width: 26px
+          height: 26px
+          border: 2px solid $c-dark
+          border-radius: 50%
+          position: relative
+          .dish-info__figure, .dish-info__figure:before, .dish-info__figure:after
+            width: 4px
+            height: 4px
+            background-color: $c-dark
+            border-radius: 50%
+            position: absolute
+            top: 50%
+            left: 50%
+            transform: translateY(-50%) translateX(-40%)
+          .dish-info__figure:before, .dish-info__figure:after
+            content: ''
+            display: block
+          .dish-info__figure:before
+            transform: translateY(-40%) translateX(-8px)
+          .dish-info__figure:after
+            transform: translateY(-42%) translateX(3px)
+          .dish-info__figure_active
+            width: 0
+          .dish-info__figure_active:before, .dish-info__figure_active:after
+            width: 14px
+            height: 2px
+            border-radius: 0
+          .dish-info__figure_active:before
+            transform: translateY(-1px) translateX(-7px) rotate(45deg)
+          .dish-info__figure_active:after
+            transform: translateY(-1px) translateX(-7px) rotate(-45deg)
       &-footer
         display: flex
         justify-content: space-between

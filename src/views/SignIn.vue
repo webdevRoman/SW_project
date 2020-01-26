@@ -39,8 +39,10 @@ export default {
     checkForm() {
       this.checkEmail()
       this.checkPassword()
-      if (!this.errors || (this.emailError == '' && this.passwordError == ''))
+      if (!this.errors || (this.email != '' && this.password != '')) {
+        this.$store.dispatch('SET_USER_AUTH', true)
         this.$router.push('/')
+      }
     },
     checkEmail() {
       const emailArr = this.email.split('@')

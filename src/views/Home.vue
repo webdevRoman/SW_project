@@ -6,6 +6,8 @@ div
       .logo
         img(src="../assets/img/logo.png", alt="Logo")
       .right
+        button.nav-btn(@click.prevent="toggleMenu()")
+          .nav-burger
         ul.nav
           li.nav-item(:class="{'nav-item_active': !showFavourites}", @click.prevent="showFavourites = false") Меню
           li.nav-item(:class="{'nav-item_active': showFavourites}", @click.prevent="showFavourites = true") Избранное
@@ -43,6 +45,14 @@ export default {
     showCart() {
       const cart = document.querySelector('.cart-popup')
       cart.style.display = 'block'
+      if (document.body.clientWidth <= 768)
+        this.toggleMenu()
+    },
+    toggleMenu() {
+      const burgerBtn = document.querySelector('.nav-burger')
+      const navMenu = document.querySelector('.nav')
+      navMenu.style.display != 'block' ? burgerBtn.classList.add('nav-burger_active') : burgerBtn.classList.remove('nav-burger_active')
+      navMenu.style.display != 'block' ? navMenu.style.display = 'block' : navMenu.style.display = 'none'
     }
   },
   computed: {
@@ -55,6 +65,12 @@ export default {
         sum += this.cartItems[key].price * this.cartItems[key].order
       }
       return sum
+    }
+  },
+  watch: {
+    showFavourites() {
+      if (document.body.clientWidth <= 768)
+        this.toggleMenu()
     }
   },
   mounted() {
@@ -73,6 +89,7 @@ export default {
 
 <style scoped lang="sass">
 @import "../assets/sass/vars"
+@import "../assets/sass/media-home"
 
 .navigation
   padding: 25px
@@ -87,6 +104,35 @@ export default {
       display: flex
       justify-content: flex-end
       align-items: center
+      .nav-btn
+        width: 38px
+        height: 38px
+      .nav-burger, .nav-burger:before, .nav-burger:after
+        width: 38px
+        height: 3px
+        background-color: $c-dark
+        transition: 0.2s
+        transform-origin: center center
+      .nav-burger
+        display: none
+        position: relative
+      .nav-burger:before, .nav-burger:after
+        content: ''
+        display: block
+        position: absolute
+        left: 0
+      .nav-burger:before
+        top: -12px
+        transform-origin: right top
+      .nav-burger:after
+        bottom: -12px
+        transform-origin: right bottom
+      .nav-burger_active
+        width: 0
+      .nav-burger_active:before
+        transform: translateX(-5px) rotate(-45deg) translateY(-1.5px)
+      .nav-burger_active:after
+        transform: translateX(-5px) rotate(45deg) translateY(1.5px)
       .nav
         display: flex
         justify-content: flex-end

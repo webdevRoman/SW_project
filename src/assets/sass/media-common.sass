@@ -1,0 +1,1137 @@
+@media(max-width: 1200px)
+  html
+    .container
+      width: 960px
+    //   &_center
+    //     display: flex
+    //     justify-content: center
+    //     align-items: center
+    //     height: 100vh
+    //     width: 100vw
+    // .logo
+    //   width: 388px
+    //   margin: 0 auto
+    // .title
+    //   font-weight: bold
+    //   font-size: 24px
+    //   text-transform: uppercase
+    // .btn
+    //   width: 184px
+    //   padding: 15px
+    //   background-color: $c-dark
+    //   border: 1px solid $c-dark
+    //   font-size: 15px
+    //   color: $c-light
+    //   text-align: center
+    //   transition: 0.2s
+    //   &:hover
+    //     background-color: lighten($c-dark, 10)
+    //     border: 1px solid lighten($c-dark, 10)
+    //   &[disabled]
+    //     filter: opacity(50%)
+    //     &:hover
+    //       background-color: $c-dark
+    //       color: $c-light
+    //   &_o
+    //     background-color: transparent
+    //     color: $c-dark
+    //     &:hover
+    //       background-color: lighten($c-middle, 10)
+    //     &[disabled]:hover
+    //       background-color: transparent
+    //       color: $c-dark
+    // .form
+    //   &-block
+    //     margin-bottom: 65px
+    //     position: relative
+    //   &-label
+    //     display: block
+    //     font-weight: 500
+    //     font-size: 13px
+    //     text-transform: uppercase
+    //     color: lighten($c-dark, 40)
+    //     transition: 0.2s
+    //     cursor: pointer
+    //     &:hover
+    //       color: $c-active
+    //   &-input
+    //     width: 100%
+    //     padding: 10px 0
+    //     border: none
+    //     background-color: transparent
+    //     border-bottom: 2px solid lighten($c-dark, 40)
+    //     font-weight: 500
+    //     font-size: 18px
+    //     transition: 0.2s
+    //     &:focus
+    //       border-bottom: 2px solid $c-active
+    //     &::placeholder
+    //       font-weight: 500
+    //       font-size: 18px
+    //       text-align: right
+    //       color: $c-middle
+    //     &[type="password"]
+    //       padding-right: 30px
+    //   &-password
+    //     position: relative
+    //     &__eye
+    //       width: 24px
+    //       position: absolute
+    //       top: 50%
+    //       transform: translateY(-50%)
+    //       right: 0
+    //   &-error
+    //     font-weight: 500
+    //     font-size: 13px
+    //     color: $c-warning
+    //     position: absolute
+    //     top: calc(100% + 10px)
+    //     left: 0
+    //   &-submit
+    //     width: 100%
+    //     padding: 20px
+    //     background-color: $c-active
+    //     border: 1px solid $c-active
+    //     font-weight: 500
+    //     font-size: 18px
+    //     color: $c-light
+    //     transition: 0.2s
+    //     &:hover
+    //       background-color: darken($c-active, 15)
+    //       border: 1px solid darken($c-active, 15)
+    //     &[disabled]
+    //       opacity: 0.5
+    //       &:hover
+    //         background-color: $c-active
+    //         border: 1px solid $c-active
+
+    // .v-select
+    //   cursor: pointer
+    //   position: relative
+    //   .vs__search
+    //     opacity: 0
+    //     // visibility: hidden
+    //     position: absolute
+    //     top: 2px
+    //     left: 2px
+    //     z-index: -1
+    //   .vs__dropdown-toggle
+    //     display: flex
+    //     justify-content: space-between
+    //     align-items: center
+    //     border: 3px solid $c-middle
+    //   .select-arrow
+    //     transition: 0.2s
+    //     width: 14px
+    //     height: 12px
+    //     background-image: url("./assets/img/arrow-select.svg")
+    // .v-select.vs--open
+    //   .select-arrow
+    //     transform: rotateX(180deg)
+    // .select
+    //   transition: 0.2s
+    //   .vs
+    //     &__dropdown
+    //       &-toggle
+    //         padding: 15px 24px
+    //         color: darken($c-middle, 40)
+    //       &-menu
+    //         max-height: 400px
+    //         overflow-y: scroll
+    //         border-left: 3px solid $c-middle
+    //         border-bottom: 3px solid $c-middle
+    //         &::-webkit-scrollbar
+    //           width: 4px
+    //         &::-webkit-scrollbar-button
+    //           height: 0
+    //         &::-webkit-scrollbar-track
+    //           background-color: $c-middle
+    //         &::-webkit-scrollbar-track-piece
+    //           background-color: $c-middle
+    //         &::-webkit-scrollbar-thumb
+    //           height: 50px
+    //           background-color: $c-dark
+    //         &::-webkit-scrollbar-corner
+    //           background-color: $c-dark
+    //         &::-webkit-resizer
+    //           background-color: $c-dark
+    //       &-option
+    //         padding: 15px 25px
+    //         font-weight: 500
+    //         font-size: 18px
+    //         transition: 0.2s
+    //         &--selected
+    //           background-color: $c-active
+    //           color: $c-light
+    //         &:hover
+    //           background-color: $c-active
+    //           color: $c-light
+    // .select.vs--open
+    //   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15)
+
+    // .calendar
+    //   .vfc
+    //     &-main
+    //       &-container
+    //         width: 308px
+    //         height: auto !important
+    //         background-color: $c-light
+    //         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2)
+    //     &-calendars
+    //       &-container
+    //         position: relative
+    //     &-navigation
+    //       &-buttons
+    //         display: flex
+    //         justify-content: space-between
+    //         align-items: center
+    //         width: 100%
+    //         padding: 13px
+    //         position: absolute
+    //         top: 0
+    //         left: 0
+    //         & > div
+    //           display: flex
+    //           justify-content: center
+    //           align-items: center
+    //           width: 22px
+    //           height: 22px
+    //           border: 2px solid lighten($c-dark, 40)
+    //           border-radius: 50%
+    //           transition: 0.2s
+    //           .vfc-arrow-left, .vfc-arrow-right
+    //             width: 8px
+    //             height: 8px
+    //             border-top: 2px solid lighten($c-dark, 40)
+    //             border-right: 2px solid lighten($c-dark, 40)
+    //             transition: 0.2s
+    //           .vfc-arrow-right
+    //             transform: rotate(45deg)
+    //             margin-right: 3px
+    //           .vfc-arrow-left
+    //             transform: rotate(225deg)
+    //             margin-right: -3px
+    //         .vfc-cursor
+    //           &-pointer
+    //             border: 2px solid $c-dark
+    //             cursor: pointer
+    //             &:hover
+    //               border: 2px solid lighten($c-dark, 40)
+    //               .vfc-arrow-left, .vfc-arrow-right
+    //                 border-top: 2px solid lighten($c-dark, 40)
+    //                 border-right: 2px solid lighten($c-dark, 40)
+    //             .vfc-arrow-left, .vfc-arrow-right
+    //               border-top: 2px solid $c-dark
+    //               border-right: 2px solid $c-dark
+    //     &-top
+    //       &-date
+    //         padding: 8px
+    //         text-align: center
+    //         a
+    //           font-weight: 500
+    //           font-size: 18px
+    //     &-dayNames
+    //       display: flex
+    //       justify-content: space-between
+    //       align-items: center
+    //       span
+    //         display: block
+    //         width: 44px
+    //         padding: 9px 0
+    //         background-color: $c-dark
+    //         font-weight: bold
+    //         font-size: 13px
+    //         color: $c-light
+    //         text-align: center
+    //         &:last-child
+    //           background-color: lighten($c-dark, 40)
+    //     &-week
+    //       display: flex
+    //       justify-content: space-between
+    //       align-items: center
+    //     &-day
+    //       width: 44px
+    //       span
+    //         display: block
+    //         width: 100%
+    //         padding: 9px 0
+    //         font-size: 13px
+    //         text-align: center
+    //         transition: 0.2s
+    //         cursor: pointer
+    //         &:hover
+    //           background-color: $c-active
+    //           color: $c-light
+    //       .vfc-today
+    //         background-color: lighten($c-active, 30)
+    //       .vfc-cursor-not-allowed
+    //         color: lighten($c-dark, 40)
+    //         cursor: default
+    //         &:hover
+    //           background-color: transparent
+    //           color: lighten($c-dark, 40)
+    //       .vfc-hide
+    //         color: lighten($c-dark, 40)
+    //         cursor: default
+    //         &:hover
+    //           background-color: transparent
+    //           color: lighten($c-dark, 40)
+    //       .vfc-marked
+    //         background-color: lighten($c-active, 10)
+    //         color: $c-light
+    //       .vfc-start-marked, .vfc-end-marked
+    //         background-color: $c-active
+    //         color: $c-light
+
+@media(max-width: 992px)
+  html
+    .container
+      width: 720px
+    //   &_center
+    //     display: flex
+    //     justify-content: center
+    //     align-items: center
+    //     height: 100vh
+    //     width: 100vw
+    // .logo
+    //   width: 388px
+    //   margin: 0 auto
+    // .title
+    //   font-weight: bold
+    //   font-size: 24px
+    //   text-transform: uppercase
+    // .btn
+    //   width: 184px
+    //   padding: 15px
+    //   background-color: $c-dark
+    //   border: 1px solid $c-dark
+    //   font-size: 15px
+    //   color: $c-light
+    //   text-align: center
+    //   transition: 0.2s
+    //   &:hover
+    //     background-color: lighten($c-dark, 10)
+    //     border: 1px solid lighten($c-dark, 10)
+    //   &[disabled]
+    //     filter: opacity(50%)
+    //     &:hover
+    //       background-color: $c-dark
+    //       color: $c-light
+    //   &_o
+    //     background-color: transparent
+    //     color: $c-dark
+    //     &:hover
+    //       background-color: lighten($c-middle, 10)
+    //     &[disabled]:hover
+    //       background-color: transparent
+    //       color: $c-dark
+    // .form
+    //   &-block
+    //     margin-bottom: 65px
+    //     position: relative
+    //   &-label
+    //     display: block
+    //     font-weight: 500
+    //     font-size: 13px
+    //     text-transform: uppercase
+    //     color: lighten($c-dark, 40)
+    //     transition: 0.2s
+    //     cursor: pointer
+    //     &:hover
+    //       color: $c-active
+    //   &-input
+    //     width: 100%
+    //     padding: 10px 0
+    //     border: none
+    //     background-color: transparent
+    //     border-bottom: 2px solid lighten($c-dark, 40)
+    //     font-weight: 500
+    //     font-size: 18px
+    //     transition: 0.2s
+    //     &:focus
+    //       border-bottom: 2px solid $c-active
+    //     &::placeholder
+    //       font-weight: 500
+    //       font-size: 18px
+    //       text-align: right
+    //       color: $c-middle
+    //     &[type="password"]
+    //       padding-right: 30px
+    //   &-password
+    //     position: relative
+    //     &__eye
+    //       width: 24px
+    //       position: absolute
+    //       top: 50%
+    //       transform: translateY(-50%)
+    //       right: 0
+    //   &-error
+    //     font-weight: 500
+    //     font-size: 13px
+    //     color: $c-warning
+    //     position: absolute
+    //     top: calc(100% + 10px)
+    //     left: 0
+    //   &-submit
+    //     width: 100%
+    //     padding: 20px
+    //     background-color: $c-active
+    //     border: 1px solid $c-active
+    //     font-weight: 500
+    //     font-size: 18px
+    //     color: $c-light
+    //     transition: 0.2s
+    //     &:hover
+    //       background-color: darken($c-active, 15)
+    //       border: 1px solid darken($c-active, 15)
+    //     &[disabled]
+    //       opacity: 0.5
+    //       &:hover
+    //         background-color: $c-active
+    //         border: 1px solid $c-active
+
+    // .v-select
+    //   cursor: pointer
+    //   position: relative
+    //   .vs__search
+    //     opacity: 0
+    //     // visibility: hidden
+    //     position: absolute
+    //     top: 2px
+    //     left: 2px
+    //     z-index: -1
+    //   .vs__dropdown-toggle
+    //     display: flex
+    //     justify-content: space-between
+    //     align-items: center
+    //     border: 3px solid $c-middle
+    //   .select-arrow
+    //     transition: 0.2s
+    //     width: 14px
+    //     height: 12px
+    //     background-image: url("./assets/img/arrow-select.svg")
+    // .v-select.vs--open
+    //   .select-arrow
+    //     transform: rotateX(180deg)
+    // .select
+    //   transition: 0.2s
+    //   .vs
+    //     &__dropdown
+    //       &-toggle
+    //         padding: 15px 24px
+    //         color: darken($c-middle, 40)
+    //       &-menu
+    //         max-height: 400px
+    //         overflow-y: scroll
+    //         border-left: 3px solid $c-middle
+    //         border-bottom: 3px solid $c-middle
+    //         &::-webkit-scrollbar
+    //           width: 4px
+    //         &::-webkit-scrollbar-button
+    //           height: 0
+    //         &::-webkit-scrollbar-track
+    //           background-color: $c-middle
+    //         &::-webkit-scrollbar-track-piece
+    //           background-color: $c-middle
+    //         &::-webkit-scrollbar-thumb
+    //           height: 50px
+    //           background-color: $c-dark
+    //         &::-webkit-scrollbar-corner
+    //           background-color: $c-dark
+    //         &::-webkit-resizer
+    //           background-color: $c-dark
+    //       &-option
+    //         padding: 15px 25px
+    //         font-weight: 500
+    //         font-size: 18px
+    //         transition: 0.2s
+    //         &--selected
+    //           background-color: $c-active
+    //           color: $c-light
+    //         &:hover
+    //           background-color: $c-active
+    //           color: $c-light
+    // .select.vs--open
+    //   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15)
+
+    // .calendar
+    //   .vfc
+    //     &-main
+    //       &-container
+    //         width: 308px
+    //         height: auto !important
+    //         background-color: $c-light
+    //         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2)
+    //     &-calendars
+    //       &-container
+    //         position: relative
+    //     &-navigation
+    //       &-buttons
+    //         display: flex
+    //         justify-content: space-between
+    //         align-items: center
+    //         width: 100%
+    //         padding: 13px
+    //         position: absolute
+    //         top: 0
+    //         left: 0
+    //         & > div
+    //           display: flex
+    //           justify-content: center
+    //           align-items: center
+    //           width: 22px
+    //           height: 22px
+    //           border: 2px solid lighten($c-dark, 40)
+    //           border-radius: 50%
+    //           transition: 0.2s
+    //           .vfc-arrow-left, .vfc-arrow-right
+    //             width: 8px
+    //             height: 8px
+    //             border-top: 2px solid lighten($c-dark, 40)
+    //             border-right: 2px solid lighten($c-dark, 40)
+    //             transition: 0.2s
+    //           .vfc-arrow-right
+    //             transform: rotate(45deg)
+    //             margin-right: 3px
+    //           .vfc-arrow-left
+    //             transform: rotate(225deg)
+    //             margin-right: -3px
+    //         .vfc-cursor
+    //           &-pointer
+    //             border: 2px solid $c-dark
+    //             cursor: pointer
+    //             &:hover
+    //               border: 2px solid lighten($c-dark, 40)
+    //               .vfc-arrow-left, .vfc-arrow-right
+    //                 border-top: 2px solid lighten($c-dark, 40)
+    //                 border-right: 2px solid lighten($c-dark, 40)
+    //             .vfc-arrow-left, .vfc-arrow-right
+    //               border-top: 2px solid $c-dark
+    //               border-right: 2px solid $c-dark
+    //     &-top
+    //       &-date
+    //         padding: 8px
+    //         text-align: center
+    //         a
+    //           font-weight: 500
+    //           font-size: 18px
+    //     &-dayNames
+    //       display: flex
+    //       justify-content: space-between
+    //       align-items: center
+    //       span
+    //         display: block
+    //         width: 44px
+    //         padding: 9px 0
+    //         background-color: $c-dark
+    //         font-weight: bold
+    //         font-size: 13px
+    //         color: $c-light
+    //         text-align: center
+    //         &:last-child
+    //           background-color: lighten($c-dark, 40)
+    //     &-week
+    //       display: flex
+    //       justify-content: space-between
+    //       align-items: center
+    //     &-day
+    //       width: 44px
+    //       span
+    //         display: block
+    //         width: 100%
+    //         padding: 9px 0
+    //         font-size: 13px
+    //         text-align: center
+    //         transition: 0.2s
+    //         cursor: pointer
+    //         &:hover
+    //           background-color: $c-active
+    //           color: $c-light
+    //       .vfc-today
+    //         background-color: lighten($c-active, 30)
+    //       .vfc-cursor-not-allowed
+    //         color: lighten($c-dark, 40)
+    //         cursor: default
+    //         &:hover
+    //           background-color: transparent
+    //           color: lighten($c-dark, 40)
+    //       .vfc-hide
+    //         color: lighten($c-dark, 40)
+    //         cursor: default
+    //         &:hover
+    //           background-color: transparent
+    //           color: lighten($c-dark, 40)
+    //       .vfc-marked
+    //         background-color: lighten($c-active, 10)
+    //         color: $c-light
+    //       .vfc-start-marked, .vfc-end-marked
+    //         background-color: $c-active
+    //         color: $c-light
+
+@media(max-width: 768px)
+  html
+    .container
+      width: 540px
+    //   &_center
+    //     display: flex
+    //     justify-content: center
+    //     align-items: center
+    //     height: 100vh
+    //     width: 100vw
+    // .logo
+    //   width: 388px
+    //   margin: 0 auto
+    // .title
+    //   font-weight: bold
+    //   font-size: 24px
+    //   text-transform: uppercase
+    // .btn
+    //   width: 184px
+    //   padding: 15px
+    //   background-color: $c-dark
+    //   border: 1px solid $c-dark
+    //   font-size: 15px
+    //   color: $c-light
+    //   text-align: center
+    //   transition: 0.2s
+    //   &:hover
+    //     background-color: lighten($c-dark, 10)
+    //     border: 1px solid lighten($c-dark, 10)
+    //   &[disabled]
+    //     filter: opacity(50%)
+    //     &:hover
+    //       background-color: $c-dark
+    //       color: $c-light
+    //   &_o
+    //     background-color: transparent
+    //     color: $c-dark
+    //     &:hover
+    //       background-color: lighten($c-middle, 10)
+    //     &[disabled]:hover
+    //       background-color: transparent
+    //       color: $c-dark
+    // .form
+    //   &-block
+    //     margin-bottom: 65px
+    //     position: relative
+    //   &-label
+    //     display: block
+    //     font-weight: 500
+    //     font-size: 13px
+    //     text-transform: uppercase
+    //     color: lighten($c-dark, 40)
+    //     transition: 0.2s
+    //     cursor: pointer
+    //     &:hover
+    //       color: $c-active
+    //   &-input
+    //     width: 100%
+    //     padding: 10px 0
+    //     border: none
+    //     background-color: transparent
+    //     border-bottom: 2px solid lighten($c-dark, 40)
+    //     font-weight: 500
+    //     font-size: 18px
+    //     transition: 0.2s
+    //     &:focus
+    //       border-bottom: 2px solid $c-active
+    //     &::placeholder
+    //       font-weight: 500
+    //       font-size: 18px
+    //       text-align: right
+    //       color: $c-middle
+    //     &[type="password"]
+    //       padding-right: 30px
+    //   &-password
+    //     position: relative
+    //     &__eye
+    //       width: 24px
+    //       position: absolute
+    //       top: 50%
+    //       transform: translateY(-50%)
+    //       right: 0
+    //   &-error
+    //     font-weight: 500
+    //     font-size: 13px
+    //     color: $c-warning
+    //     position: absolute
+    //     top: calc(100% + 10px)
+    //     left: 0
+    //   &-submit
+    //     width: 100%
+    //     padding: 20px
+    //     background-color: $c-active
+    //     border: 1px solid $c-active
+    //     font-weight: 500
+    //     font-size: 18px
+    //     color: $c-light
+    //     transition: 0.2s
+    //     &:hover
+    //       background-color: darken($c-active, 15)
+    //       border: 1px solid darken($c-active, 15)
+    //     &[disabled]
+    //       opacity: 0.5
+    //       &:hover
+    //         background-color: $c-active
+    //         border: 1px solid $c-active
+
+    // .v-select
+    //   cursor: pointer
+    //   position: relative
+    //   .vs__search
+    //     opacity: 0
+    //     // visibility: hidden
+    //     position: absolute
+    //     top: 2px
+    //     left: 2px
+    //     z-index: -1
+    //   .vs__dropdown-toggle
+    //     display: flex
+    //     justify-content: space-between
+    //     align-items: center
+    //     border: 3px solid $c-middle
+    //   .select-arrow
+    //     transition: 0.2s
+    //     width: 14px
+    //     height: 12px
+    //     background-image: url("./assets/img/arrow-select.svg")
+    // .v-select.vs--open
+    //   .select-arrow
+    //     transform: rotateX(180deg)
+    // .select
+    //   transition: 0.2s
+    //   .vs
+    //     &__dropdown
+    //       &-toggle
+    //         padding: 15px 24px
+    //         color: darken($c-middle, 40)
+    //       &-menu
+    //         max-height: 400px
+    //         overflow-y: scroll
+    //         border-left: 3px solid $c-middle
+    //         border-bottom: 3px solid $c-middle
+    //         &::-webkit-scrollbar
+    //           width: 4px
+    //         &::-webkit-scrollbar-button
+    //           height: 0
+    //         &::-webkit-scrollbar-track
+    //           background-color: $c-middle
+    //         &::-webkit-scrollbar-track-piece
+    //           background-color: $c-middle
+    //         &::-webkit-scrollbar-thumb
+    //           height: 50px
+    //           background-color: $c-dark
+    //         &::-webkit-scrollbar-corner
+    //           background-color: $c-dark
+    //         &::-webkit-resizer
+    //           background-color: $c-dark
+    //       &-option
+    //         padding: 15px 25px
+    //         font-weight: 500
+    //         font-size: 18px
+    //         transition: 0.2s
+    //         &--selected
+    //           background-color: $c-active
+    //           color: $c-light
+    //         &:hover
+    //           background-color: $c-active
+    //           color: $c-light
+    // .select.vs--open
+    //   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15)
+
+    // .calendar
+    //   .vfc
+    //     &-main
+    //       &-container
+    //         width: 308px
+    //         height: auto !important
+    //         background-color: $c-light
+    //         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2)
+    //     &-calendars
+    //       &-container
+    //         position: relative
+    //     &-navigation
+    //       &-buttons
+    //         display: flex
+    //         justify-content: space-between
+    //         align-items: center
+    //         width: 100%
+    //         padding: 13px
+    //         position: absolute
+    //         top: 0
+    //         left: 0
+    //         & > div
+    //           display: flex
+    //           justify-content: center
+    //           align-items: center
+    //           width: 22px
+    //           height: 22px
+    //           border: 2px solid lighten($c-dark, 40)
+    //           border-radius: 50%
+    //           transition: 0.2s
+    //           .vfc-arrow-left, .vfc-arrow-right
+    //             width: 8px
+    //             height: 8px
+    //             border-top: 2px solid lighten($c-dark, 40)
+    //             border-right: 2px solid lighten($c-dark, 40)
+    //             transition: 0.2s
+    //           .vfc-arrow-right
+    //             transform: rotate(45deg)
+    //             margin-right: 3px
+    //           .vfc-arrow-left
+    //             transform: rotate(225deg)
+    //             margin-right: -3px
+    //         .vfc-cursor
+    //           &-pointer
+    //             border: 2px solid $c-dark
+    //             cursor: pointer
+    //             &:hover
+    //               border: 2px solid lighten($c-dark, 40)
+    //               .vfc-arrow-left, .vfc-arrow-right
+    //                 border-top: 2px solid lighten($c-dark, 40)
+    //                 border-right: 2px solid lighten($c-dark, 40)
+    //             .vfc-arrow-left, .vfc-arrow-right
+    //               border-top: 2px solid $c-dark
+    //               border-right: 2px solid $c-dark
+    //     &-top
+    //       &-date
+    //         padding: 8px
+    //         text-align: center
+    //         a
+    //           font-weight: 500
+    //           font-size: 18px
+    //     &-dayNames
+    //       display: flex
+    //       justify-content: space-between
+    //       align-items: center
+    //       span
+    //         display: block
+    //         width: 44px
+    //         padding: 9px 0
+    //         background-color: $c-dark
+    //         font-weight: bold
+    //         font-size: 13px
+    //         color: $c-light
+    //         text-align: center
+    //         &:last-child
+    //           background-color: lighten($c-dark, 40)
+    //     &-week
+    //       display: flex
+    //       justify-content: space-between
+    //       align-items: center
+    //     &-day
+    //       width: 44px
+    //       span
+    //         display: block
+    //         width: 100%
+    //         padding: 9px 0
+    //         font-size: 13px
+    //         text-align: center
+    //         transition: 0.2s
+    //         cursor: pointer
+    //         &:hover
+    //           background-color: $c-active
+    //           color: $c-light
+    //       .vfc-today
+    //         background-color: lighten($c-active, 30)
+    //       .vfc-cursor-not-allowed
+    //         color: lighten($c-dark, 40)
+    //         cursor: default
+    //         &:hover
+    //           background-color: transparent
+    //           color: lighten($c-dark, 40)
+    //       .vfc-hide
+    //         color: lighten($c-dark, 40)
+    //         cursor: default
+    //         &:hover
+    //           background-color: transparent
+    //           color: lighten($c-dark, 40)
+    //       .vfc-marked
+    //         background-color: lighten($c-active, 10)
+    //         color: $c-light
+    //       .vfc-start-marked, .vfc-end-marked
+    //         background-color: $c-active
+    //         color: $c-light
+
+@media(max-width: 576px)
+  html
+    .container
+      width: 300px
+    //   &_center
+    //     display: flex
+    //     justify-content: center
+    //     align-items: center
+    //     height: 100vh
+    //     width: 100vw
+    // .logo
+    //   width: 388px
+    //   margin: 0 auto
+    // .title
+    //   font-weight: bold
+    //   font-size: 24px
+    //   text-transform: uppercase
+    // .btn
+    //   width: 184px
+    //   padding: 15px
+    //   background-color: $c-dark
+    //   border: 1px solid $c-dark
+    //   font-size: 15px
+    //   color: $c-light
+    //   text-align: center
+    //   transition: 0.2s
+    //   &:hover
+    //     background-color: lighten($c-dark, 10)
+    //     border: 1px solid lighten($c-dark, 10)
+    //   &[disabled]
+    //     filter: opacity(50%)
+    //     &:hover
+    //       background-color: $c-dark
+    //       color: $c-light
+    //   &_o
+    //     background-color: transparent
+    //     color: $c-dark
+    //     &:hover
+    //       background-color: lighten($c-middle, 10)
+    //     &[disabled]:hover
+    //       background-color: transparent
+    //       color: $c-dark
+    // .form
+    //   &-block
+    //     margin-bottom: 65px
+    //     position: relative
+    //   &-label
+    //     display: block
+    //     font-weight: 500
+    //     font-size: 13px
+    //     text-transform: uppercase
+    //     color: lighten($c-dark, 40)
+    //     transition: 0.2s
+    //     cursor: pointer
+    //     &:hover
+    //       color: $c-active
+    //   &-input
+    //     width: 100%
+    //     padding: 10px 0
+    //     border: none
+    //     background-color: transparent
+    //     border-bottom: 2px solid lighten($c-dark, 40)
+    //     font-weight: 500
+    //     font-size: 18px
+    //     transition: 0.2s
+    //     &:focus
+    //       border-bottom: 2px solid $c-active
+    //     &::placeholder
+    //       font-weight: 500
+    //       font-size: 18px
+    //       text-align: right
+    //       color: $c-middle
+    //     &[type="password"]
+    //       padding-right: 30px
+    //   &-password
+    //     position: relative
+    //     &__eye
+    //       width: 24px
+    //       position: absolute
+    //       top: 50%
+    //       transform: translateY(-50%)
+    //       right: 0
+    //   &-error
+    //     font-weight: 500
+    //     font-size: 13px
+    //     color: $c-warning
+    //     position: absolute
+    //     top: calc(100% + 10px)
+    //     left: 0
+    //   &-submit
+    //     width: 100%
+    //     padding: 20px
+    //     background-color: $c-active
+    //     border: 1px solid $c-active
+    //     font-weight: 500
+    //     font-size: 18px
+    //     color: $c-light
+    //     transition: 0.2s
+    //     &:hover
+    //       background-color: darken($c-active, 15)
+    //       border: 1px solid darken($c-active, 15)
+    //     &[disabled]
+    //       opacity: 0.5
+    //       &:hover
+    //         background-color: $c-active
+    //         border: 1px solid $c-active
+
+    // .v-select
+    //   cursor: pointer
+    //   position: relative
+    //   .vs__search
+    //     opacity: 0
+    //     // visibility: hidden
+    //     position: absolute
+    //     top: 2px
+    //     left: 2px
+    //     z-index: -1
+    //   .vs__dropdown-toggle
+    //     display: flex
+    //     justify-content: space-between
+    //     align-items: center
+    //     border: 3px solid $c-middle
+    //   .select-arrow
+    //     transition: 0.2s
+    //     width: 14px
+    //     height: 12px
+    //     background-image: url("./assets/img/arrow-select.svg")
+    // .v-select.vs--open
+    //   .select-arrow
+    //     transform: rotateX(180deg)
+    .select
+      .vs
+        &__dropdown
+          &-toggle
+            padding: 12px
+    //       &-menu
+    //         max-height: 400px
+    //         overflow-y: scroll
+    //         border-left: 3px solid $c-middle
+    //         border-bottom: 3px solid $c-middle
+    //         &::-webkit-scrollbar
+    //           width: 4px
+    //         &::-webkit-scrollbar-button
+    //           height: 0
+    //         &::-webkit-scrollbar-track
+    //           background-color: $c-middle
+    //         &::-webkit-scrollbar-track-piece
+    //           background-color: $c-middle
+    //         &::-webkit-scrollbar-thumb
+    //           height: 50px
+    //           background-color: $c-dark
+    //         &::-webkit-scrollbar-corner
+    //           background-color: $c-dark
+    //         &::-webkit-resizer
+    //           background-color: $c-dark
+    //       &-option
+    //         padding: 15px 25px
+    //         font-weight: 500
+    //         font-size: 18px
+    //         transition: 0.2s
+    //         &--selected
+    //           background-color: $c-active
+    //           color: $c-light
+    //         &:hover
+    //           background-color: $c-active
+    //           color: $c-light
+    // .select.vs--open
+    //   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15)
+
+    // .calendar
+    //   .vfc
+    //     &-main
+    //       &-container
+    //         width: 308px
+    //         height: auto !important
+    //         background-color: $c-light
+    //         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2)
+    //     &-calendars
+    //       &-container
+    //         position: relative
+    //     &-navigation
+    //       &-buttons
+    //         display: flex
+    //         justify-content: space-between
+    //         align-items: center
+    //         width: 100%
+    //         padding: 13px
+    //         position: absolute
+    //         top: 0
+    //         left: 0
+    //         & > div
+    //           display: flex
+    //           justify-content: center
+    //           align-items: center
+    //           width: 22px
+    //           height: 22px
+    //           border: 2px solid lighten($c-dark, 40)
+    //           border-radius: 50%
+    //           transition: 0.2s
+    //           .vfc-arrow-left, .vfc-arrow-right
+    //             width: 8px
+    //             height: 8px
+    //             border-top: 2px solid lighten($c-dark, 40)
+    //             border-right: 2px solid lighten($c-dark, 40)
+    //             transition: 0.2s
+    //           .vfc-arrow-right
+    //             transform: rotate(45deg)
+    //             margin-right: 3px
+    //           .vfc-arrow-left
+    //             transform: rotate(225deg)
+    //             margin-right: -3px
+    //         .vfc-cursor
+    //           &-pointer
+    //             border: 2px solid $c-dark
+    //             cursor: pointer
+    //             &:hover
+    //               border: 2px solid lighten($c-dark, 40)
+    //               .vfc-arrow-left, .vfc-arrow-right
+    //                 border-top: 2px solid lighten($c-dark, 40)
+    //                 border-right: 2px solid lighten($c-dark, 40)
+    //             .vfc-arrow-left, .vfc-arrow-right
+    //               border-top: 2px solid $c-dark
+    //               border-right: 2px solid $c-dark
+    //     &-top
+    //       &-date
+    //         padding: 8px
+    //         text-align: center
+    //         a
+    //           font-weight: 500
+    //           font-size: 18px
+    //     &-dayNames
+    //       display: flex
+    //       justify-content: space-between
+    //       align-items: center
+    //       span
+    //         display: block
+    //         width: 44px
+    //         padding: 9px 0
+    //         background-color: $c-dark
+    //         font-weight: bold
+    //         font-size: 13px
+    //         color: $c-light
+    //         text-align: center
+    //         &:last-child
+    //           background-color: lighten($c-dark, 40)
+    //     &-week
+    //       display: flex
+    //       justify-content: space-between
+    //       align-items: center
+    //     &-day
+    //       width: 44px
+    //       span
+    //         display: block
+    //         width: 100%
+    //         padding: 9px 0
+    //         font-size: 13px
+    //         text-align: center
+    //         transition: 0.2s
+    //         cursor: pointer
+    //         &:hover
+    //           background-color: $c-active
+    //           color: $c-light
+    //       .vfc-today
+    //         background-color: lighten($c-active, 30)
+    //       .vfc-cursor-not-allowed
+    //         color: lighten($c-dark, 40)
+    //         cursor: default
+    //         &:hover
+    //           background-color: transparent
+    //           color: lighten($c-dark, 40)
+    //       .vfc-hide
+    //         color: lighten($c-dark, 40)
+    //         cursor: default
+    //         &:hover
+    //           background-color: transparent
+    //           color: lighten($c-dark, 40)
+    //       .vfc-marked
+    //         background-color: lighten($c-active, 10)
+    //         color: $c-light
+    //       .vfc-start-marked, .vfc-end-marked
+    //         background-color: $c-active
+    //         color: $c-light

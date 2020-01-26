@@ -7,12 +7,16 @@ export default {
     name: 'Волк',
     surname: 'Цирков',
     middlename: '',
-    // testData: null
+    isUserAuthenticated: true,
+    // testData: null,
   },
   mutations: {
     // LOAD_DATA(state, data) {
     //   Vue.set(state, 'testData', data)
-    // }
+    // },
+    SET_USER_AUTH(state, payload) {
+      state.isUserAuthenticated = payload
+    }
   },
   actions: {
     // LOAD_DATA({commit}, url) {
@@ -30,11 +34,15 @@ export default {
     //       }
     //     )
     //   })
-    // }
+    // },
+    SET_USER_AUTH({commit}, payload) {
+      commit('SET_USER_AUTH', payload)
+    }
   },
   getters: {
     name: state => state.name,
     surname: state => state.surname,
-    middlename: state => state.middlename
+    middlename: state => state.middlename,
+    isUserAuthenticated: state => state.isUserAuthenticated
   }
 }

@@ -114,6 +114,7 @@ export default {
 
 <style scoped lang="sass">
 @import "../assets/sass/vars"
+@import "../assets/sass/media-dishes"
 
 .favourites
   &-no
@@ -186,7 +187,7 @@ export default {
           justify-content: space-between
           align-items: center
           flex-basis: 75%
-          padding: 5px 15px
+          padding: 5px 10px
           border-right: 2px solid $c-middle
           &_active
             background-color: $c-active
