@@ -20,8 +20,10 @@
               .dish-info__text
                 span.dish-info__price {{ dish.price }} Р
                 span.dish-info__weight {{ dish.weight }} г
-              button.dish-info__show(@click.prevent="toggleDescr()")
-                .dish-info__figure
+              button.dish-info__show(@click.prevent="showDescr(dish.description)")
+                .dish-info__dot
+                .dish-info__dot
+                .dish-info__dot
             .dish-footer
               div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.order > 0}")
                 button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order > 0")
@@ -34,13 +36,18 @@
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
                 img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
                 img(src="../assets/img/star.svg", alt="Star image", v-else)
+  .overlay(v-if="showPopup")
+    .popup {{ showingDescr }}
+      button.popup-close(@click.prevent="hideDescr()") &times;
 </template>
 
 <script>
 export default {
   data() {
     return {
-      selectCategory: { name: 'Все категории' }
+      selectCategory: { name: 'Все категории' },
+      showPopup: false,
+      showingDescr: ''
     }
   },
   methods: {
@@ -72,6 +79,14 @@ export default {
       } else {
         this.$store.dispatch('SET_OREDER', dish)
       }
+    },
+    showDescr(descr) {
+      this.showPopup = true
+      this.showingDescr = descr
+    },
+    hideDescr() {
+      this.showPopup = false
+      this.showingDescr = ''
     }
   },
   computed: {
@@ -176,37 +191,21 @@ export default {
           vertical-align: middle
         &__show
           display: none
+          justify-content: center
+          align-items: center
           width: 26px
           height: 26px
           border: 2px solid $c-dark
           border-radius: 50%
           position: relative
-          .dish-info__figure, .dish-info__figure:before, .dish-info__figure:after
+          .dish-info__dot
             width: 4px
             height: 4px
             background-color: $c-dark
             border-radius: 50%
-            position: absolute
-            top: 50%
-            left: 50%
-            transform: translateY(-50%) translateX(-40%)
-          .dish-info__figure:before, .dish-info__figure:after
-            content: ''
-            display: block
-          .dish-info__figure:before
-            transform: translateY(-40%) translateX(-8px)
-          .dish-info__figure:after
-            transform: translateY(-42%) translateX(3px)
-          .dish-info__figure_active
-            width: 0
-          .dish-info__figure_active:before, .dish-info__figure_active:after
-            width: 14px
-            height: 2px
-            border-radius: 0
-          .dish-info__figure_active:before
-            transform: translateY(-1px) translateX(-7px) rotate(45deg)
-          .dish-info__figure_active:after
-            transform: translateY(-1px) translateX(-7px) rotate(-45deg)
+            margin-right: 2px
+            &:last-child
+              margin-right: 0
       &-footer
         display: flex
         justify-content: space-between
@@ -265,4 +264,29 @@ export default {
           transition: 0.2s
           &:hover
             transform: scale(1.3)
+.overlay
+  display: flex
+  justify-content: center
+  align-items: center
+  width: 100vw
+  height: 100vh
+  background-color: rgba(0, 0, 0, 0.5)
+  position: fixed
+  top: 0
+  left: 0
+  .popup
+    width: 90%
+    padding: 20px
+    background-color: $c-bg
+    box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.35)
+    font-size: 15px
+    line-height: 25px
+    margin: 0 auto
+    position: relative
+    &-close
+      font-size: 38px
+      color: $c-light
+      position: absolute
+      top: -45px
+      right: 0
 </style>

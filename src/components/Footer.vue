@@ -148,4 +148,29 @@ window.addEventListener('scroll', () => {
     .btn-up
       right: 15px
       bottom: 15px
+
+@media(max-width: 576px)
+  html
+    .footer
+      padding: 15px 0
+      &-top
+        padding-bottom: 30px
+      &-contacts
+        flex-basis: 100%
+        flex-wrap: wrap
+        .contacts-item
+          flex-basis: 100%
+          margin-right: 0
+          margin-bottom: 30px
+          &:last-child
+            margin-bottom: 0
+          &__title
+            font-size: 13px
+            margin-bottom: 5px
+          &__contact
+            font-size: 15px
+    .btn-up
+      width: 35px
+      height: 35px
+      padding: 5px
 </style>

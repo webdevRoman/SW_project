@@ -98,10 +98,7 @@
             text-align: left
             margin-bottom: 7px
           &-descr
-            font-size: 10px
-            line-height: 15px
-            text-align: left
-            margin-bottom: 10px
+            display: none
           &-info
             width: 90%
             display: flex
@@ -114,62 +111,22 @@
             &__weight
               font-size: 10px
             &__show
-              display: block
-          // &-footer
-          //   display: flex
-          //   justify-content: space-between
-          //   align-items: stretch
-          //   border-top: 2px solid $c-middle
-          //   &__cart
-          //     display: flex
-          //     justify-content: space-between
-          //     align-items: center
-          //     flex-basis: 75%
-          //     padding: 5px 10px
-          //     border-right: 2px solid $c-middle
-          //     &_active
-          //       background-color: $c-active
-          //     .cart
-          //       &-btn
-          //         transition: 0.2s
-          //         &:hover
-          //           transform: scale(1.3)
-          //       &-number
-          //         display: flex
-          //         align-items: center
-          //         &__btn
-          //           width: 24px
-          //           height: 24px
-          //           border: 1px solid $c-dark
-          //           border-radius: 50%
-          //           font-weight: 500
-          //           font-size: 18px
-          //           margin-right: 10px
-          //           transition: 0.2s
-          //           &:last-child
-          //             margin-right: 0
-          //           &:hover
-          //             transform: scale(1.4)
-          //         &__value
-          //           width: 20px
-          //           background-color: transparent
-          //           border: none
-          //           font-weight: 500
-          //           font-size: 18px
-          //           text-align: center
-          //           margin-right: 10px
-          //         &_active
-          //           .cart-number__btn
-          //             border: 1px solid $c-light
-          //           .cart-number__btn, .cart-number__value
-          //             color: $c-light
-          //   &__favourite
-          //     display: flex
-          //     justify-content: center
-          //     align-items: center
-          //     flex-basis: 25%
-          //     padding: 2px 12px
-          //     box-sizing: border-box
-          //     transition: 0.2s
-          //     &:hover
-          //       transform: scale(1.3)
+              display: flex
+          &-footer
+            &__cart
+              padding: 3px 6px
+              .cart
+                &-btn
+                  width: 17px
+                &-number
+                  &__btn
+                    width: 17px
+                    height: 17px
+                    font-size: 12px
+                    margin-right: 0
+                  &__value
+                    width: 20px
+                    font-size: 15px
+                    margin-right: 0
+            &__favourite
+              padding: 3px
