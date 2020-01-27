@@ -28,6 +28,19 @@ export default {
         Vue.set(state.errors, 'email', 'wrong')
       }
     },
+    CHECK_OLD_PASSWORD(state, password) {
+      Vue.set(state.errors, 'oldPassword', undefined)       // Change!
+      if (password.length == 0) {
+        Vue.set(state.errors, 'oldPassword', 'empty')
+      }
+      // } else if (password.length < 6) {
+      //   Vue.set(state.errors, 'oldPassword', 'short')
+      // } else if (password.length > 25) {
+      //   Vue.set(state.errors, 'oldPassword', 'long')
+      // } else if (!password.match(state.passwordMask)) {
+      //   Vue.set(state.errors, 'oldPassword', 'wrong')
+      // }
+    },
     CHECK_PASSWORD(state, password) {
       Vue.set(state.errors, 'password', undefined)
       if (password.length == 0) {
@@ -59,7 +72,7 @@ export default {
     CHECK_NAME({commit, getters}, payload) {
       commit('CHECK_NAME', payload)
       return new Promise((resolve) => {
-        if (getters.errors[payload.type] != '')
+        if (getters.errors[payload.type] != undefined)
           resolve(getters.errors[payload.type])
         else
           resolve('correct')
@@ -68,8 +81,17 @@ export default {
     CHECK_EMAIL({commit, getters}, email) {
       commit('CHECK_EMAIL', email)
       return new Promise((resolve) => {
-        if (getters.errors.email != '')
+        if (getters.errors.email != undefined)
           resolve(getters.errors.email)
+        else
+          resolve('correct')
+      })
+    },
+    CHECK_OLD_PASSWORD({commit, getters}, password) {
+      commit('CHECK_OLD_PASSWORD', password)
+      return new Promise((resolve) => {
+        if (getters.errors.oldPassword != undefined)
+          resolve(getters.errors.oldPassword)
         else
           resolve('correct')
       })
@@ -77,7 +99,7 @@ export default {
     CHECK_PASSWORD({commit, getters}, password) {
       commit('CHECK_PASSWORD', password)
       return new Promise((resolve) => {
-        if (getters.errors.password != '')
+        if (getters.errors.password != undefined)
           resolve(getters.errors.password)
         else
           resolve('correct')
@@ -86,7 +108,7 @@ export default {
     CHECK_PASSWORD_REPEAT({commit, getters}, passwords) {
       commit('CHECK_PASSWORD_REPEAT', passwords)
       return new Promise((resolve) => {
-        if (getters.errors.passwordRepeat != '')
+        if (getters.errors.passwordRepeat != undefined)
           resolve(getters.errors.passwordRepeat)
         else
           resolve('correct')

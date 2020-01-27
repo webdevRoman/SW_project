@@ -17,10 +17,10 @@
             img(src="../assets/img/eye.svg", alt="Eye")
           button.form-password__eye(v-if="passwordFocus && passwordShow", @click.prevent="togglePasswordShow()")
             img(src="../assets/img/eye-closed.svg", alt="Closed eye")
-        router-link.signin-form__forget(to="/password") Забыли пароль?
+        button.signin-form__forget(@click.prevent="goToPassword()") Забыли пароль?
         .form-error(v-if="passwordError != ''") {{ passwordError }}
       button.form-submit(type="submit", :disabled="errors") Войти
-      router-link.signin-form__signup(to="/signup") Еще нет аккаунта?
+      button.signin-form__signup(@click.prevent="goToSignup()") Еще нет аккаунта?
 </template>
 
 <script>
@@ -36,6 +36,14 @@ export default {
     }
   },
   methods: {
+    goToPassword() {
+      this.$store.dispatch('CLEAR_ERRORS', 'all')
+      this.$router.push('/password')
+    },
+    goToSignup() {
+      this.$store.dispatch('CLEAR_ERRORS', 'all')
+      this.$router.push('/signup')
+    },
     checkForm() {
       this.checkEmail()
       this.checkPassword()
@@ -62,14 +70,16 @@ export default {
       )
     },
     checkPassword() {
-      this.$store.dispatch('CHECK_PASSWORD', this.password)
+      this.$store.dispatch('CHECK_OLD_PASSWORD', this.password)
       .then(
         result => {
           if (result == 'empty')
             this.passwordError = 'Заполните пароль'
+          else if (result == 'wrong')
+            this.passwordError = 'Неверный пароль'
           else {
             this.passwordError = ''
-            this.$store.dispatch('CLEAR_ERRORS', 'password')
+            this.$store.dispatch('CLEAR_ERRORS', 'oldPassword')
           }
         },
         error => console.log("Password checker rejected: " + error.message)
@@ -129,14 +139,13 @@ export default {
       &:hover
         color: lighten($c-dark, 20)
     &__signup
-      display: block
       font-weight: 500
       font-size: 13px
       color: lighten($c-dark, 40)
       text-transform: uppercase
       text-decoration: underline
       text-align: center
-      margin-top: 30px
+      margin: 30px auto 0 auto
       transition: 0.2s
       &:hover
         color: lighten($c-dark, 20)

@@ -57,6 +57,12 @@ body, button, input, a
   &-block
     margin-bottom: 65px
     position: relative
+    &_disabled
+      opacity: 0.5
+      .form-label
+        cursor: default
+        &:hover
+          color: lighten($c-dark, 40)
   &-label
     display: block
     font-weight: 500
@@ -183,6 +189,7 @@ body, button, input, a
   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15)
 
 .calendar
+  z-index: 10
   .vfc
     &-main
       &-container

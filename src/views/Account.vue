@@ -9,22 +9,47 @@
       .account-form__inputs
         .form-block.account-form__block
           label.form-label(for="account-name") Имя
-          input.form-input(type="text", id="account-name", v-model="changingName")
+          input.form-input(type="text", id="account-name", v-model="name", @focusout="checkName()")
+          .form-error(v-if="nameError != ''") {{ nameError }}
         .form-block.account-form__block
           label.form-label(for="account-surname") Фамилия
-          input.form-input(type="text", id="account-surname", v-model="changingSurname")
+          input.form-input(type="text", id="account-surname", v-model="surname", @focusout="checkSurname()")
+          .form-error(v-if="surnameError != ''") {{ surnameError }}
         .form-block.account-form__block
           label.form-label(for="account-middlename") Отчество (не обязательно)
-          input.form-input(type="text", id="account-middlename", v-model="changingMiddlename")
+          input.form-input(type="text", id="account-middlename", v-model="middlename", @focusout="checkMiddlename()")
+          .form-error(v-if="middlenameError != ''") {{ middlenameError }}
         .form-block.account-form__block
           label.form-label(for="account-password-old") Ваш действующий пароль
-          input.form-input(type="password", id="account-password-old")
-        .form-block.account-form__block
+          .form-password
+            input.form-input(type="password", id="account-password-old", v-model="oldPassword", @focusout="checkOldPassword()")
+            button.form-password__eye(v-if="oldPasswordFocus && !oldPasswordShow", @click.prevent="togglePasswordShow('account-password-old')")
+              img(src="../assets/img/eye.svg", alt="Eye")
+            button.form-password__eye(v-if="oldPasswordFocus && oldPasswordShow", @click.prevent="togglePasswordShow('account-password-old')")
+              img(src="../assets/img/eye-closed.svg", alt="Closed eye")
+          .form-error(v-if="oldPasswordError != ''") {{ oldPasswordError }}
+        .form-block.account-form__block(:class="{'form-block_disabled': !newPasswordEnabled}")
           label.form-label(for="account-password") Новый пароль
-          input.form-input(type="password", id="account-password")
-        .form-block.account-form__block
+          .form-password
+            input.form-input(type="password", id="account-password", v-model="password", @focusout="checkPassword()", :disabled="!newPasswordEnabled")
+            button.form-password__eye(v-if="!passwordsMatch && passwordFocus && !passwordShow", @click.prevent="togglePasswordShow('account-password')")
+              img(src="../assets/img/eye.svg", alt="Eye")
+            button.form-password__eye(v-if="!passwordsMatch && passwordFocus && passwordShow", @click.prevent="togglePasswordShow('account-password')")
+              img(src="../assets/img/eye-closed.svg", alt="Closed eye")
+            .form-password__eye(v-if="passwordsMatch")
+              img(src="../assets/img/tick-success.svg", alt="Tick")
+          .form-error(v-if="passwordError != ''") {{ passwordError }}
+        .form-block.account-form__block(:class="{'form-block_disabled': !newPasswordEnabled}")
           label.form-label(for="account-password-repeat") Повторите пароль
-          input.form-input(type="password", id="account-password-repeat")
+          .form-password
+            input.form-input(type="password", id="account-password-repeat", v-model="passwordRepeat", @focusout="checkPasswordRepeat()", :disabled="!newPasswordEnabled")
+            button.form-password__eye(v-if="!passwordsMatch && passwordRepeatFocus && !passwordRepeatShow", @click.prevent="togglePasswordShow('account-password-repeat')")
+              img(src="../assets/img/eye.svg", alt="Eye")
+            button.form-password__eye(v-if="!passwordsMatch && passwordRepeatFocus && passwordRepeatShow", @click.prevent="togglePasswordShow('account-password-repeat')")
+              img(src="../assets/img/eye-closed.svg", alt="Closed eye")
+            .form-password__eye(v-if="passwordsMatch")
+              img(src="../assets/img/tick-success.svg", alt="Tick")
+          .form-error(v-if="passwordRepeatError != ''") {{ passwordRepeatError }}
         .form-block.account-form__block.account-form__block__checkbox
           input.form-input.account-form__checkbox(type="checkbox", id="account-checkbox", @change="toggleCalendar()")
           label.form-label(for="account-checkbox") Не заказывать на меня
@@ -35,17 +60,36 @@
           input.form-input(type="text", id="account-date-end", v-mask="'##.##.####'", v-model="inputsDates.end", @focus="showCalendar()", @change="checkInputs()")
           FunctionalCalendar.calendar.account-form__calendar(v-model="calendarDates", :configs="calendarConfig")
       .account-form__buttons
-        router-link.btn.btn_o.account-form__btn(tag="button", to="/") Вернуться на сайт
-        button.form-submit.account-form__btn.account-form__submit(type="submit") Подтвердить
+        button.btn.btn_o.account-form__btn(@click.prevent="goBack()") Вернуться на сайт
+        button.form-submit.account-form__btn.account-form__submit(type="submit", :disabled="errors") Подтвердить
 </template>
 
 <script>
 export default {
   data() {
     return {
-      changingName: '',
-      changingSurname: '',
-      changingMiddlename: '',
+      name: '',
+      nameError: '',
+      surname: '',
+      surnameError: '',
+      middlename: '',
+      middlenameError: '',
+      email: '',
+      emailError: '',
+      oldPassword: '',
+      oldPasswordError: '',
+      oldPasswordFocus: false,
+      oldPasswordShow: false,
+      password: '',
+      passwordError: '',
+      passwordFocus: false,
+      passwordShow: false,
+      passwordRepeat: '',
+      passwordRepeatError: '',
+      passwordRepeatFocus: false,
+      passwordRepeatShow: false,
+      passwordsMatch: false,
+      newPasswordEnabled: false,
       calendarConfig: {
         isDateRange: true,
         dateFormat: 'dd.mm.yyyy',
@@ -74,6 +118,10 @@ export default {
     }
   },
   methods: {
+    goBack() {
+      this.$store.dispatch('CLEAR_ERRORS', 'all')
+      this.$router.push('/')
+    },
     checkForm() {
       // this.$store.dispatch('LOAD_DATA', 'http://demo7404292.mockable.io/')
       // .then(
@@ -82,6 +130,132 @@ export default {
       // )
       // .catch(error => console.log(error))
       // this.$router.push('/')
+      this.checkName()
+      this.checkSurname()
+      this.checkMiddlename()
+      this.checkOldPassword()
+      if (!this.errors)
+        this.$router.push('/')
+    },
+    checkName() {
+      this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1).toLowerCase()
+      this.$store.dispatch('CHECK_NAME', { type: 'name', data: this.name })
+      .then(
+        result => {
+          if (result == 'empty')
+            this.nameError = 'Заполните имя'
+          else if (result == 'long')
+            this.nameError = 'Имя должно содержать не более 35 символов'
+          else if (result == 'wrong')
+            this.nameError = 'Имя должно состоять только из букв русского алфавита'
+          else
+            this.nameError = ''
+        },
+        error => console.log("Name checker rejected: " + error.message)
+      )
+    },
+    checkSurname() {
+      this.surname = this.surname.charAt(0).toUpperCase() + this.surname.slice(1).toLowerCase()
+      this.$store.dispatch('CHECK_NAME', { type: 'surname', data: this.surname })
+      .then(
+        result => {
+          if (result == 'empty')
+            this.surnameError = 'Заполните фамилию'
+          else if (result == 'long')
+            this.surnameError = 'Фамилия должна содержать не более 35 символов'
+          else if (result == 'wrong')
+            this.surnameError = 'Фамилия должна состоять только из букв русского алфавита'
+          else
+            this.surnameError = ''
+        },
+        error => console.log("Name checker rejected: " + error.message)
+      )
+    },
+    checkMiddlename() {
+      this.middlename = this.middlename.charAt(0).toUpperCase() + this.middlename.slice(1).toLowerCase()
+      this.$store.dispatch('CHECK_NAME', { type: 'middlename', data: this.middlename })
+      .then(
+        result => {
+          if (result == 'long')
+            this.middlenameError = 'Отчество должно содержать не более 35 символов'
+          else if (result == 'wrong')
+            this.middlenameError = 'Отчество должно состоять только из букв русского алфавита'
+          else
+            this.middlenameError = ''
+        },
+        error => console.log("Name checker rejected: " + error.message)
+      )
+    },
+    checkOldPassword() {
+      if (this.oldPassword == '') {
+        this.$store.dispatch('CLEAR_ERRORS', 'oldPassword')
+        this.$store.dispatch('CLEAR_ERRORS', 'password')
+        this.$store.dispatch('CLEAR_ERRORS', 'passwordRepeat')
+      } else {
+        this.$store.dispatch('CHECK_OLD_PASSWORD', this.oldPassword)
+        .then(
+          result => {
+            if (result == 'wrong')
+              this.oldPasswordError = 'Неверный пароль'
+            else {
+              this.oldPasswordError = ''
+              this.$store.dispatch('CLEAR_ERRORS', 'oldPassword')
+              this.checkPassword()
+              this.checkPasswordRepeat()
+            }
+          },
+          error => console.log("OldPassword checker rejected: " + error.message)
+        )
+      }
+    },
+    checkPassword() {
+      this.$store.dispatch('CHECK_PASSWORD', this.password)
+      .then(
+        result => {
+          if (result == 'empty')
+            this.passwordError = 'Заполните пароль'
+          else if (result == 'short')
+            this.passwordError = 'Пароль должен содержать не менее 6 символов'
+          else if (result == 'long')
+            this.passwordError = 'Пароль должен содержать не более 25 символов'
+          else if (result == 'wrong')
+            this.passwordError = 'Пароль должен состоять только из латинских букв и цифр'
+          else
+            this.passwordError = ''
+          this.checkPasswordRepeat()
+        },
+        error => console.log("Password checker rejected: " + error.message)
+      )
+    },
+    togglePasswordShow(id) {
+      const passwordInput = document.getElementById(id)
+      if (passwordInput.type == 'password')
+        passwordInput.type = 'text'
+      else
+        passwordInput.type = 'password'
+      if (id == 'account-password-old')
+        this.oldPasswordShow = !this.oldPasswordShow
+      else if (id == 'account-password')
+        this.passwordShow = !this.passwordShow
+      else if (id == 'account-password-repeat')
+        this.passwordRepeatShow = !this.passwordRepeatShow
+    },
+    checkPasswordRepeat() {
+      this.$store.dispatch('CHECK_PASSWORD_REPEAT', { password: this.password, passwordRepeat: this.passwordRepeat })
+      .then(
+        result => {
+          this.passwordsMatch = false
+          if (result == 'empty')
+            this.passwordRepeatError = 'Заполните пароль'
+          else if (result == 'wrong')
+            this.passwordRepeatError = 'Пароли не совпадают'
+          else {
+            this.passwordRepeatError = ''
+            this.passwordsMatch = true
+          }
+        },
+        error => console.log("PasswordRepeat checker rejected: " + error.message)
+      )
     },
     getTodayDate() {
       const date = new Date()
@@ -217,17 +391,45 @@ export default {
     }
   },
   computed: {
-    name() {
+    oldName() {
       return this.$store.getters.name
     },
-    surname() {
+    oldSurname() {
       return this.$store.getters.surname
     },
-    middlename() {
+    oldMiddlename() {
       return this.$store.getters.middlename
+    },
+    errors() {
+      const errors = this.$store.getters.errors
+      if (errors.oldPassword != undefined || errors.password != undefined || errors.passwordRepeat != undefined || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined)
+        return true
+      else
+        return false
     }
   },
   watch: {
+    oldPassword(value) {
+      if (value != '') {
+        this.oldPasswordFocus = true
+        this.newPasswordEnabled = true
+      } else {
+        this.oldPasswordFocus = false
+        this.newPasswordEnabled = false
+      }
+    },
+    password(value) {
+      if (value != '')
+        this.passwordFocus = true
+      else
+        this.passwordFocus = false
+    },
+    passwordRepeat(value) {
+      if (value != '')
+        this.passwordRepeatFocus = true
+      else
+        this.passwordRepeatFocus = false
+    },
     isChoosingDate(value) {
       const checkbox = document.querySelector('.account-form__checkbox')
       if (!value && (this.calendarDates.dateRange.start.date == false || this.calendarDates.dateRange.end.date == false)) {
@@ -261,9 +463,9 @@ export default {
     },
   },
   created() {
-    this.changingName = this.name
-    this.changingSurname = this.surname
-    this.changingMiddlename = this.middlename
+    this.name = this.oldName
+    this.surname = this.oldSurname
+    this.changingMiddlename = this.oldMiddlename
   }
 }
 </script>

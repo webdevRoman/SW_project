@@ -45,7 +45,7 @@
               img(src="../assets/img/tick-success.svg", alt="Tick")
           .form-error(v-if="passwordRepeatError != ''") {{ passwordRepeatError }}
       button.form-submit.signup-form__submit(type="submit", :disabled="errors") Зарегистрироваться
-      router-link.signup-form__signin(to="/signin") Уже есть аккаунт?
+      button.signup-form__signin(@click.prevent="goToSignin()") Уже есть аккаунт?
 </template>
 
 <script>
@@ -72,6 +72,10 @@ export default {
     }
   },
   methods: {
+    goToSignin() {
+      this.$store.dispatch('CLEAR_ERRORS', 'all')
+      this.$router.push('/signin')
+    },
     checkForm() {
       this.checkName()
       this.checkSurname()
@@ -169,14 +173,6 @@ export default {
         error => console.log("Password checker rejected: " + error.message)
       )
     },
-    togglePasswordShow() {
-      const passwordInput = document.getElementById('signup-password')
-      if (passwordInput.type == 'password')
-        passwordInput.type = 'text'
-      else
-        passwordInput.type = 'password'
-      this.passwordShow = !this.passwordShow
-    },
     checkPasswordRepeat() {
       this.$store.dispatch('CHECK_PASSWORD_REPEAT', { password: this.password, passwordRepeat: this.passwordRepeat })
       .then(
@@ -193,6 +189,14 @@ export default {
         },
         error => console.log("PasswordRepeat checker rejected: " + error.message)
       )
+    },
+    togglePasswordShow() {
+      const passwordInput = document.getElementById('signup-password')
+      if (passwordInput.type == 'password')
+        passwordInput.type = 'text'
+      else
+        passwordInput.type = 'password'
+      this.passwordShow = !this.passwordShow
     },
     togglePasswordRepeatShow() {
       const passwordInput = document.getElementById('signup-password-repeat')
@@ -256,14 +260,13 @@ export default {
       width: 262px
       margin: 0 auto
     &__signin
-      display: block
       font-weight: 500
       font-size: 13px
       color: lighten($c-dark, 40)
       text-transform: uppercase
       text-decoration: underline
       text-align: center
-      margin-top: 30px
+      margin: 30px auto 0 auto
       transition: 0.2s
       &:hover
         color: lighten($c-dark, 20)
