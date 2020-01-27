@@ -27,7 +27,7 @@
                   img(src="../assets/img/cart.svg", alt="Cart image", v-else)
                 div(:class="{'cart-number': true, 'cart-number_active': dish.order > 0}")
                   button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.order <= 0") -
-                  input.cart-number__value(type="text", v-model="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
+                  input.cart-number__value(type="text", v-model.trim="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
                   button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99") +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
                 img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
@@ -56,7 +56,7 @@
                   img(src="../assets/img/cart-inactive.svg", alt="Cart image")
                 .cart-number.cart-number_inactive
                   button.cart-number__btn(disabled) -
-                  input.cart-number__value(v-model="dish.order", disabled)
+                  input.cart-number__value(v-model.trim="dish.order", disabled)
                   button.cart-number__btn(disabled) +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
                 img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")

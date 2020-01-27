@@ -8,24 +8,24 @@
       .signup-form__inputs
         .form-block.signup-form__block
           label.form-label(for="signup-surname") Фамилия
-          input.form-input(type="text", id="signup-surname", v-model="surname", @focusout="checkSurname()")
+          input.form-input(type="text", id="signup-surname", v-model.trim="surname", @focusout="checkSurname()")
           .form-error(v-if="surnameError != ''") {{ surnameError }}
         .form-block.signup-form__block
           label.form-label(for="signup-name") Имя
-          input.form-input(type="text", id="signup-name", v-model="name", @focusout="checkName()")
+          input.form-input(type="text", id="signup-name", v-model.trim="name", @focusout="checkName()")
           .form-error(v-if="nameError != ''") {{ nameError }}
         .form-block.signup-form__block
           label.form-label(for="signup-middlename") Отчество (не обязательно)
-          input.form-input(type="text", id="signup-middlename", v-model="middlename", @focusout="checkMiddlename()")
+          input.form-input(type="text", id="signup-middlename", v-model.trim="middlename", @focusout="checkMiddlename()")
           .form-error(v-if="middlenameError != ''") {{ middlenameError }}
         .form-block.signup-form__block
           label.form-label(for="signup-email") Корпоративная почта SmartWorld
-          input.form-input(type="text", id="signup-email", placeholder="@smartworld.team", v-model="email", @focusout="checkEmail()")
+          input.form-input(type="text", id="signup-email", placeholder="@smartworld.team", v-model.trim="email", @focusout="checkEmail()")
           .form-error(v-if="emailError != ''") {{ emailError }}
         .form-block.signup-form__block
           label.form-label(for="signup-password") Пароль
           .form-password
-            input.form-input(type="password", id="signup-password", v-model="password", @focusout="checkPassword()")
+            input.form-input(type="password", id="signup-password", v-model.trim="password", @focusout="checkPassword()")
             button.form-password__eye(v-if="!passwordsMatch && passwordFocus && !passwordShow", @click.prevent="togglePasswordShow()")
               img(src="../assets/img/eye.svg", alt="Eye")
             button.form-password__eye(v-if="!passwordsMatch && passwordFocus && passwordShow", @click.prevent="togglePasswordShow()")
@@ -36,7 +36,7 @@
         .form-block.signup-form__block
           label.form-label(for="signup-password-repeat") Повторите пароль
           .form-password
-            input.form-input(type="password", id="signup-password-repeat", v-model="passwordRepeat", @focusout="checkPasswordRepeat()")
+            input.form-input(type="password", id="signup-password-repeat", v-model.trim="passwordRepeat", @focusout="checkPasswordRepeat()")
             button.form-password__eye(v-if="!passwordsMatch && passwordRepeatFocus && !passwordRepeatShow", @click.prevent="togglePasswordRepeatShow()")
               img(src="../assets/img/eye.svg", alt="Eye")
             button.form-password__eye(v-if="!passwordsMatch && passwordRepeatFocus && passwordRepeatShow", @click.prevent="togglePasswordRepeatShow()")
@@ -270,4 +270,82 @@ export default {
       transition: 0.2s
       &:hover
         color: lighten($c-dark, 20)
+
+@media(max-width: 1200px)
+  html
+    .container_center
+      align-items: center
+      height: 100vh
+    .signup
+      width: 610px
+      &-title
+        font-size: 28px
+        margin-bottom: 60px
+      .logo
+        margin-bottom: 25px
+      &-form
+        &__block
+          margin-right: 85px
+          &:nth-child(3n)
+            margin-right: 85px
+          &:nth-child(2n)
+            margin-right: 0
+        &__submit
+          width: 220px
+        &__signin
+          margin-top: 13px
+
+@media(max-width: 992px)
+  html
+    .container_center
+      align-items: flex-start
+      height: auto
+    .signup
+      &-form
+        &__signin
+          &:hover
+            color: lighten($c-dark, 40)
+
+@media(max-width: 768px)
+  html
+    .container_center
+      background: url("../assets/img/bg.png") $c-bg center center no-repeat
+      background-size: cover
+    .signup
+      width: 262px
+      &-title
+        font-size: 20px
+        margin-bottom: 50px
+      &-form
+        &__block
+          margin-right: 0
+          &:nth-child(3n)
+            margin-right: 0
+          &:nth-child(2n)
+            margin-right: 0
+        &__submit
+          width: 210px
+          margin-top: 60px
+
+@media(max-width: 576px)
+  html
+    .signup
+      width: 200px
+      &-title
+        font-size: 15px
+        margin-bottom: 25px
+      .logo
+        margin-bottom: 20px
+      &-form
+        &__block
+          margin-right: 0
+          &:nth-child(3n)
+            margin-right: 0
+          &:nth-child(2n)
+            margin-right: 0
+        &__submit
+          width: 210px
+          margin-top: 60px
+        &__signin
+          margin-top: 20px
 </style>

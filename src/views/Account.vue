@@ -9,20 +9,20 @@
       .account-form__inputs
         .form-block.account-form__block
           label.form-label(for="account-name") Имя
-          input.form-input(type="text", id="account-name", v-model="name", @focusout="checkName()")
+          input.form-input(type="text", id="account-name", v-model.trim="name", @focusout="checkName()")
           .form-error(v-if="nameError != ''") {{ nameError }}
         .form-block.account-form__block
           label.form-label(for="account-surname") Фамилия
-          input.form-input(type="text", id="account-surname", v-model="surname", @focusout="checkSurname()")
+          input.form-input(type="text", id="account-surname", v-model.trim="surname", @focusout="checkSurname()")
           .form-error(v-if="surnameError != ''") {{ surnameError }}
         .form-block.account-form__block
           label.form-label(for="account-middlename") Отчество (не обязательно)
-          input.form-input(type="text", id="account-middlename", v-model="middlename", @focusout="checkMiddlename()")
+          input.form-input(type="text", id="account-middlename", v-model.trim="middlename", @focusout="checkMiddlename()")
           .form-error(v-if="middlenameError != ''") {{ middlenameError }}
         .form-block.account-form__block
           label.form-label(for="account-password-old") Ваш действующий пароль
           .form-password
-            input.form-input(type="password", id="account-password-old", v-model="oldPassword", @focusout="checkOldPassword()")
+            input.form-input(type="password", id="account-password-old", v-model.trim="oldPassword", @focusout="checkOldPassword()")
             button.form-password__eye(v-if="oldPasswordFocus && !oldPasswordShow", @click.prevent="togglePasswordShow('account-password-old')")
               img(src="../assets/img/eye.svg", alt="Eye")
             button.form-password__eye(v-if="oldPasswordFocus && oldPasswordShow", @click.prevent="togglePasswordShow('account-password-old')")
@@ -31,7 +31,7 @@
         .form-block.account-form__block(:class="{'form-block_disabled': !newPasswordEnabled}")
           label.form-label(for="account-password") Новый пароль
           .form-password
-            input.form-input(type="password", id="account-password", v-model="password", @focusout="checkPassword()", :disabled="!newPasswordEnabled")
+            input.form-input(type="password", id="account-password", v-model.trim="password", @focusout="checkPassword()", :disabled="!newPasswordEnabled")
             button.form-password__eye(v-if="!passwordsMatch && passwordFocus && !passwordShow", @click.prevent="togglePasswordShow('account-password')")
               img(src="../assets/img/eye.svg", alt="Eye")
             button.form-password__eye(v-if="!passwordsMatch && passwordFocus && passwordShow", @click.prevent="togglePasswordShow('account-password')")
@@ -42,7 +42,7 @@
         .form-block.account-form__block(:class="{'form-block_disabled': !newPasswordEnabled}")
           label.form-label(for="account-password-repeat") Повторите пароль
           .form-password
-            input.form-input(type="password", id="account-password-repeat", v-model="passwordRepeat", @focusout="checkPasswordRepeat()", :disabled="!newPasswordEnabled")
+            input.form-input(type="password", id="account-password-repeat", v-model.trim="passwordRepeat", @focusout="checkPasswordRepeat()", :disabled="!newPasswordEnabled")
             button.form-password__eye(v-if="!passwordsMatch && passwordRepeatFocus && !passwordRepeatShow", @click.prevent="togglePasswordShow('account-password-repeat')")
               img(src="../assets/img/eye.svg", alt="Eye")
             button.form-password__eye(v-if="!passwordsMatch && passwordRepeatFocus && passwordRepeatShow", @click.prevent="togglePasswordShow('account-password-repeat')")
@@ -55,9 +55,9 @@
           label.form-label(for="account-checkbox") Не заказывать на меня
         .form-block.account-form__block.account-form__block__calendar
           label.form-label(@click.prevent="showCalendar()") Начало и окончание периода отмены
-          input.form-input(type="text", id="account-date-start", v-mask="'##.##.####'", v-model="inputsDates.start", @focus="showCalendar()", @change="checkInputs()")
+          input.form-input(type="text", id="account-date-start", v-mask="'##.##.####'", v-model.trim="inputsDates.start", @focus="showCalendar()", @change="checkInputs()")
           .account-form__separator
-          input.form-input(type="text", id="account-date-end", v-mask="'##.##.####'", v-model="inputsDates.end", @focus="showCalendar()", @change="checkInputs()")
+          input.form-input(type="text", id="account-date-end", v-mask="'##.##.####'", v-model.trim="inputsDates.end", @focus="showCalendar()", @change="checkInputs()")
           FunctionalCalendar.calendar.account-form__calendar(v-model="calendarDates", :configs="calendarConfig")
       .account-form__buttons
         button.btn.btn_o.account-form__btn(@click.prevent="goBack()") Вернуться на сайт
@@ -190,7 +190,9 @@ export default {
       if (this.oldPassword == '') {
         this.$store.dispatch('CLEAR_ERRORS', 'oldPassword')
         this.$store.dispatch('CLEAR_ERRORS', 'password')
+        this.passwordError = ''
         this.$store.dispatch('CLEAR_ERRORS', 'passwordRepeat')
+        this.passwordRepeatError = ''
       } else {
         this.$store.dispatch('CHECK_OLD_PASSWORD', this.oldPassword)
         .then(
@@ -559,18 +561,6 @@ export default {
       font-size: 18px
       &:first-child
         margin-right: 30px
-    &__signin
-      display: block
-      font-weight: 500
-      font-size: 13px
-      color: lighten($c-dark, 40)
-      text-transform: uppercase
-      text-decoration: underline
-      text-align: center
-      margin-top: 30px
-      transition: 0.2s
-      &:hover
-        color: lighten($c-dark, 20)
 
 .account-form__checkbox
   position: absolute
@@ -605,4 +595,120 @@ export default {
   transition: 0.1s
 .account-form__checkbox:checked + label:after
   opacity: 1
+
+@media(max-width: 1200px)
+  html
+    .container_center
+      overflow-x: visible
+    .account
+      width: 610px
+      &-logo
+        margin-bottom: 25px
+        &__line
+          width: 186px
+          height: 2px
+          top: 50px
+          margin-left: -93px
+        &__img
+          width: 75px
+          height: 75px
+          padding: 17px
+      &-form
+        &__block
+          margin-right: 85px
+          &:nth-child(3n)
+            margin-right: 85px
+          &:nth-child(2n)
+            margin-right: 0
+        .account-form__block__calendar
+          margin-right: -13px
+        &__btn
+          width: 210px
+          &:first-child
+            margin-right: 25px
+
+@media(max-width: 768px)
+  html
+    .account
+      width: 380px
+      &-logo
+        margin-bottom: 65px
+      &-form
+        &__inputs
+          margin-bottom: 65px
+          &:after
+            display: none
+        &__block
+          margin: 0 auto 30px auto
+          &:nth-child(3n)
+            margin-right: auto
+          &:nth-child(2n)
+            margin-right: auto
+          &__checkbox
+            margin-top: 10px
+        &__btn
+          width: 180px
+          padding: 15px
+          font-size: 15px
+          &:first-child
+            margin-right: 20px
+
+@media(max-width: 576px)
+  html
+    .account
+      width: 200px
+      &-logo
+        margin-bottom: 40px
+        &__line
+          width: 138px
+          height: 1px
+          top: 35px
+          margin-left: -69px
+        &__img
+          width: 54px
+          height: 54px
+          padding: 13px
+          border: 1px solid $c-dark
+      &-form
+        &__inputs
+          margin-bottom: 50px
+        &__block
+          margin-bottom: 20px
+          &__checkbox
+            .form-label
+              font-size: 12px
+        .account-form__block__calendar
+          flex-basis: 210px
+          margin-right: -10px
+          .form-input
+            flex-basis: 72px
+            font-size: 14px
+        &__checkbox
+          max-width: 200px
+        &__separator
+          width: 15px
+          margin: 0 20px
+        &__calendar
+          margin-left: -133px
+        &__buttons
+          flex-direction: column-reverse
+        &__btn
+          width: 160px
+          font-size: 13px
+          &:first-child
+            margin-right: 0
+            margin-top: 15px
+    .account-form__checkbox + label
+      padding: 0 0 0 30px
+    .account-form__checkbox + label:before
+      margin-top: -10px
+      width: 18px
+      height: 18px
+      border: 1px solid #2c3e50
+    .account-form__checkbox + label:after
+      top: 50%
+      left: 3px
+      width: 14px
+      height: 14px
+      margin-top: -6px
 </style>

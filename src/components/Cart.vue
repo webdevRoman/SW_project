@@ -16,7 +16,7 @@
               .cart-item__name {{ dish.name }}
               .cart-item__number
                 button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.order <= 0") -
-                input.cart-number__value(type="text", v-model="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
+                input.cart-number__value(type="text", v-model.trim="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
                 button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99") +
               button.cart-item__fav(@click.prevent="toggleFavourite(dish)", v-if="dish.favourite")
                 .cart-fav__img
@@ -320,9 +320,9 @@ export default {
       &-popup
         width: 100%
       &-items
-        height: calc(100vh - 215px)
+        height: calc(100vh - 200px)
         &__no
-          height: calc(100vh - 215px)
+          height: calc(100vh - 200px)
       &-item
         padding: 10px
         &__main

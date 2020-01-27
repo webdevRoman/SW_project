@@ -7,12 +7,12 @@
     form.signin-form(action="#", @submit.prevent="checkForm()")
       .form-block
         label.form-label(for="signin-email") Корпоративная почта SmartWorld
-        input.form-input(type="text", id="signin-email", placeholder="@smartworld.team", v-model="email", @focusout="checkEmail()")
+        input.form-input(type="text", id="signin-email", placeholder="@smartworld.team", v-model.trim="email", @focusout="checkEmail()")
         .form-error(v-if="emailError != ''") {{ emailError }}
       .form-block
         label.form-label(for="signin-password") Пароль
         .form-password
-          input.form-input(type="password", id="signin-password", v-model="password", @focusout="checkPassword()")
+          input.form-input(type="password", id="signin-password", v-model.trim="password", @focusout="checkPassword()")
           button.form-password__eye(v-if="passwordFocus && !passwordShow", @click.prevent="togglePasswordShow()")
             img(src="../assets/img/eye.svg", alt="Eye")
           button.form-password__eye(v-if="passwordFocus && passwordShow", @click.prevent="togglePasswordShow()")
@@ -149,4 +149,71 @@ export default {
       transition: 0.2s
       &:hover
         color: lighten($c-dark, 20)
+
+@media(max-width: 1200px)
+  html
+    .container_center
+      align-items: center
+      height: 100vh
+    .signin
+      &-title
+        font-size: 28px
+        margin-bottom: 60px
+      .logo
+        margin-bottom: 25px
+      &-form
+        &__signup
+          margin-top: 13px
+
+@media(max-width: 992px)
+  html
+    .signin
+      .form
+        &__signup
+          &:hover
+            color: lighten($c-dark, 40)
+
+@media(max-width: 768px)
+  html
+    .container_center
+      background: url("../assets/img/bg.png") $c-bg center center no-repeat
+      background-size: cover
+    .signin
+      &-title
+        font-size: 20px
+        margin-bottom: 50px
+      .form
+        &-block
+          margin-right: 0
+          &:nth-child(3n)
+            margin-right: 0
+          &:nth-child(2n)
+            margin-right: 0
+        &-submit
+          width: 100%
+          margin-top: 60px
+
+@media(max-width: 576px)
+  html
+    .signin
+      width: 200px
+      &-title
+        font-size: 15px
+        margin-bottom: 25px
+      .logo
+        margin-bottom: 20px
+      .form
+        &-block
+          margin-right: 0
+          &:nth-child(3n)
+            margin-right: 0
+          &:nth-child(2n)
+            margin-right: 0
+        &-submit
+          width: 210px
+          font-size: 15px
+          margin-top: 60px
+      &-form
+        &__signup
+          margin-top: 20px
 </style>

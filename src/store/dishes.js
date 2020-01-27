@@ -131,6 +131,24 @@ export default {
         order: 0,
         favourite: true
       }]
+    }, {
+      name: 'Длинное название категории (не вмещается в одну строку)',
+      dishes:[]
+    }, {
+      name: '5',
+      dishes:[]
+    }, {
+      name: '6',
+      dishes:[]
+    }, {
+      name: '7',
+      dishes:[]
+    }, {
+      name: '8',
+      dishes:[]
+    }, {
+      name: '9',
+      dishes:[]
     }],
     favourites: {},
     cart: {}

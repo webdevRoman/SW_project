@@ -8,7 +8,8 @@
   .container
     .category(v-for="category in currentCategories")
       .title.category-title {{ category.name }}
-      .category-dishes
+      .title.favourites-no(v-if="category.dishes.length == 0") В этой категории нет блюд
+      .category-dishes(v-else)
         .dish(v-for="dish in category.dishes")
           .dish-top
             .dish-img
@@ -31,7 +32,7 @@
                   img(src="../assets/img/cart.svg", alt="Cart image", v-else)
                 div(:class="{'cart-number': true, 'cart-number_active': dish.order > 0}")
                   button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.order <= 0") -
-                  input.cart-number__value(type="text", v-model="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
+                  input.cart-number__value(type="text", v-model.trim="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
                   button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99") +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
                 img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
@@ -124,6 +125,10 @@ export default {
 <style scoped lang="sass">
 @import "../assets/sass/vars"
 @import "../assets/sass/media-dishes"
+
+.favourites
+  &-no
+    text-align: center
 
 .select-container
   height: 50px

@@ -127,6 +127,7 @@ body, button, input, a
 .v-select
   cursor: pointer
   position: relative
+  z-index: 5
   .vs__search
     opacity: 0
     // visibility: hidden
