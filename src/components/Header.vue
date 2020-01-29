@@ -9,6 +9,7 @@
         img(src="../assets/img/triangle-down.svg", alt="Triangle down")
       .user-menu
         router-link(tag="button", to="/account").user-menu__item Личный кабинет
+        router-link(tag="button", to="/admin").user-menu__item Администрирование
         button(@click.prevent="signout()").user-menu__item Выход
 </template>
 

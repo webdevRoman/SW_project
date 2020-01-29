@@ -130,14 +130,6 @@ export default {
   &-no
     text-align: center
 
-.select-container
-  height: 50px
-  margin-bottom: 50px
-.select
-  width: 360px
-  background-color: $c-bg
-  font-size: 16px
-
 .category
   margin-bottom: 80px
   &-title

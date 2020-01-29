@@ -124,6 +124,13 @@ body, button, input, a
         background-color: $c-active
         border: 1px solid $c-active
 
+.select-container
+  height: 50px
+  margin-bottom: 50px
+.select
+  width: 360px
+  background-color: $c-bg
+  font-size: 16px
 .v-select
   cursor: pointer
   position: relative
@@ -188,6 +195,17 @@ body, button, input, a
           color: $c-light
 .select.vs--open
   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15)
+.admin-docs
+  .vs
+    &__dropdown
+      &-toggle
+        padding: 14px
+        background-color: $c-light
+      &-menu
+        max-height: 300px
+        background-color: $c-light
+      &-option
+        padding: 14px
 
 .calendar
   z-index: 10

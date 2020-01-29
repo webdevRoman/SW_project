@@ -8,6 +8,7 @@ import SignIn from '../views/SignIn.vue'
 import Password from '../views/Password.vue'
 import SignUp from '../views/SignUp.vue'
 import EmailConfirmation from '../views/EmailConfirmation.vue'
+import Admin from '../views/Admin.vue'
 import Page404 from '../views/404.vue'
 
 Vue.use(VueRouter)
@@ -44,6 +45,11 @@ const routes = [
     path: '/email-confirmation',
     name: 'email-confirmation',
     component: EmailConfirmation
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: Admin
   },
   // {
   //   path: '/about',

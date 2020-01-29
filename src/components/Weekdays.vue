@@ -25,7 +25,7 @@ export default {
     weekdays() {
       let weekdays = []
       for (let i = 0; i < 8; i++) {
-        const nextDay = new Date();
+        const nextDay = new Date()
         nextDay.setDate(nextDay.getDate() + i)
         let day, date, month, weekdayObj
         switch (nextDay.getDay()) {

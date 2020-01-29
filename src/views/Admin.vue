@@ -1,0 +1,378 @@
+<template lang="pug">
+.admin
+  .admin-sidebar
+    button.admin-sidebar__btn(:class="{'admin-sidebar__btn_active': chosenSection == 'docs'}", @click.prevent="chosenSection = 'docs'")
+      // img(src="../assets/img/doc-inactive.svg", alt="Document inactive")
+      // img(src="../assets/img/doc.svg", alt="Document")
+      <svg width="30" height="33" viewBox="0 0 30 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M28.9398 6.8985L22.1979 0.276947C22.0171 0.0994492 21.7739 0 21.5203 0H4.47577C2.48679 0 0.868408 1.61813 0.868408 3.60736V29.3926C0.868408 31.3816 2.48653 33 4.47577 33H25.6217C27.6107 33 29.229 31.3819 29.229 29.3926V7.58835C29.229 7.32877 29.1248 7.08028 28.9398 6.8985V6.8985ZM22.4871 3.2715L25.8981 6.62155H22.7946C22.6251 6.62155 22.4871 6.48358 22.4871 6.31414V3.2715ZM25.6217 31.0664H4.47577C3.55303 31.0664 2.802 30.3156 2.802 29.3926V3.60736C2.802 2.68437 3.55278 1.93359 4.47577 1.93359H20.5538V6.31414C20.5538 7.54983 21.5591 8.55515 22.7948 8.55515H27.2954V29.3926C27.2954 30.3156 26.5447 31.0664 25.6217 31.0664V31.0664Z" fill="#ffffff"/>
+        <path d="M23.2124 15.3398H9.58362C9.04961 15.3398 8.61682 15.7726 8.61682 16.3066C8.61682 16.8406 9.04961 17.2734 9.58362 17.2734H23.2124C23.7464 17.2734 24.1792 16.8406 24.1792 16.3066C24.1792 15.7726 23.7464 15.3398 23.2124 15.3398Z" fill="#ffffff"/>
+        <path d="M9.58362 21.1406H20.6962C21.2302 21.1406 21.663 20.7078 21.663 20.1738C21.663 19.6398 21.2302 19.207 20.6962 19.207H9.58362C9.04961 19.207 8.61682 19.6398 8.61682 20.1738C8.61682 20.7078 9.04961 21.1406 9.58362 21.1406V21.1406Z" fill="#ffffff"/>
+        <path d="M22.0369 23.0742H9.58362C9.04961 23.0742 8.61682 23.507 8.61682 24.041C8.61682 24.575 9.04961 25.0078 9.58362 25.0078H22.0369C22.5707 25.0078 23.0037 24.575 23.0037 24.041C23.0037 23.507 22.5707 23.0742 22.0369 23.0742Z" fill="#ffffff"/>
+      </svg>
+    button.admin-sidebar__btn(:class="{'admin-sidebar__btn_active': chosenSection == 'users'}", @click.prevent="chosenSection = 'users'")
+      // img(src="../assets/img/user-inactive.svg", alt="User inactive")
+      // img(src="../assets/img/user.svg", alt="User")
+      <svg width="29" height="33" viewBox="0 0 29 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14.3803 17.7813C14.4145 17.7813 14.4487 17.7813 14.4897 17.7813C14.5033 17.7813 14.517 17.7813 14.5307 17.7813C14.5512 17.7813 14.5785 17.7813 14.599 17.7813C16.6013 17.7472 18.2209 17.0433 19.4168 15.697C22.0477 12.7312 21.6104 7.64693 21.5626 7.16173C21.3917 3.51936 19.6696 1.77677 18.2482 0.963554C17.189 0.355353 15.9521 0.0273349 14.5717 0H14.5238C14.517 0 14.5033 0 14.4965 0H14.4555C13.697 0 12.2072 0.123007 10.779 0.936219C9.34387 1.74943 7.59444 3.49203 7.4236 7.16173C7.37576 7.64693 6.93841 12.7312 9.56939 15.697C10.7585 17.0433 12.378 17.7472 14.3803 17.7813ZM9.2482 7.33257C9.2482 7.31207 9.25504 7.29157 9.25504 7.2779C9.48055 2.37813 12.9589 1.85194 14.4487 1.85194H14.476C14.4897 1.85194 14.5102 1.85194 14.5307 1.85194C16.3758 1.89294 19.5124 2.64465 19.7243 7.2779C19.7243 7.29841 19.7243 7.31891 19.7311 7.33257C19.738 7.38041 20.2163 12.0273 18.0432 14.4738C17.1821 15.4442 16.0341 15.9226 14.5238 15.9362C14.5102 15.9362 14.5033 15.9362 14.4897 15.9362C14.476 15.9362 14.4692 15.9362 14.4555 15.9362C12.9521 15.9226 11.7972 15.4442 10.943 14.4738C8.77668 12.041 9.24137 7.37358 9.2482 7.33257Z" fill="#ffffff"/>
+        <path d="M28.533 26.2141C28.533 26.2072 28.533 26.2004 28.533 26.1936C28.533 26.1389 28.5262 26.0842 28.5262 26.0227C28.4852 24.6696 28.3963 21.5056 25.4305 20.4942C25.41 20.4874 25.3827 20.4806 25.3622 20.4737C22.2802 19.6879 19.7175 17.9111 19.6902 17.8906C19.2733 17.5968 18.6993 17.6993 18.4054 18.1161C18.1116 18.533 18.2141 19.107 18.631 19.4009C18.7471 19.4829 21.4669 21.3758 24.8701 22.2505C26.4624 22.8177 26.6401 24.5193 26.6879 26.0774C26.6879 26.1389 26.6879 26.1936 26.6947 26.2482C26.7016 26.8633 26.6606 27.8132 26.5512 28.3599C25.4442 28.9886 21.1048 31.1617 14.5034 31.1617C7.92936 31.1617 3.56262 28.9817 2.44872 28.353C2.33939 27.8063 2.29155 26.8564 2.30522 26.2414C2.30522 26.1867 2.31205 26.1321 2.31205 26.0706C2.35989 24.5125 2.53756 22.8109 4.12982 22.2437C7.53301 21.369 10.2528 19.4692 10.369 19.394C10.7859 19.1002 10.8884 18.5261 10.5945 18.1093C10.3007 17.6924 9.72663 17.5899 9.30977 17.8838C9.28244 17.9043 6.73346 19.681 3.63779 20.4669C3.61046 20.4737 3.58996 20.4806 3.56945 20.4874C0.603622 21.5056 0.514784 24.6696 0.473782 26.0159C0.473782 26.0774 0.473781 26.1321 0.466948 26.1867C0.466948 26.1936 0.466948 26.2004 0.466948 26.2072C0.460114 26.5626 0.453281 28.3872 0.815467 29.3029C0.883804 29.4806 1.00681 29.6309 1.17082 29.7334C1.37583 29.8701 6.28927 32.9999 14.5102 32.9999C22.7312 32.9999 27.6446 29.8633 27.8496 29.7334C28.0068 29.6309 28.1367 29.4806 28.205 29.3029C28.5467 28.394 28.5398 26.5694 28.533 26.2141Z" fill="#ffffff"/>
+      </svg>
+    router-link.admin-sidebar__btn(tag="button", to="/")
+      // img(src="../assets/img/arrow-back-inactive.svg", alt="Arrow back inactive")
+      // img(src="../assets/img/arrow-back.svg", alt="Arrow back")
+      <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19.4531 6.49997H11.4844V1.57809C11.4844 1.14591 11.2465 0.748816 10.8654 0.544909C10.4844 0.341003 10.0221 0.363327 9.66246 0.603034L0.521836 6.69678C0.19582 6.91411 0 7.28003 0 7.67184C0 8.06366 0.19582 8.42958 0.521836 8.6469L9.66246 14.7407C10.0226 14.9807 10.4849 15.0024 10.8654 14.7988C11.2465 14.5949 11.4844 14.1978 11.4844 13.7656V8.84372H19.4531C23.9763 8.84372 27.6562 12.5236 27.6562 17.0468C27.6562 21.57 23.9763 25.25 19.4531 25.25C18.8059 25.25 18.2812 25.7746 18.2812 26.4218C18.2812 27.0691 18.8059 27.5937 19.4531 27.5937C25.2687 27.5937 30 22.8624 30 17.0468C30 11.2313 25.2687 6.49997 19.4531 6.49997ZM9.14062 11.5759L3.28453 7.67184L9.14062 3.76774V11.5759Z" fill="#ffffff"/>
+      </svg>
+  .admin-main.admin-docs(v-if="chosenSection == 'docs'")
+    .docs-container
+      form.docs-block(action="#")
+        .docs-block__title Скачать лист заказов
+        div
+          .form-block.docs-block__block.docs-block__block__calendar
+            label.form-label(@click.prevent="showCalendar()") Выберите дату
+            input.form-input(type="text", id="orders-date", v-mask="'##.##.####'", v-model.trim="inputDate", @focus="showCalendar()", @change="checkInput()")
+            FunctionalCalendar.calendar.account-form__calendar(v-model="calendarDate", :configs="calendarConfig")
+          button.form-submit(type="submit") Скачать
+      form.docs-block(action="#")
+        .docs-block__title Скачать лист превышений лимита
+        div
+          .select-container
+            v-select.select(v-model="selectedMonth", label="name", index="name", :options="months", :clearable="false", :searchable="false")
+              template(v-slot:option="option")
+                span.select-option {{ option.name }}
+          button.form-submit(type="submit") Скачать
+  .admin-main.admin-users(v-if="chosenSection == 'users'")
+    form.users-container(action="#")
+      .users-title Управление пользователями
+      .users-table
+        .users-table__header
+          .name Фамилия и имя
+          .email Почта
+          .role Роль
+          .status Статус учетной записи
+          .limit Лимит
+        .users-table__body
+          .users-table__user
+            .name Иванов Иван
+            .email blablabla@smartworld.tem
+            .role
+              .select-container
+                //- v-select.select(v-model="selectedRole", label="name", index="name", :options="roles", :clearable="false", :searchable="false")
+                //-   template(v-slot:option="option")
+                //-     span.select-option {{ option.name }}
+            .status
+              .select-container
+                //- v-select.select(v-model="selectedStatus", label="name", index="name", :options="statuses", :clearable="false", :searchable="false")
+                //-   template(v-slot:option="option")
+                //-     span.select-option {{ option.name }}
+            .limit
+              input.form-input(type="text")
+            .no-order
+              .form-block.account-form__block.account-form__block__checkbox
+                input.form-input.account-form__checkbox(type="checkbox", id="account-checkbox", @change="toggleCalendar()")
+                label.form-label(for="account-checkbox") Не заказывать
+              .form-block.account-form__block.account-form__block__calendar
+                label.form-label(@click.prevent="showCalendar()") Начало и окончание периода
+                //- input.form-input(type="text", id="account-date-start", v-mask="'##.##.####'", v-model.trim="inputsDates.start", @focus="showCalendar()", @change="checkInputs()")
+                //- .account-form__separator
+                //- input.form-input(type="text", id="account-date-end", v-mask="'##.##.####'", v-model.trim="inputsDates.end", @focus="showCalendar()", @change="checkInputs()")
+                //- FunctionalCalendar.calendar.account-form__calendar(v-model="calendarDates", :configs="calendarConfig")
+            .delete
+              button.btn Удалить
+        .users-table__btn +
+      .users-bottom
+        .form-block
+          label.form-label(for="users-limit") Установить лимит всем пользователями
+          .form-block__line
+            input.form-input(type="text")
+            span Р
+        button.form-submit(type="submit") Сохранить изменения
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      chosenSection: 'docs',
+      calendarConfig: {
+        // isDateRange: true,
+        isDatePicker: true,
+        dateFormat: 'dd.mm.yyyy',
+        disabledDayNames: ['Вс'],
+        disabledDates: ['afterToday'],
+        monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+        shortMonthNames: ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
+        limits: { min: this.getLimitDates().min, max: this.getLimitDates().max },
+        applyStylesheet: false
+      },
+      inputDate: '',
+      calendarDate: { selectedDate: '' },
+      selectedMonth: 'Выберите месяц'
+    }
+  },
+  methods: {
+    getLimitDates() {
+      const date = new Date()
+      return { min: `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`, max: `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}` }
+    },
+    showCalendar() {
+      const calendar = document.querySelector('.account-form__calendar')
+      calendar.classList.add('account-form__calendar_active')
+      this.hideCalendar()
+    },
+    hideCalendar() {
+      const calendar = document.querySelector('.account-form__calendar')
+      const self = this
+      function hideOnClickOutside(e) {
+        let a = e.target
+        let parentsFlag = false
+        while (a) {
+          if (a == calendar) {
+            parentsFlag = true
+            break
+          }
+          a = a.parentNode
+        }
+        if(calendar.classList.contains('account-form__calendar_active') && !parentsFlag && !e.target.parentNode.classList.contains('docs-block__block__calendar') && !e.target.classList.contains('docs-block__block__calendar')) {
+          calendar.classList.remove('account-form__calendar_active')
+          self.isChoosingDate = false
+          document.removeEventListener('click', hideOnClickOutside)
+        }
+      }
+      document.addEventListener('click', hideOnClickOutside)
+    },
+    checkInput() {
+      const input = document.getElementById('orders-date')
+      if (input.value.length == 10)
+        this.calendarDate.selectedDate = this.formatDateCalendar(input.value)
+      else
+        this.calendarDate.selectedDate = ''
+    },
+    formatDateInputs(dateStr) {
+      let dateArr = dateStr.split('.')
+      if (dateArr[0].length < 2)
+        dateArr[0] = '0' + dateArr[0]
+      if (dateArr[1].length < 2)
+        dateArr[1] = '0' + dateArr[1]
+      return dateArr.join('.')
+    },
+    formatDateCalendar(dateStr) {
+      let dateArr = dateStr.split('.')
+      if (dateArr[0].length == 2 && dateArr[0][0] == '0')
+        dateArr[0] = dateArr[0][1]
+      if (dateArr[1].length == 2 && dateArr[1][0] == '0')
+        dateArr[1] = dateArr[1][1]
+      return dateArr.join('.')
+    }
+  },
+  computed: {
+    months() {
+      let months = []
+      const nextMonthDay = new Date()
+      const startYear = nextMonthDay.getFullYear()
+      const startMonth = nextMonthDay.getMonth()
+      for (let i = 0; i < 12; i++) {
+        let currentYear, currentMonth
+        if (startMonth - i >= 0) {
+          currentYear = startYear
+          currentMonth = startMonth - i
+        } else {
+          currentYear = startYear - 1
+          currentMonth = 12 + startMonth - i
+        }
+        let month
+        switch (currentMonth) {
+          case 0:
+            month = 'Январь'
+            break;
+          case 1:
+            month = 'Февраль'
+            break;
+          case 2:
+            month = 'Март'
+            break;
+          case 3:
+            month = 'Апрель'
+            break;
+          case 4:
+            month = 'Май'
+            break;
+          case 5:
+            month = 'Июнь'
+            break;
+          case 6:
+            month = 'Июль'
+            break;
+          case 7:
+            month = 'Август'
+            break;
+          case 8:
+            month = 'Сентябрь'
+            break;
+          case 9:
+            month = 'Октябрь'
+            break;
+          case 10:
+            month = 'Ноябрь'
+            break;
+          case 11:
+            month = 'Декабрь'
+            break;
+          default:
+            break;
+        }
+        months.push({ name: month + ' ' + currentYear })
+      }
+      return months
+    }
+  },
+  watch: {
+    calendarDate: {
+      handler (value) {
+        value = { selectedDate:  value.selectedDate }
+        if (value.selectedDate == '')
+          this.inputDate = ''
+        else
+          this.inputDate = this.formatDateInputs(value.selectedDate)
+      },
+      deep: true
+    },
+  }
+}
+</script>
+
+<style scoped lang="sass">
+@import "../assets/sass/vars"
+
+.admin
+  display: flex
+  justify-content: space-between
+  align-items: stretch
+  width: 100%
+  min-height: 100vh
+  &-sidebar
+    flex-basis: 75px
+    min-height: 100vh
+    background-color: $c-dark
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4)
+    &__btn
+      height: 145px
+      padding: 22px
+      transition: 0.2s
+      svg path
+        transition: 0.2s
+      &:hover
+        background-color: $c-middle
+        svg path
+          fill: $c-dark
+      &_active
+        background-color: $c-middle
+        svg path
+          fill: $c-dark
+  &-main
+    flex-grow: 1
+    display: flex
+    justify-content: center
+    align-items: center
+    min-height: 100vh
+  .docs
+    &-container
+      display: flex
+      justify-content: center
+      align-items: stretch
+    &-block
+      display: flex
+      justify-content: space-between
+      align-items: center
+      flex-direction: column
+      width: 360px
+      padding: 35px 55px 60px 55px
+      background-color: $c-light
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25)
+      &:first-child
+        margin-right: 90px
+      &__title
+        font-weight: 500
+        font-size: 24px
+        line-height: 28px
+        text-align: center
+        margin-bottom: 80px
+      .form-block
+        margin-bottom: 75px
+      .form-label, .form-input
+        display: block
+        width: 220px
+      .form-submit
+        width: 220px
+      .select
+        width: 220px
+        &-container
+          margin-bottom: 75px
+  .account-form
+    &__calendar
+      display: none
+      position: absolute
+      top: calc(100% + 15px)
+      left: 50%
+      margin-left: -154px
+      margin-bottom: 25px
+      &_active
+        display: block
+  .users
+    &-container
+      flex-basis: 1300px
+      padding: 30px 35px
+      background-color: $c-light
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25)
+    &-title
+      font-weight: 500
+      font-size: 24px
+      line-height: 28px
+      margin-bottom: 40px
+    &-table
+      margin-bottom: 25px
+      &__header
+        display: flex
+        justify-content: space-between
+        align-items: center
+        padding-bottom: 15px
+        border-bottom: 1px solid lighten($c-dark, 40)
+        &:after
+          content: ''
+          flex: auto
+        div
+          font-size: 12px
+          color: lighten($c-dark, 40)
+          text-align: center
+      .name
+        flex-basis: 160px
+        margin-right: 25px
+      .email
+        flex-basis: 110px
+        margin-right: 25px
+      .role
+        flex-basis: 125px
+        margin-right: 25px
+      .status
+        flex-basis: 135px
+        margin-right: 25px
+      .limit
+        flex-basis: 50px
+        margin-right: 25px
+      .no-order
+        .account-form__block__checkbox
+          flex-basis: 115px
+          margin-right: 10px
+        .account-form__block__calendar
+          flex-basis: 180px
+          margin-right: 25px
+      .delete
+        flex-basis: 100px
+    &-bottom
+      display: flex
+      justify-content: space-between
+      align-items: flex-end
+      .form-block
+        flex-basis: 300px
+        margin-bottom: 0
+</style>
