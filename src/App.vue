@@ -125,7 +125,6 @@ body, button, input, a
         border: 1px solid $c-active
 
 .select-container
-  height: 50px
   margin-bottom: 50px
 .select
   width: 360px
@@ -151,7 +150,8 @@ body, button, input, a
     transition: 0.2s
     width: 14px
     height: 12px
-    background-image: url("./assets/img/arrow-select.svg")
+    background: url("./assets/img/arrow-select.svg") center no-repeat
+    background-size: contain
 .v-select.vs--open
   .select-arrow
     transform: rotateX(180deg)
@@ -206,6 +206,25 @@ body, button, input, a
         background-color: $c-light
       &-option
         padding: 14px
+.admin-users
+  .select-arrow
+    width: 10px
+    height: 9px
+  .vs
+    &__dropdown
+      &-toggle
+        background-color: $c-light
+        border: 1px solid $c-middle
+        padding: 8px 6px
+      &-menu
+        overflow-y: visible
+        background-color: $c-light
+        border-left: 1px solid $c-middle
+        border-bottom: 1px solid $c-middle
+        border-right: 1px solid $c-middle
+      &-option
+        padding: 8px 6px
+        font-size: 12px
 
 .calendar
   z-index: 10
