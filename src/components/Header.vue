@@ -17,8 +17,10 @@
 export default {
   methods: {
     signout() {
-      this.$store.dispatch('SET_USER_AUTH', false)
-      this.$router.push('/signin')
+      this.$store.dispatch('AUTH_LOGOUT')
+      .then(() => {
+        this.$router.push('/signin')
+      })
     }
   },
   computed: {
@@ -92,7 +94,6 @@ export default {
       .container
         .user
           &-menu
-            width: 100%
             left: auto
             right: 0
             margin-left: 0

@@ -44,7 +44,7 @@
             .form-password__eye(v-if="passwordsMatch")
               img(src="../assets/img/tick-success.svg", alt="Tick")
           .form-error(v-if="passwordRepeatError != ''") {{ passwordRepeatError }}
-      button.form-submit.signup-form__submit(type="submit", :disabled="errors") Зарегистрироваться
+      button.form-submit.signup-form__submit(type="submit", :disabled="errors || processing") Зарегистрироваться
       button.signup-form__signin(@click.prevent="goToSignin()") Уже есть аккаунт?
 </template>
 
@@ -214,6 +214,9 @@ export default {
         return true
       else
         return false
+    },
+    processing() {
+      return this.$store.getters.processing
     }
   },
   watch: {

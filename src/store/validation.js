@@ -61,6 +61,9 @@ export default {
         Vue.set(state.errors, 'passwordRepeat', 'wrong')
       }
     },
+    SET_ERROR (state, error) {
+      Vue.set(state.errors, error.type, error.msg)
+    },
     CLEAR_ERRORS(state, errorType) {
       if (errorType == 'all')
         Vue.set(state, 'errors', {})
@@ -113,6 +116,9 @@ export default {
         else
           resolve('correct')
       })
+    },
+    SET_ERROR({commit}, error) {
+      commit('SET_ERROR', error)
     },
     CLEAR_ERRORS({commit}, errorType) {
       commit('CLEAR_ERRORS', errorType)

@@ -19,7 +19,8 @@
             img(src="../assets/img/eye-closed.svg", alt="Closed eye")
         button.signin-form__forget(@click.prevent="goToPassword()") Забыли пароль?
         .form-error(v-if="passwordError != ''") {{ passwordError }}
-      button.form-submit(type="submit", :disabled="errors") Войти
+        .form-error(v-if="authError != ''") {{ authError }}
+      button.form-submit(type="submit", :disabled="errors || processing") Войти
       button.signin-form__signup(@click.prevent="goToSignup()") Еще нет аккаунта?
 </template>
 
@@ -32,7 +33,8 @@ export default {
       password: '',
       passwordError: '',
       passwordFocus: false,
-      passwordShow: false
+      passwordShow: false,
+      authError: ''
     }
   },
   methods: {
@@ -48,11 +50,26 @@ export default {
       this.checkEmail()
       this.checkPassword()
       if (!this.errors || (this.email != '' && this.password != '')) {
-        this.$store.dispatch('SET_USER_AUTH', true)
-        this.$router.push('/')
+        this.$store.dispatch('AUTH_REQUEST', { email: this.email, rememberMe: 1, password: this.password })
+        .then(result => {
+          this.$router.push('/')
+        },
+        error => {
+          this.$store.dispatch('SET_ERROR', { type: 'auth', msg: 'wrong' })
+          this.authError = 'Неверная почта или пароль'
+          // setTimeout(() => {
+          //   this.$store.dispatch('CLEAR_ERRORS', 'auth')
+          //   this.authError = ''
+          // }, 10000)
+        })
+        // .then(() => {
+        //   this.$router.push('/')
+        // })
       }
     },
     checkEmail() {
+      this.$store.dispatch('CLEAR_ERRORS', 'auth')
+      this.authError = ''
       const emailArr = this.email.split('@')
       if (this.email != '' && emailArr[1] == undefined)
         this.email = emailArr[0] + '@smartworld.team'
@@ -70,6 +87,8 @@ export default {
       )
     },
     checkPassword() {
+      this.$store.dispatch('CLEAR_ERRORS', 'auth')
+      this.authError = ''
       this.$store.dispatch('CHECK_OLD_PASSWORD', this.password)
       .then(
         result => {
@@ -97,10 +116,13 @@ export default {
   computed: {
     errors() {
       const errors = this.$store.getters.errors
-      if (errors.email != undefined || errors.password != undefined)
+      if (errors.email != undefined || errors.password != undefined || errors.auth != undefined)
         return true
       else
         return false
+    },
+    processing() {
+      return this.$store.getters.processing
     }
   },
   watch: {
@@ -149,6 +171,9 @@ export default {
       transition: 0.2s
       &:hover
         color: lighten($c-dark, 20)
+  .form
+    &-submit
+      margin-top: 85px
 
 @media(max-width: 1200px)
   html
@@ -212,7 +237,6 @@ export default {
         &-submit
           width: 210px
           font-size: 15px
-          margin-top: 60px
       &-form
         &__signup
           margin-top: 20px

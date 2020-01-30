@@ -73,7 +73,7 @@ const router = new VueRouter({
 
 // router.beforeEach((to, from, next) => {
 //   if (to.matched.some(route => route.meta.authRequired)) {
-//     if (Store.getters.isUserAuthenticated)
+//     if (Store.getters.isAuthenticated)
 //       next()
 //     else
 //       next('/signin')

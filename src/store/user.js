@@ -1,21 +1,30 @@
 // import Vue from 'vue'
-// import axios from 'axios'
+import axios from 'axios'
 
 export default {
   state: {
-    token: '',
-    name: 'Волк',
-    surname: 'Цирков',
+    token: localStorage.getItem('user-token') || '',
+    name: '',
+    surname: '',
     middlename: '',
-    isUserAuthenticated: true,
-    // testData: null,
   },
   mutations: {
-    // LOAD_DATA(state, data) {
-    //   Vue.set(state, 'testData', data)
-    // },
-    SET_USER_AUTH(state, payload) {
-      state.isUserAuthenticated = payload
+    AUTH_REQUEST(state) {
+      state.status = 'loading'
+    },
+    AUTH_SUCCESS(state, token) {
+      state.status = 'success'
+      state.token = token
+    },
+    AUTH_ERROR(state) {
+      state.status = 'error'
+    },
+    AUTH_LOGOUT(state) {
+      state.status = ''
+      state.token = ''
+      state.name = ''
+      state.surname = ''
+      state.middlename = ''
     }
   },
   actions: {
@@ -35,14 +44,41 @@ export default {
     //     )
     //   })
     // },
-    SET_USER_AUTH({commit}, payload) {
-      commit('SET_USER_AUTH', payload)
+    AUTH_REQUEST({commit}, user) {
+      return new Promise((resolve, reject) => {
+        commit('AUTH_REQUEST')
+        commit('SET_PROCESSING', true)
+        const proxyurl = 'https://cors-anywhere.herokuapp.com/'
+        const url = 'https://pylearn.info/modules/auth/login'
+        axios({ url: proxyurl + url, data: user, method: 'POST' })
+        .then(resp => {
+          // const token = resp.data.token
+          // localStorage.setItem('user-token', token)
+          // commit('AUTH_SUCCESS', token)
+          // dispatch('USER_REQUEST')                   // set user name, surname...
+          commit('SET_PROCESSING', false)
+          resolve(resp)
+        })
+        .catch(err => {
+          commit('AUTH_ERROR', err)
+          // localStorage.removeItem('user-token')
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
+      })
+    },
+    AUTH_LOGOUT({commit}) {
+      return new Promise((resolve) => {
+        commit('AUTH_LOGOUT')
+        // localStorage.removeItem('user-token')
+        resolve()
+      })
     }
   },
   getters: {
     name: state => state.name,
     surname: state => state.surname,
-    middlename: state => state.middlename,
-    isUserAuthenticated: state => state.isUserAuthenticated
+    // middlename: state => state.middlename,
+    isAuthenticated: state => !!state.token
   }
 }
