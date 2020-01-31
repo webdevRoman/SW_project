@@ -46,12 +46,23 @@
 export default {
   data() {
     return {
+      categories: [],
       selectCategory: { name: 'Все категории' },
       showPopup: false,
       showingDescr: ''
     }
   },
   methods: {
+    formatDate(date) {
+      let day = date.getDate()
+      let month = date.getMonth() + 1
+      let year = date.getFullYear()
+      if (day.toString().length < 2)
+        day = '0' + day.toString()
+      if (month.toString().length < 2)
+        month = '0' + month.toString()
+      return `${day}/${month}/${year.toString().slice(2)}`
+    },
     toggleFavourite(dish) {
       if (!dish.favourite) {
         this.$store.dispatch('ADD_FAVOURITE', dish)
@@ -91,22 +102,22 @@ export default {
     }
   },
   computed: {
-    categories() {
-      const categories = this.$store.getters.categories
-      let newCategories = []
-      categories.forEach(category => {
-        let filteredDishes = []
-        category.dishes.forEach(dish => {
-          if (dish.hide == 0)
-            filteredDishes.push(dish)
-        })
-        let newCategory = {}
-        newCategory.name = category.name
-        newCategory.dishes = filteredDishes
-        newCategories.push(newCategory)
-      })
-      return newCategories
-    },
+    // categories() {
+    //   const categories = this.$store.getters.categories
+    //   let newCategories = []
+    //   categories.forEach(category => {
+    //     let filteredDishes = []
+    //     category.dishes.forEach(dish => {
+    //       if (dish.hide == 0)
+    //         filteredDishes.push(dish)
+    //     })
+    //     let newCategory = {}
+    //     newCategory.name = category.name
+    //     newCategory.dishes = filteredDishes
+    //     newCategories.push(newCategory)
+    //   })
+    //   return newCategories
+    // },
     currentCategories() {
       if (this.selectCategory.name == 'Все категории')
         return this.categories
@@ -118,7 +129,23 @@ export default {
       selectCategories.unshift({ name: 'Все категории' })
       return selectCategories
     }
-  }
+  },
+  // created() {
+  //   const date = new Date()
+  //   const dateStr = this.formatDate(date)
+  //   this.$store.dispatch('LOAD_DISHES', { date: dateStr, category: 'all', page: 1 })
+  //   .then(result => {
+  //     this.categories = result
+  //   },
+  //   error => {
+  //     console.log("Error on loading dishes: " + error.message)
+  //   })
+  // },
+  // mounted() {
+  //   console.log('cookies')
+  //   console.log(this.$cookies.keys())
+  //   // console.log(this.$cookies.get('_identity-frontend'))
+  // }
 }
 </script>
 

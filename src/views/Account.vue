@@ -5,21 +5,21 @@
       .account-logo__line
       .account-logo__img
         img(src="../assets/img/user.svg", alt="User icon")
-    form.account-form(action="#", @submit.prevent="checkForm()")
+    form.form.account-form(action="#", @submit.prevent="checkForm()")
       .account-form__inputs
-        .form-block.account-form__block
+        .form-block.account-form__block(:class="{'form-block_error': nameError != ''}")
           label.form-label(for="account-name") Имя
-          input.form-input(type="text", id="account-name", v-model.trim="name", @focusout="checkName()")
+          input.form-input(type="text", id="account-name", v-model.trim="name", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkName()")
           .form-error(v-if="nameError != ''") {{ nameError }}
-        .form-block.account-form__block
+        .form-block.account-form__block(:class="{'form-block_error': surnameError != ''}")
           label.form-label(for="account-surname") Фамилия
-          input.form-input(type="text", id="account-surname", v-model.trim="surname", @focusout="checkSurname()")
+          input.form-input(type="text", id="account-surname", v-model.trim="surname", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkSurname()")
           .form-error(v-if="surnameError != ''") {{ surnameError }}
-        .form-block.account-form__block
+        .form-block.account-form__block(:class="{'form-block_error': middlenameError != ''}")
           label.form-label(for="account-middlename") Отчество (не обязательно)
-          input.form-input(type="text", id="account-middlename", v-model.trim="middlename", @focusout="checkMiddlename()")
+          input.form-input(type="text", id="account-middlename", v-model.trim="middlename", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkMiddlename()")
           .form-error(v-if="middlenameError != ''") {{ middlenameError }}
-        .form-block.account-form__block
+        .form-block.account-form__block(:class="{'form-block_error': oldPasswordError != ''}")
           label.form-label(for="account-password-old") Ваш действующий пароль
           .form-password
             input.form-input(type="password", id="account-password-old", v-model.trim="oldPassword", @focusout="checkOldPassword()")
@@ -28,7 +28,7 @@
             button.form-password__eye(v-if="oldPasswordFocus && oldPasswordShow", @click.prevent="togglePasswordShow('account-password-old')")
               img(src="../assets/img/eye-closed.svg", alt="Closed eye")
           .form-error(v-if="oldPasswordError != ''") {{ oldPasswordError }}
-        .form-block.account-form__block(:class="{'form-block_disabled': !newPasswordEnabled}")
+        .form-block.account-form__block(:class="{'form-block_disabled': !newPasswordEnabled, 'form-block_error': passwordError != ''}")
           label.form-label(for="account-password") Новый пароль
           .form-password
             input.form-input(type="password", id="account-password", v-model.trim="password", @focusout="checkPassword()", :disabled="!newPasswordEnabled")
@@ -39,7 +39,7 @@
             .form-password__eye(v-if="passwordsMatch")
               img(src="../assets/img/tick-success.svg", alt="Tick")
           .form-error(v-if="passwordError != ''") {{ passwordError }}
-        .form-block.account-form__block(:class="{'form-block_disabled': !newPasswordEnabled}")
+        .form-block.account-form__block(:class="{'form-block_disabled': !newPasswordEnabled, 'form-block_error': passwordRepeatError != ''}")
           label.form-label(for="account-password-repeat") Повторите пароль
           .form-password
             input.form-input(type="password", id="account-password-repeat", v-model.trim="passwordRepeat", @focusout="checkPasswordRepeat()", :disabled="!newPasswordEnabled")
@@ -51,14 +51,15 @@
               img(src="../assets/img/tick-success.svg", alt="Tick")
           .form-error(v-if="passwordRepeatError != ''") {{ passwordRepeatError }}
         .form-block.account-form__block.account-form__block__checkbox
-          input.form-input.account-form__checkbox(type="checkbox", id="account-checkbox", @change="toggleCalendar()")
+          input.form-input.account-form__checkbox(type="checkbox", id="account-checkbox", v-model="calendarCheckbox", @change="toggleCalendar()")
           label.form-label(for="account-checkbox") Не заказывать на меня
-        .form-block.account-form__block.account-form__block__calendar
+        .form-block.account-form__block.account-form__block__calendar(:class="{'form-block_disabled': !calendarCheckbox, 'form-block_error': calendarError != ''}")
           label.form-label(@click.prevent="showCalendar()") Начало и окончание периода отмены
-          input.form-input(type="text", id="account-date-start", v-mask="'##.##.####'", v-model.trim="inputsDates.start", @focus="showCalendar()", @change="checkInputs()")
+          input.form-input(type="text", id="account-date-start", v-mask="'##.##.####'", v-model.trim="inputsDates.start", @focus="showCalendar()", @focusout="checkInputs()", :disabled="!calendarCheckbox")
           .account-form__separator
-          input.form-input(type="text", id="account-date-end", v-mask="'##.##.####'", v-model.trim="inputsDates.end", @focus="showCalendar()", @change="checkInputs()")
+          input.form-input(type="text", id="account-date-end", v-mask="'##.##.####'", v-model.trim="inputsDates.end", @focus="showCalendar()", @focusout="checkInputs()", :disabled="!calendarCheckbox")
           FunctionalCalendar.calendar.account-form__calendar(v-model="calendarDates", :configs="calendarConfig")
+          .form-error(v-if="calendarError != ''") {{ calendarError }}
       .account-form__buttons
         button.btn.btn_o.account-form__btn(@click.prevent="goBack()") Вернуться на сайт
         button.form-submit.account-form__btn.account-form__submit(type="submit", :disabled="errors") Подтвердить
@@ -89,6 +90,8 @@ export default {
       passwordRepeatFocus: false,
       passwordRepeatShow: false,
       passwordsMatch: false,
+      calendarCheckbox: false,
+      calendarError: '',
       newPasswordEnabled: false,
       calendarConfig: {
         isDateRange: true,
@@ -114,7 +117,7 @@ export default {
         start: '',
         end: ''
       },
-      isChoosingDate: false
+      // isChoosingDate: false
     }
   },
   methods: {
@@ -123,13 +126,6 @@ export default {
       this.$router.push('/')
     },
     checkForm() {
-      // this.$store.dispatch('LOAD_DATA', 'http://demo7404292.mockable.io/')
-      // .then(
-      //   result => console.log(result),
-      //   error => console.log('error: ' + error)
-      // )
-      // .catch(error => console.log(error))
-      // this.$router.push('/')
       this.checkName()
       this.checkSurname()
       this.checkMiddlename()
@@ -251,6 +247,8 @@ export default {
             this.passwordRepeatError = 'Заполните пароль'
           else if (result == 'wrong')
             this.passwordRepeatError = 'Пароли не совпадают'
+          else if (this.passwordError != '')
+            this.passwordRepeatError = ''
           else {
             this.passwordRepeatError = ''
             this.passwordsMatch = true
@@ -264,11 +262,11 @@ export default {
       return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
     },
     showCalendar() {
-      const checkbox = document.querySelector('.account-form__checkbox')
+      // const checkbox = document.querySelector('.account-form__checkbox')
       const calendar = document.querySelector('.account-form__calendar')
-      checkbox.checked = true
+      // checkbox.checked = true
       calendar.classList.add('account-form__calendar_active')
-      this.isChoosingDate = true
+      // this.isChoosingDate = true
       this.hideCalendar()
     },
     hideCalendar() {
@@ -286,7 +284,8 @@ export default {
         }
         if(calendar.classList.contains('account-form__calendar_active') && !parentsFlag && !e.target.parentNode.classList.contains('account-form__block__calendar') && !e.target.classList.contains('account-form__block__calendar')) {
           calendar.classList.remove('account-form__calendar_active')
-          self.isChoosingDate = false
+          // self.isChoosingDate = false
+          self.checkInputs()
           document.removeEventListener('click', hideOnClickOutside)
         }
       }
@@ -294,11 +293,14 @@ export default {
     },
     toggleCalendar() {
       const calendar = document.querySelector('.account-form__calendar')
-      const checkbox = document.querySelector('.account-form__checkbox')
+      // const checkbox = document.querySelector('.account-form__checkbox')
       const startInput = document.getElementById('account-date-start')
-      if (checkbox.checked) {
+      // if (checkbox.checked) {
+      if (this.calendarCheckbox) {
+        this.showCalendar()
         startInput.focus()
         const date = new Date()
+        date.setDate(date.getDate() + 1)
         let dateStr = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
         this.calendarDates = {
           dateRange: {
@@ -310,11 +312,9 @@ export default {
             }
           }
         }
-        // this.calendarDates.dateRange.start.date = dateStr
-        // this.calendarDates.dateRange.end.date = dateStr
         this.inputsDates.start = this.formatDateInputs(dateStr)
         this.inputsDates.end = this.formatDateInputs(dateStr)
-        this.isChoosingDate = true
+        // this.isChoosingDate = true
       } else {
         this.calendarDates = {
           dateRange: {
@@ -326,27 +326,35 @@ export default {
             }
           }
         }
-        // this.calendarDates.dateRange.start.date = ''
-        // this.calendarDates.dateRange.end.date = ''
         this.inputsDates.start = ''
         this.inputsDates.end = ''
+        this.$store.dispatch('CLEAR_ERRORS', 'dates')
+        this.calendarError = ''
         calendar.classList.remove('account-form__calendar_active')
-        this.isChoosingDate = false
+        // this.isChoosingDate = false
       }
     },
     checkInputs() {
       const startInput = document.getElementById('account-date-start')
       const endInput = document.getElementById('account-date-end')
-      if (startInput.value.length == 10)
+      if (startInput.value.length == 10) {
         this.calendarDates.dateRange.start.date = this.formatDateCalendar(startInput.value)
-      else
+      } else {
         this.calendarDates.dateRange.start.date = false
-      if (endInput.value.length == 10)
+        this.$store.dispatch('SET_ERROR', { type: 'dates', msg: 'wrong' })
+        this.calendarError = 'Дни отмены заказа не выбраны'
+      }
+      if (endInput.value.length == 10) {
         this.calendarDates.dateRange.end.date = this.formatDateCalendar(endInput.value)
-      else
+      } else {
         this.calendarDates.dateRange.end.date = false
+        this.$store.dispatch('SET_ERROR', { type: 'dates', msg: 'wrong' })
+        this.calendarError = 'Дни отмены заказа не выбраны'
+      }
 
       if (startInput.value.length == 10 && endInput.value.length == 10) {
+        this.$store.dispatch('CLEAR_ERRORS', 'dates')
+        this.calendarError = ''
         const startDateArr = startInput.value.split('.')
         const endDateArr = endInput.value.split('.')
         if (parseInt(startDateArr[2]) > parseInt(endDateArr[2])) {
@@ -404,7 +412,7 @@ export default {
     },
     errors() {
       const errors = this.$store.getters.errors
-      if (errors.oldPassword != undefined || errors.password != undefined || errors.passwordRepeat != undefined || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined)
+      if (errors.oldPassword != undefined || errors.password != undefined || errors.passwordRepeat != undefined || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined || errors.dates != undefined)
         return true
       else
         return false
@@ -432,14 +440,17 @@ export default {
       else
         this.passwordRepeatFocus = false
     },
-    isChoosingDate(value) {
-      const checkbox = document.querySelector('.account-form__checkbox')
-      if (!value && (this.calendarDates.dateRange.start.date == false || this.calendarDates.dateRange.end.date == false)) {
-        checkbox.checked = false
-      } else {
-        checkbox.checked = true
-      }
-    },
+    // calendarCheckbox(value) {
+    //   console.log(value)
+    // },
+    // isChoosingDate(value) {
+    //   const checkbox = document.querySelector('.account-form__checkbox')
+    //   if (!value && (this.calendarDates.dateRange.start.date == false || this.calendarDates.dateRange.end.date == false)) {
+    //     checkbox.checked = false
+    //   } else {
+    //     checkbox.checked = true
+    //   }
+    // },
     calendarDates: {
       handler (value) {
         value = {
@@ -506,7 +517,6 @@ export default {
     &__inputs
       display: flex
       justify-content: space-between
-      align-items: center
       flex-wrap: wrap
       margin-bottom: 50px
       &:after

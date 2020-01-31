@@ -5,6 +5,7 @@ import store from './store'
 import VueMask from 'v-mask'
 import vSelect from 'vue-select'
 import FunctionalCalendar from 'vue-functional-calendar'
+import VueCookies from 'vue-cookies'
 
 Vue.config.productionTip = false
 
@@ -20,6 +21,8 @@ Vue.component('v-select', vSelect)
 Vue.use(FunctionalCalendar, {
   dayNames: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
 })
+
+Vue.use(VueCookies)
 
 new Vue({
   router,

@@ -1,14 +1,15 @@
 <template lang="pug">
 .header
   .container
-    button.user
-      .user-img
-        img(src="../assets/img/user.svg", alt="User Image")
-      .user-name {{ surname }} {{ name }}
-      .user-triangle
-        img(src="../assets/img/triangle-down.svg", alt="Triangle down")
+    .header-container
+      button.user(@click.prevent="toggleMenu()")
+        .user-img
+          img(src="../assets/img/user.svg", alt="User Image")
+        .user-name {{ surname }} {{ name }}
+        .user-triangle
+          img(src="../assets/img/triangle-down.svg", alt="Triangle down")
       .user-menu
-        router-link(tag="button", to="/account").user-menu__item Личный кабинет
+        button(@click.prevent="goToAccount()").user-menu__item Личный кабинет
         router-link(tag="button", to="/admin").user-menu__item Администрирование
         button(@click.prevent="signout()").user-menu__item Выход
 </template>
@@ -16,6 +17,16 @@
 <script>
 export default {
   methods: {
+    toggleMenu() {
+      const menuBtn = document.querySelector('.header-container')
+      menuBtn.classList.contains('header-container_active') ? menuBtn.classList.remove('header-container_active') : menuBtn.classList.add('header-container_active')
+    },
+    goToAccount() {
+      this.$store.dispatch('LOAD_ACCOUNT')
+      .then(() => {
+        this.$router.push('/account')
+      })
+    },
     signout() {
       this.$store.dispatch('AUTH_LOGOUT')
       .then(() => {
@@ -30,6 +41,9 @@ export default {
     surname() {
       return this.$store.getters.surname
     }
+  },
+  created() {
+    this.$store.dispatch('LOAD_USERNAME')
   }
 }
 </script>
@@ -40,6 +54,13 @@ export default {
 .header
   padding: 9px 0
   background-color: $c-dark
+  .header-container
+    position: relative
+    &_active
+      .user-triangle
+        transform: rotateX(180deg)
+      div.user-menu
+        display: block
   .container
     display: flex
     justify-content: flex-end
@@ -47,7 +68,6 @@ export default {
     .user
       display: flex
       align-items: center
-      position: relative
       &-img
         width: 32px
         height: 32px
@@ -62,21 +82,22 @@ export default {
         color: $c-light
         transition: 0.2s
         margin-right: 20px
+      &-triangle
+        transition: 0.2s
       &:hover
         .user-name
           color: $c-active
-      &:focus-within
-        .user-menu
-          display: block
+      // &:focus-within
+      //   .user-menu
+      //     display: block
       &-menu
         display: none
         width: 250px
         box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.25)
         position: absolute
         top: calc(100% + 5px)
-        left: 50%
-        margin-left: -125px
-        z-index: 10
+        right: 0
+        z-index: 15
         &__item
           width: 100%
           padding: 14px 24px
@@ -87,16 +108,6 @@ export default {
           &:hover
             background-color: $c-active
             color: $c-light
-
-@media(max-width: 1200px)
-  html
-    .header
-      .container
-        .user
-          &-menu
-            left: auto
-            right: 0
-            margin-left: 0
 
 @media(max-width: 992px)
   html

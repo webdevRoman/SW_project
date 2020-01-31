@@ -4,25 +4,25 @@
     .logo
       img(src="../assets/img/logo.png", alt="Logo")
     .title.signup-title Регистрация
-    form.signup-form(action="#", @submit.prevent="checkForm()")
+    form.form.signup-form(action="#", @submit.prevent="checkForm()")
       .signup-form__inputs
-        .form-block.signup-form__block
+        .form-block.signup-form__block(:class="{'form-block_error': surnameError != ''}")
           label.form-label(for="signup-surname") Фамилия
-          input.form-input(type="text", id="signup-surname", v-model.trim="surname", @focusout="checkSurname()")
+          input.form-input(type="text", id="signup-surname", v-model.trim="surname", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkSurname()")
           .form-error(v-if="surnameError != ''") {{ surnameError }}
-        .form-block.signup-form__block
+        .form-block.signup-form__block(:class="{'form-block_error': nameError != ''}")
           label.form-label(for="signup-name") Имя
-          input.form-input(type="text", id="signup-name", v-model.trim="name", @focusout="checkName()")
+          input.form-input(type="text", id="signup-name", v-model.trim="name", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkName()")
           .form-error(v-if="nameError != ''") {{ nameError }}
-        .form-block.signup-form__block
+        .form-block.signup-form__block(:class="{'form-block_error': middlenameError != ''}")
           label.form-label(for="signup-middlename") Отчество (не обязательно)
-          input.form-input(type="text", id="signup-middlename", v-model.trim="middlename", @focusout="checkMiddlename()")
+          input.form-input(type="text", id="signup-middlename", v-model.trim="middlename", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkMiddlename()")
           .form-error(v-if="middlenameError != ''") {{ middlenameError }}
-        .form-block.signup-form__block
+        .form-block.signup-form__block(:class="{'form-block_error': emailError != ''}")
           label.form-label(for="signup-email") Корпоративная почта SmartWorld
-          input.form-input(type="text", id="signup-email", placeholder="@smartworld.team", v-model.trim="email", @focusout="checkEmail()")
+          input.form-input(type="text", id="signup-email", placeholder="@smartworld.team", v-model.trim="email", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkEmail()")
           .form-error(v-if="emailError != ''") {{ emailError }}
-        .form-block.signup-form__block
+        .form-block.signup-form__block(:class="{'form-block_error': passwordError != ''}")
           label.form-label(for="signup-password") Пароль
           .form-password
             input.form-input(type="password", id="signup-password", v-model.trim="password", @focusout="checkPassword()")
@@ -33,7 +33,7 @@
             .form-password__eye(v-if="passwordsMatch")
               img(src="../assets/img/tick-success.svg", alt="Tick")
           .form-error(v-if="passwordError != ''") {{ passwordError }}
-        .form-block.signup-form__block
+        .form-block.signup-form__block(:class="{'form-block_error': passwordRepeatError != ''}")
           label.form-label(for="signup-password-repeat") Повторите пароль
           .form-password
             input.form-input(type="password", id="signup-password-repeat", v-model.trim="passwordRepeat", @focusout="checkPasswordRepeat()")
@@ -182,6 +182,8 @@ export default {
             this.passwordRepeatError = 'Заполните пароль'
           else if (result == 'wrong')
             this.passwordRepeatError = 'Пароли не совпадают'
+          else if (this.passwordError != '')
+            this.passwordRepeatError = ''
           else {
             this.passwordRepeatError = ''
             this.passwordsMatch = true
@@ -251,7 +253,6 @@ export default {
     &__inputs
       display: flex
       justify-content: space-between
-      align-items: center
       flex-wrap: wrap
     &__block
       flex-basis: 262px

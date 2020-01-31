@@ -1,4 +1,4 @@
-// import Vue from 'vue'
+import Vue from 'vue'
 import axios from 'axios'
 
 export default {
@@ -9,76 +9,85 @@ export default {
     middlename: '',
   },
   mutations: {
-    AUTH_REQUEST(state) {
-      state.status = 'loading'
+    LOAD_USERNAME(state) {
+      const username = Vue.$cookies.get('username')
+      state.name = username.name
+      state.surname = username.surname
     },
-    AUTH_SUCCESS(state, token) {
-      state.status = 'success'
-      state.token = token
-    },
-    AUTH_ERROR(state) {
-      state.status = 'error'
+    SET_USER(state, user) {
+      state.name = user.firstname
+      state.surname = user.lastname
+      Vue.$cookies.set('username', { name: user.firstname, surname: user.lastname })
     },
     AUTH_LOGOUT(state) {
       state.status = ''
       state.token = ''
       state.name = ''
       state.surname = ''
-      state.middlename = ''
+      Vue.$cookies.remove('username')
     }
   },
   actions: {
-    // LOAD_DATA({commit}, url) {
-    //   return new Promise((resolve) => {
-    //     axios.post(url, {id: 235}, {
-    //       headers:  { 
-    //         'Accept': 'application/json',
-    //         'Content-Type': 'application/json'
-    //       }
-    //     })
-    //     .then(
-    //       result => {
-    //         commit('LOAD_DATA', result)
-    //         resolve(result)
-    //       }
-    //     )
-    //   })
-    // },
+    LOAD_USERNAME({commit}) {
+      commit('LOAD_USERNAME')
+    },
     AUTH_REQUEST({commit}, user) {
       return new Promise((resolve, reject) => {
-        commit('AUTH_REQUEST')
         commit('SET_PROCESSING', true)
-        const proxyurl = 'https://cors-anywhere.herokuapp.com/'
-        const url = 'https://pylearn.info/modules/auth/login'
-        axios({ url: proxyurl + url, data: user, method: 'POST' })
+        const url = 'auth/login'
+        axios({ url: url, data: user, method: 'POST' })
         .then(resp => {
-          // const token = resp.data.token
-          // localStorage.setItem('user-token', token)
-          // commit('AUTH_SUCCESS', token)
-          // dispatch('USER_REQUEST')                   // set user name, surname...
+          commit('SET_USER', resp.data)
           commit('SET_PROCESSING', false)
           resolve(resp)
         })
         .catch(err => {
-          commit('AUTH_ERROR', err)
-          // localStorage.removeItem('user-token')
           commit('SET_PROCESSING', false)
           reject(err)
         })
       })
     },
     AUTH_LOGOUT({commit}) {
-      return new Promise((resolve) => {
-        commit('AUTH_LOGOUT')
-        // localStorage.removeItem('user-token')
-        resolve()
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        const url = 'auth/logout'
+        axios({ url: url, method: 'POST' })
+        .then(resp => {
+          commit('AUTH_LOGOUT')
+          commit('SET_PROCESSING', false)
+          resolve()
+        })
+        .catch(err => {
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
       })
-    }
+    },
+    LOAD_ACCOUNT({commit}) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        // const proxyurl = 'https://cors-anywhere.herokuapp.com/'
+        // const url = 'https://pylearn.info/modules/auth/logout'
+        const url = 'account'
+        axios({ url: url, method: 'GET' })
+        .then(resp => {
+          console.log(resp.data)
+          // localStorage.removeItem('user-token')
+          // commit('AUTH_LOGOUT')
+          commit('SET_PROCESSING', false)
+          resolve()
+        })
+        .catch(err => {
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
+      })
+    },
   },
   getters: {
     name: state => state.name,
     surname: state => state.surname,
-    // middlename: state => state.middlename,
+    middlename: state => state.middlename,
     isAuthenticated: state => !!state.token
   }
 }

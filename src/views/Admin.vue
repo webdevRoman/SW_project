@@ -390,7 +390,6 @@ export default {
           font-size: 12px
         .select
           width: 125px
-          height: 33px
           background-color: $c-light
           font-size: 12px
           margin: 0 auto

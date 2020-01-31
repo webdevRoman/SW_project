@@ -19,7 +19,8 @@ body, button, input, a
     display: flex
     justify-content: center
     align-items: center
-    height: 100vh
+    padding: 30px 0
+    min-height: 100vh
     width: 100vw
 .logo
   width: 388px
@@ -57,12 +58,15 @@ body, button, input, a
   &-block
     margin-bottom: 65px
     position: relative
+    transition: 0.2s
     &_disabled
       opacity: 0.5
       .form-label
         cursor: default
         &:hover
           color: lighten($c-dark, 40)
+  div.form-block_error
+    margin-bottom: 75px
   &-label
     display: block
     font-weight: 500
@@ -163,10 +167,15 @@ body, button, input, a
         padding: 15px 24px
         color: darken($c-middle, 40)
       &-menu
+        width: 100%
         max-height: 400px
+        background-color: $c-bg
         overflow-y: scroll
         border-left: 3px solid $c-middle
         border-bottom: 3px solid $c-middle
+        position: absolute
+        top: 100%
+        left: 0
         &::-webkit-scrollbar
           width: 4px
         &::-webkit-scrollbar-button

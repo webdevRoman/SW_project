@@ -2,15 +2,13 @@
   html
     .container
       width: 960px
-      &_center
-        align-items: flex-start
-        height: auto
-        padding: 30px 0
     .logo
       width: 280px
     .form
       &-block
         margin-bottom: 42px
+      div.form-block_error
+        margin-bottom: 65px
 
 @media(max-width: 992px)
   html
@@ -46,6 +44,8 @@
     .form
       &-block
         margin-bottom: 30px
+      div.form-block_error
+        margin-bottom: 50px
       &-submit
         width: 210px
         padding: 18px
@@ -70,11 +70,15 @@
     .form
       &-block
         margin-bottom: 20px
+      div.form-block_error
+        margin-bottom: 40px
       &-label
         font-size: 10px
       &-input
         padding: 3px 0 10px 0
         font-size: 15px
+        &::placeholder
+          font-size: 15px
       &-password
         &__eye
           width: 20px

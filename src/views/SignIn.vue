@@ -4,12 +4,12 @@
     img(src="../assets/img/logo.png", alt="Logo")
   .signin
     .title.signin-title Вход
-    form.signin-form(action="#", @submit.prevent="checkForm()")
-      .form-block
+    form.form.signin-form(action="#", @submit.prevent="checkForm()")
+      .form-block(:class="{'form-block_error': emailError != ''}")
         label.form-label(for="signin-email") Корпоративная почта SmartWorld
         input.form-input(type="text", id="signin-email", placeholder="@smartworld.team", v-model.trim="email", @focusout="checkEmail()")
         .form-error(v-if="emailError != ''") {{ emailError }}
-      .form-block
+      .form-block(:class="{'form-block_error': passwordError != '' || authError != ''}")
         label.form-label(for="signin-password") Пароль
         .form-password
           input.form-input(type="password", id="signin-password", v-model.trim="password", @focusout="checkPassword()")
