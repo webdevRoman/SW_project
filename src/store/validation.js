@@ -3,7 +3,7 @@ import Vue from 'vue'
 export default {
   state: {
     errors: {},
-    nameMask: /^[А-Яа-я]{0,35}$/,
+    nameMask: /^[А-Яа-яё]{0,35}$/,
     emailMask: /^[\w.]{1,34}@smartworld.team$/,
     passwordMask: /^[A-Za-z0-9]{6,25}$/
   },

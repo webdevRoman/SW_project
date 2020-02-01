@@ -21,14 +21,14 @@
                 .dish-info__dot
                 .dish-info__dot
             .dish-footer
-              div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.order > 0}")
-                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order > 0")
-                  img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.order > 0")
+              div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.amount > 0}")
+                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount > 0")
+                  img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.amount > 0")
                   img(src="../assets/img/cart.svg", alt="Cart image", v-else)
-                div(:class="{'cart-number': true, 'cart-number_active': dish.order > 0}")
-                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.order <= 0") -
-                  input.cart-number__value(type="text", v-model.trim="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
-                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99") +
+                div(:class="{'cart-number': true, 'cart-number_active': dish.amount > 0}")
+                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0") -
+                  input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)")
+                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99") +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
                 img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
                 img(src="../assets/img/star.svg", alt="Star image", v-else)
@@ -56,7 +56,7 @@
                   img(src="../assets/img/cart-inactive.svg", alt="Cart image")
                 .cart-number.cart-number_inactive
                   button.cart-number__btn(disabled) -
-                  input.cart-number__value(v-model.trim="dish.order", disabled)
+                  input.cart-number__value(v-model.trim="dish.amount", disabled)
                   button.cart-number__btn(disabled) +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
                 img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
@@ -76,29 +76,29 @@ export default {
   },
   methods: {
     toggleFavourite(dish) {
-      if (!dish.favourite) {
-        this.$store.dispatch('ADD_FAVOURITE', dish)
-        dish.favourite = true
+      if (!dish.elect) {
+        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: false })
+        dish.elect = true
       } else {
-        this.$store.dispatch('REMOVE_FAVOURITE', dish)
-        dish.favourite = false
+        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: true })
+        dish.elect = false
       }
     },
     incrementOrder(dish) {
-      dish.order++
+      dish.amount++
       this.$store.dispatch('SET_OREDER', dish)
     },
     decrementOrder(dish) {
-      dish.order--
+      dish.amount--
       this.$store.dispatch('DECREMENT_OREDER', dish)
     },
     checkOrder(dish) {
-      if (dish.order == '' || !dish.order.match(/\d+/)) {
-        dish.order = 0
+      if (dish.amount == '' || !dish.amount.match(/\d+/)) {
+        dish.amount = 0
         this.$store.dispatch('DECREMENT_OREDER', dish)
-      } else if (dish.order.length > 1 && dish.order[0] == '0') {
-        dish.order = dish.order[1]
-        dish.order = parseInt(dish.order)
+      } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
+        dish.amount = dish.amount[1]
+        dish.amount = parseInt(dish.amount)
         this.$store.dispatch('SET_OREDER', dish)
       } else {
         this.$store.dispatch('SET_OREDER', dish)
@@ -121,7 +121,7 @@ export default {
       let availableFavs = []
       for (const key in this.favourites) {
         const el = this.favourites[key]
-        if (el.hide == 0)
+        if (el.active)
           availableFavs.push(el)
       }
       return availableFavs
@@ -130,7 +130,7 @@ export default {
       let unavailableFavs = []
       for (const key in this.favourites) {
         const el = this.favourites[key]
-        if (el.hide == 1)
+        if (!el.active)
           unavailableFavs.push(el)
       }
       return unavailableFavs

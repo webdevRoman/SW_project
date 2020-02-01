@@ -152,20 +152,39 @@ export default {
     //   dishes:[]
     // }],
     categories: [],
+    meta: {},
+    links: {},
     favourites: {},
     cart: {}
   },
   mutations: {
     SET_CATEGORIES(state, data) {
-
-    },
-    SET_FAVOURITES(state) {
-      state.categories.forEach(category => {
-        category.dishes.forEach(dish => {
-          if (dish.favourite)
-            Vue.set(state.favourites, dish.id, dish)
+      let categories = []
+      if (data != 'err') {
+        data.categories.forEach(cat => {
+          categories.push({ id: cat.id, name: cat.name, dishes: [] })
         })
-      })
+        data.dishes.forEach(dish => {
+          for (let i = 0; i < categories.length; i++) {
+            if (dish.category == categories[i].name) {
+              categories[i].dishes.push(dish)
+              break
+            }
+          }
+        })
+        state.meta = data._meta
+        state.links = data._links
+      }
+      state.categories = categories
+    },
+    SET_FAVOURITES(state, data) {
+      if (data != 'err') {
+        data.dishes.forEach(dish => {
+          Vue.set(state.favourites, dish.id, dish)
+        })
+      } else {
+        state.favourites = {}
+      }
     },
     ADD_FAVOURITE(state, dish) {
       Vue.set(state.favourites, dish.id, dish)
@@ -177,7 +196,7 @@ export default {
       state.favourites = newFavs
     },
     DECREMENT_OREDER(state, dish) {
-      if (dish.order < 1) {
+      if (dish.amount < 1) {
         let newCart = state.cart
         delete newCart[dish.id]
         state.cart = newCart
@@ -193,35 +212,73 @@ export default {
     LOAD_DISHES({commit}, data) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        // const proxyurl = 'https://cors-anywhere.herokuapp.com/'
-        // const url = 'https://pylearn.info/modules/menu'
-        const url = 'menu'
-        const parameters = {}
-        parameters.date = data.date
-        if (data.category != 'all')
-          parameters.category = data.category
-        parameters.page = data.page
-        axios({ url: url, method: 'GET', params: parameters })
+        let requestParams = {}
+        // if (data.link == undefined) {
+          const url = '/modules/menu'
+          const parameters = {}
+          parameters.date = data.date
+          if (data.category != 'all')
+            parameters.category = data.category
+          parameters.page = data.page
+          requestParams = {
+            url: url,
+            method: 'GET',
+            params: parameters
+          }
+        // } else {
+        //   requestParams = { url: data.link, method: 'GET' }
+        // }
+        axios(requestParams)
         .then(resp => {
-          console.log(resp.data)
           commit('SET_CATEGORIES', resp.data)
           commit('SET_PROCESSING', false)
           resolve()
         })
         .catch(err => {
+          commit('SET_CATEGORIES', 'err')
           commit('SET_PROCESSING', false)
           reject(err)
         })
       })
     },
-    SET_FAVOURITES({commit}) {
-      commit('SET_FAVOURITES')
+    LOAD_FAVOURITES({commit}, date) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        let requestParams = {}
+        const url = '/modules/account/elect'
+        requestParams = {
+          url: url,
+          method: 'GET',
+          params: { date: date }
+        }
+        axios(requestParams)
+        .then(resp => {
+          commit('SET_FAVOURITES', resp.data)
+          commit('SET_PROCESSING', false)
+          resolve()
+        })
+        .catch(err => {
+          commit('SET_FAVOURITES', 'err')
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
+      })
     },
-    ADD_FAVOURITE({commit}, dish) {
-      commit('ADD_FAVOURITE', dish)
-    },
-    REMOVE_FAVOURITE({commit}, dish) {
-      commit('REMOVE_FAVOURITE', dish)
+    TOGGLE_FAVOURITE({commit}, data) {
+      commit('SET_PROCESSING', true)
+      axios({ url: '/modules/account/edit', data: data.dish.id, method: 'POST' })
+      .then(resp => {
+        console.log(resp)
+        if (data.remove)
+          commit('REMOVE_FAVOURITE', data.dish)
+        else
+          commit('ADD_FAVOURITE', data.dish)
+        commit('SET_PROCESSING', false)
+      })
+      .catch(err => {
+        console.log(err)
+        commit('SET_PROCESSING', false)
+      })
     },
     DECREMENT_OREDER({commit}, dish) {
       commit('DECREMENT_OREDER', dish)

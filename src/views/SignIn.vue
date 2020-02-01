@@ -20,7 +20,7 @@
         button.signin-form__forget(@click.prevent="goToPassword()") Забыли пароль?
         .form-error(v-if="passwordError != ''") {{ passwordError }}
         .form-error(v-if="authError != ''") {{ authError }}
-      button.form-submit(type="submit", :disabled="errors || processing") Войти
+      button.form-submit(type="submit", :disabled="errors") Войти
       button.signin-form__signup(@click.prevent="goToSignup()") Еще нет аккаунта?
 </template>
 
@@ -57,14 +57,7 @@ export default {
         error => {
           this.$store.dispatch('SET_ERROR', { type: 'auth', msg: 'wrong' })
           this.authError = 'Неверная почта или пароль'
-          // setTimeout(() => {
-          //   this.$store.dispatch('CLEAR_ERRORS', 'auth')
-          //   this.authError = ''
-          // }, 10000)
         })
-        // .then(() => {
-        //   this.$router.push('/')
-        // })
       }
     },
     checkEmail() {
@@ -78,6 +71,8 @@ export default {
         result => {
           if (result == 'empty')
             this.emailError = 'Заполните e-mail'
+          // else if (result == 'wrong')
+          //   this.emailError = 'Невалидный e-mail'
           else {
             this.emailError = ''
             this.$store.dispatch('CLEAR_ERRORS', 'email')

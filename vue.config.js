@@ -3,7 +3,7 @@ module.exports = {
     ? './' // prod
     : '/', // dev
     devServer: {
-      proxy: 'https://pylearn.info/modules/'
+      proxy: 'https://pylearn.info'
       // https: true
     }
 }

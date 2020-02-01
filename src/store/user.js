@@ -34,7 +34,7 @@ export default {
     AUTH_REQUEST({commit}, user) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = 'auth/login'
+        const url = '/modules/auth/login'
         axios({ url: url, data: user, method: 'POST' })
         .then(resp => {
           commit('SET_USER', resp.data)
@@ -50,7 +50,7 @@ export default {
     AUTH_LOGOUT({commit}) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = 'auth/logout'
+        const url = '/modules/auth/logout'
         axios({ url: url, method: 'POST' })
         .then(resp => {
           commit('AUTH_LOGOUT')
@@ -66,14 +66,10 @@ export default {
     LOAD_ACCOUNT({commit}) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        // const proxyurl = 'https://cors-anywhere.herokuapp.com/'
-        // const url = 'https://pylearn.info/modules/auth/logout'
-        const url = 'account'
+        const url = '/modules/account'
         axios({ url: url, method: 'GET' })
         .then(resp => {
           console.log(resp.data)
-          // localStorage.removeItem('user-token')
-          // commit('AUTH_LOGOUT')
           commit('SET_PROCESSING', false)
           resolve()
         })
@@ -81,6 +77,39 @@ export default {
           commit('SET_PROCESSING', false)
           reject(err)
         })
+      })
+    },
+    REG_REQUEST({commit}, user) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        const url = '/modules/auth/signup'
+        axios({ url: url, data: user, method: 'POST' })
+        .then(() => {
+          Vue.$cookies.set('email', user.email)
+          commit('SET_PROCESSING', false)
+          resolve()
+        })
+        .catch(err => {
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
+      })
+    },
+    SEND_LINK({commit}) {
+      return new Promise((resolve, reject) => {
+        if (Vue.$cookies.get('email') != null) {
+          commit('SET_PROCESSING', true)
+          const url = '/modules/auth/resend'
+          axios({ url: url, data: Vue.$cookies.get('email'), method: 'POST' })
+          .then(() => {
+            commit('SET_PROCESSING', false)
+            resolve()
+          })
+          .catch(err => {
+            commit('SET_PROCESSING', false)
+            reject(err)
+          })
+        }
       })
     },
   },

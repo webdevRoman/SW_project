@@ -2,30 +2,22 @@
 .container_center.signup-container
   .logo
     img(src="../assets/img/logo.png", alt="Logo")
-  .signup
+  .signup.container
     .title.signup-title Регистрация
-    form.signup-form(action="#", @submit.prevent="checkForm()")
-      .form-block.signup-form__block
-        label.form-label(for="signup-code") Введите код подтверждения
-        input.form-input(type="text", id="signup-code", v-model.trim="confirmCode")
-      button.form-submit.signup-form__submit(type="submit") Подтвердить
-      button.btn.btn_o.signup-form__repeat(@click.prevent="sendCode()") Отправить новый код
+    .signup-info
+      .signup-info__title Пожалуйста, проверьте почту
+      .signup-info__descr На вашу почту отправлено письмо со ссылкой для подтверждения регистрации
+      button.signup-info__repeat(@click.prevent="sendLink()") Получить новую ссылку
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      confirmCode: ''
-    }
-  },
   methods: {
-    checkForm() {
-      // this.$store.dispatch('SET_USER_AUTH', true)
-      this.$router.push('/')
-    },
-    sendCode() {
-      alert('New code was sent')
+    sendLink() {
+      this.$store.dispatch('SEND_LINK')
+      .then(() => {
+        alert('Новая ссылка отправлена')
+      })
     }
   }
 }
@@ -35,7 +27,6 @@ export default {
 @import "../assets/sass/vars"
 
 .signup
-  width: 262px
   &-container
     flex-direction: column
     .logo
@@ -44,45 +35,50 @@ export default {
     font-size: 30px
     text-align: center
     margin-bottom: 90px
-  &-form
-    &__forget
-      display: block
+  &-info
+    &__title
       font-weight: 500
-      font-size: 13px
-      color: lighten($c-dark, 40)
-      text-decoration: underline
-      margin-top: 12px
-      transition: 0.2s
-      &:hover
-        color: lighten($c-dark, 20)
-    &__signup
-      display: block
+      font-size: 28px
+      text-align: center
+      margin-bottom: 20px
+    &__descr
+      font-weight: 500
+      font-size: 24px
+      text-align: center
+      margin-bottom: 50px
+    &__repeat
       font-weight: 500
       font-size: 13px
       color: lighten($c-dark, 40)
       text-transform: uppercase
       text-decoration: underline
       text-align: center
-      margin-top: 30px
+      margin: 0 auto
       transition: 0.2s
       &:hover
         color: lighten($c-dark, 20)
-    &__repeat
-      width: 100%
-      padding: 20px
-      margin-top: 20px
 
 @media(max-width: 1200px)
   html
-    .container_center
-      align-items: center
-      height: 100vh
     .signup
       &-title
         font-size: 28px
         margin-bottom: 60px
       .logo
         margin-bottom: 25px
+      &-info
+        &__title
+          font-size: 26px
+        &__descr
+          font-size: 22px
+
+@media(max-width: 992px)
+  html
+    .signup
+      &-info
+        &__repeat
+          &:hover
+            color: lighten($c-dark, 40)
 
 @media(max-width: 768px)
   html
@@ -93,38 +89,27 @@ export default {
       &-title
         font-size: 20px
         margin-bottom: 50px
-      .form
-        &-block
-          margin-right: 0
-          &:nth-child(3n)
-            margin-right: 0
-          &:nth-child(2n)
-            margin-right: 0
-        &-submit
-          width: 100%
-          margin-top: 60px
+      &-info
+        &__title
+          font-size: 20px
+          margin-bottom: 10px
+        &__descr
+          font-size: 16px
+          margin-bottom: 30px
+        &__repeat
+          font-size: 10px
 
 @media(max-width: 576px)
   html
     .signup
-      width: 200px
       &-title
         font-size: 15px
         margin-bottom: 25px
       .logo
         margin-bottom: 20px
-      .form
-        &-block
-          margin-right: 0
-          &:nth-child(3n)
-            margin-right: 0
-          &:nth-child(2n)
-            margin-right: 0
-        &-submit
-          width: 100%
-          font-size: 15px
-          margin-top: 60px
-      .btn_o
-        padding: 15px
-        width: 100%
+      &-info
+        &__title
+          font-size: 16px
+        &__descr
+          font-size: 13px
 </style>

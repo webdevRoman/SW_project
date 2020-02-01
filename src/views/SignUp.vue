@@ -44,7 +44,7 @@
             .form-password__eye(v-if="passwordsMatch")
               img(src="../assets/img/tick-success.svg", alt="Tick")
           .form-error(v-if="passwordRepeatError != ''") {{ passwordRepeatError }}
-      button.form-submit.signup-form__submit(type="submit", :disabled="errors || processing") Зарегистрироваться
+      button.form-submit.signup-form__submit(type="submit", :disabled="errors") Зарегистрироваться
       button.signup-form__signin(@click.prevent="goToSignin()") Уже есть аккаунт?
 </template>
 
@@ -83,8 +83,18 @@ export default {
       this.checkEmail()
       this.checkPassword()
       this.checkPasswordRepeat()
-      if (!this.errors)
-        this.$router.push('/email-confirmation')
+      if (!this.errors) {
+        this.$store.dispatch('REG_REQUEST', { email: this.email, firstname: this.name, lastname: this.surname, midname: this.middlename, password: this.password, password_2: this.passwordRepeat })
+        .then(() => {
+          this.$router.push('/email-confirmation')
+        },
+        error => {
+          this.$store.dispatch('SET_ERROR', { type: 'email', msg: 'reserved' })
+          this.emailError = 'Данная почта уже занята'
+          console.log('Error from server:' + error)
+        })
+        // this.$router.push('/email-confirmation')
+      }
     },
     checkName() {
       this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1).toLowerCase()
@@ -146,10 +156,12 @@ export default {
             this.emailError = 'Заполните e-mail'
           else if (result == 'long')
             this.emailError = 'E-mail должен содержать не более 50 символов'
-          else if (result == 'wrong')
-            this.emailError = 'Невалидный e-mail'
-          else
+          // else if (result == 'wrong')
+          //   this.emailError = 'Невалидный e-mail'
+          else {
             this.emailError = ''
+            this.$store.dispatch('CLEAR_ERRORS', 'email')
+          }
         },
         error => console.log("Email checker rejected: " + error.message)
       )
@@ -212,7 +224,7 @@ export default {
   computed: {
     errors() {
       const errors = this.$store.getters.errors
-      if (errors.email != undefined || errors.password != undefined || errors.passwordRepeat != undefined || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined)
+      if (errors.email != undefined && errors.email != 'wrong' || errors.password != undefined || errors.passwordRepeat != undefined || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined)
         return true
       else
         return false

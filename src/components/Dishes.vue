@@ -6,6 +6,7 @@
         template(v-slot:option="option")
           span.select-option {{ option.name }}
   .container
+    .title.favourites-no(v-if="categories.length == 0") На этот день нет блюд
     .category(v-for="category in currentCategories")
       .title.category-title {{ category.name }}
       .title.favourites-no(v-if="category.dishes.length == 0") В этой категории нет блюд
@@ -26,16 +27,16 @@
                 .dish-info__dot
                 .dish-info__dot
             .dish-footer
-              div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.order > 0}")
-                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order > 0")
-                  img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.order > 0")
+              div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.amount > 0}")
+                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount > 0")
+                  img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.amount > 0")
                   img(src="../assets/img/cart.svg", alt="Cart image", v-else)
-                div(:class="{'cart-number': true, 'cart-number_active': dish.order > 0}")
-                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.order <= 0") -
-                  input.cart-number__value(type="text", v-model.trim="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
-                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99") +
+                div(:class="{'cart-number': true, 'cart-number_active': dish.amount > 0}")
+                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0") -
+                  input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)")
+                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99") +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
-                img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
+                img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.elect")
                 img(src="../assets/img/star.svg", alt="Star image", v-else)
   .overlay(v-if="showPopup")
     .popup {{ showingDescr }}
@@ -46,47 +47,36 @@
 export default {
   data() {
     return {
-      categories: [],
       selectCategory: { name: 'Все категории' },
       showPopup: false,
       showingDescr: ''
     }
   },
   methods: {
-    formatDate(date) {
-      let day = date.getDate()
-      let month = date.getMonth() + 1
-      let year = date.getFullYear()
-      if (day.toString().length < 2)
-        day = '0' + day.toString()
-      if (month.toString().length < 2)
-        month = '0' + month.toString()
-      return `${day}/${month}/${year.toString().slice(2)}`
-    },
     toggleFavourite(dish) {
-      if (!dish.favourite) {
+      if (!dish.elect) {
         this.$store.dispatch('ADD_FAVOURITE', dish)
-        dish.favourite = true
+        dish.elect = true
       } else {
         this.$store.dispatch('REMOVE_FAVOURITE', dish)
-        dish.favourite = false
+        dish.elect = false
       }
     },
     incrementOrder(dish) {
-      dish.order++
+      dish.amount++
       this.$store.dispatch('SET_OREDER', dish)
     },
     decrementOrder(dish) {
-      dish.order--
+      dish.amount--
       this.$store.dispatch('DECREMENT_OREDER', dish)
     },
     checkOrder(dish) {
-      if (dish.order == '' || !dish.order.match(/\d+/)) {
-        dish.order = 0
+      if (dish.amount == '' || !dish.amount.match(/\d+/)) {
+        dish.amount = 0
         this.$store.dispatch('DECREMENT_OREDER', dish)
-      } else if (dish.order.length > 1 && dish.order[0] == '0') {
-        dish.order = dish.order[1]
-        dish.order = parseInt(dish.order)
+      } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
+        dish.amount = dish.amount[1]
+        dish.amount = parseInt(dish.amount)
         this.$store.dispatch('SET_OREDER', dish)
       } else {
         this.$store.dispatch('SET_OREDER', dish)
@@ -102,22 +92,9 @@ export default {
     }
   },
   computed: {
-    // categories() {
-    //   const categories = this.$store.getters.categories
-    //   let newCategories = []
-    //   categories.forEach(category => {
-    //     let filteredDishes = []
-    //     category.dishes.forEach(dish => {
-    //       if (dish.hide == 0)
-    //         filteredDishes.push(dish)
-    //     })
-    //     let newCategory = {}
-    //     newCategory.name = category.name
-    //     newCategory.dishes = filteredDishes
-    //     newCategories.push(newCategory)
-    //   })
-    //   return newCategories
-    // },
+    categories() {
+      return this.$store.getters.categories
+    },
     currentCategories() {
       if (this.selectCategory.name == 'Все категории')
         return this.categories
@@ -130,22 +107,6 @@ export default {
       return selectCategories
     }
   },
-  // created() {
-  //   const date = new Date()
-  //   const dateStr = this.formatDate(date)
-  //   this.$store.dispatch('LOAD_DISHES', { date: dateStr, category: 'all', page: 1 })
-  //   .then(result => {
-  //     this.categories = result
-  //   },
-  //   error => {
-  //     console.log("Error on loading dishes: " + error.message)
-  //   })
-  // },
-  // mounted() {
-  //   console.log('cookies')
-  //   console.log(this.$cookies.keys())
-  //   // console.log(this.$cookies.get('_identity-frontend'))
-  // }
 }
 </script>
 
@@ -156,6 +117,7 @@ export default {
 .favourites
   &-no
     text-align: center
+    margin-bottom: 50px
 
 .category
   margin-bottom: 80px

@@ -6,7 +6,7 @@
     .weekdays-arrow__next
   .container
     .weekdays-container(:class="{'weekdays-container_1': offset == 1, 'weekdays-container_2': offset == 2, 'weekdays-container_3': offset == 3}")
-      button.weekday(v-for="weekday in weekdays", :class="{'weekday_active': currentDate == weekday.date}")
+      button.weekday(v-for="weekday in weekdays", :class="{'weekday_active': weekday.fullDate == currentDate}", @click.prevent="chooseDate(weekday.fullDate)")
         .weekday-tick
           img(src="../assets/img/tick-success.svg", alt="Tick")
         .weekday-title {{ weekday.day }}
@@ -17,8 +17,41 @@
 export default {
   data() {
     return {
-      // currentDate: '',
+      currentDate: '',
       offset: 0
+    }
+  },
+  methods: {
+    formatDate(date) {
+      let day = date.getDate()
+      let month = date.getMonth() + 1
+      let year = date.getFullYear()
+      if (day.toString().length < 2)
+        day = '0' + day.toString()
+      if (month.toString().length < 2)
+        month = '0' + month.toString()
+      // return `${day}/${month}/${year.toString().slice(2)}`
+      return `${day}/${month}/${year.toString()}`
+    },
+    chooseDate(date) {
+      this.$store.dispatch('LOAD_DISHES', { date: date, category: 'all', page: 1 })
+      .then(result => {
+        this.currentDate = date
+        this.$store.dispatch('LOAD_FAVOURITES', date)
+        .catch((error) => {
+          console.log("Error on loading favourites: " + error.message)
+        })
+      },
+      error => {
+        this.categories = []
+        this.currentDate = date
+        this.$store.dispatch('LOAD_FAVOURITES', date)
+        .catch((error) => {
+          console.log("Error on loading favourites: " + error.message)
+        })
+        console.log("Error on loading dishes: " + error.message)
+      })
+      
     }
   },
   computed: {
@@ -94,18 +127,28 @@ export default {
           default:
             break;
         }
-        weekdayObj = { day: day, date: date, month: month }
+        weekdayObj = { day: day, date: date, month: month, fullDate: this.formatDate(nextDay) }
         weekdays.push(weekdayObj)
       }
       return weekdays
     },
-    currentDate() {
-      const today = new Date()
-      return today.getDate()
-    },
     screenWidth() {
       return document.body.clientWidth
     }
+  },
+  created() {
+    const date = new Date()
+    this.currentDate = this.formatDate(date)
+    this.$store.dispatch('LOAD_DISHES', { date: this.currentDate, category: 'all', page: 1 })
+    .catch(error => {
+      console.log("Error on loading dishes: " + error.message)
+    })
+    this.$store.dispatch('LOAD_FAVOURITES', this.currentDate)
+    .catch(error => {
+      console.log("Error on loading favourites: " + error.message)
+    })
+
+    // this.$store.dispatch('TOGGLE_FAVOURITE', { dish: { id: 3 }, remove: false })
   }
 }
 </script>
