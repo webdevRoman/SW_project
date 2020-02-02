@@ -73,9 +73,6 @@ export default {
         this.toggleMenu()
     }
   },
-  mounted() {
-    this.$store.dispatch('SET_FAVOURITES')
-  },
   components: {
     Header,
     Cart,

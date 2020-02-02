@@ -253,6 +253,7 @@ export default {
         }
         axios(requestParams)
         .then(resp => {
+          console.log(resp.data);
           commit('SET_FAVOURITES', resp.data)
           commit('SET_PROCESSING', false)
           resolve()

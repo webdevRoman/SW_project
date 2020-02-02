@@ -23,9 +23,9 @@
         .docs-block__title Скачать лист заказов
         div
           .form-block.docs-block__block.docs-block__block__calendar
-            label.form-label(@click.prevent="showCalendar()") Выберите дату
-            input.form-input(type="text", id="orders-date", v-mask="'##.##.####'", v-model.trim="inputDate", @focus="showCalendar()", @change="checkInput()")
-            FunctionalCalendar.calendar.account-form__calendar(v-model="calendarDate", :configs="calendarConfig")
+            label.form-label(@click.prevent="showCalendarDocs()") Выберите дату
+            input.form-input(type="text", id="orders-date", v-mask="'##.##.####'", v-model.trim="inputDate", @focus="showCalendarDocs()", @change="checkInput()")
+            FunctionalCalendar.calendar.account-form__calendar(id="account-form__calendar", v-model="calendarDate", :configs="calendarConfig")
           button.form-submit(type="submit") Скачать
       form.docs-block(action="#")
         .docs-block__title Скачать лист превышений лимита
@@ -46,31 +46,33 @@
           th.status Статус учетной записи
           th.limit Лимит
           th(colspan="3")
-        tr.users-table__line
-          td.name Иванов Иван
-          td.email blablabla@smartworld.tem
+        tr.users-table__line(v-for="user in users")
+          td.name {{ user.firstname }} {{ user.midname }} {{ user.lastname }}
+          td.email {{ user.email }}
           td.role
             .select-container
-              v-select.select(v-model="selectedRole", label="name", index="name", :options="roles", :clearable="false", :searchable="false")
+              v-select.select(v-model="user.role", label="name", index="name", :options="roles", :clearable="false", :searchable="false")
                 template(v-slot:option="option")
                   span.select-option {{ option.name }}
           td.status
             .select-container
-              v-select.select(v-model="selectedStatus", label="name", index="name", :options="statuses", :clearable="false", :searchable="false")
+              v-select.select(v-model="user.status", label="name", index="name", :options="statuses", :clearable="false", :searchable="false")
                 template(v-slot:option="option")
                   span.select-option {{ option.name }}
           td.limit
-            input.form-input(type="text")
+            input.form-input(type="text", v-model="user.limit")
           td.no-order.form-block.account-form__block.account-form__block__checkbox
-            input.form-input.account-form__checkbox(type="checkbox", id="account-checkbox", @change="toggleCalendar()")
+            input.form-input.account-form__checkbox(type="checkbox", :id="`account-checkbox-${user.id}`", v-model="user.order", @change="toggleCalendar(user.id)")
             label.form-label(for="account-checkbox") Не заказывать
-          td.no-order.form-block.account-form__block.account-form__block__calendar
-            label.form-label(@click.prevent="showCalendar()") Начало и окончание периода
+          td.no-order.form-block.account-form__block.account-form__block__calendar(:class="`account-form__block__calendar-${user.id}`")
+            label.form-label(@click.prevent="showCalendar(user.id)") Начало и окончание периода
             .inputs-container
-              input.form-input(type="text", id="account-date-start", v-mask="'##.##.####'", v-model.trim="inputsDates.start", @focus="showCalendar()", @change="checkInputs()")
+              //- input.form-input(type="text", :id="`account-date-start-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.orderDates.dateRange.start.date", @focus="showCalendar(user.id)", @change="checkInputs(user.id)")
+              input.form-input(type="text", :id="`account-date-start-${user.id}`", v-model.trim="user.orderDates.dateRange.start.date", @focus="showCalendar(user.id)", @change="checkInputs(user.id)")
               .account-form__separator
-              input.form-input(type="text", id="account-date-end", v-mask="'##.##.####'", v-model.trim="inputsDates.end", @focus="showCalendar()", @change="checkInputs()")
-            FunctionalCalendar.calendar.account-form__calendar(v-model="calendarDates", :configs="calendarConfig2")
+              //- input.form-input(type="text", :id="`account-date-end-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.orderDates.dateRange.end.date", @focus="showCalendar(user.id)", @change="checkInputs(user.id)")
+              input.form-input(type="text", :id="`account-date-end-${user.id}`", v-model.trim="user.orderDates.dateRange.end.date", @focus="showCalendar(user.id)", @change="checkInputs(user.id)")
+            FunctionalCalendar.calendar.account-form__calendar(:id="`account-form__calendar-${user.id}`", v-model="user.orderDates", :configs="calendarConfig2")
           td.delete
             button.btn Удалить
       .users-btn +
@@ -102,10 +104,10 @@ export default {
         isDateRange: true,
         dateFormat: 'dd.mm.yyyy',
         disabledDayNames: ['Вс'],
-        disabledDates: ['afterToday'],
+        disabledDates: ['beforeToday'],
         monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
         shortMonthNames: ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
-        limits: { min: this.getLimitDates().min, max: this.getLimitDates().max },
+        limits: { min: this.getTodayDate(), max: '31.12.3030' },
         applyStylesheet: false
       },
       inputDate: '',
@@ -115,20 +117,20 @@ export default {
       roles: ['Пользователь', 'Администратор'],
       selectedStatus: '',
       statuses: ['Не подтвержден', 'Подтвержден'],
-      calendarDates: {
-        dateRange: {
-          start: {
-            date: false
-          },
-          end: {
-            date: false
-          }
-        }
-      },
-      inputsDates: {
-        start: '',
-        end: ''
-      },
+      // calendarDates: {
+      //   dateRange: {
+      //     start: {
+      //       date: false
+      //     },
+      //     end: {
+      //       date: false
+      //     }
+      //   }
+      // },
+      // inputsDates: {
+      //   start: '',
+      //   end: ''
+      // },
       isChoosingDate: false
     }
   },
@@ -137,15 +139,15 @@ export default {
       const date = new Date()
       return { min: `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`, max: `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}` }
     },
-    showCalendar() {
-      const calendar = document.querySelector('.account-form__calendar')
+    showCalendarDocs() {
+      const calendar = document.getElementById('account-form__calendar')
       calendar.classList.add('account-form__calendar_active')
-      this.hideCalendar()
+      this.hideCalendarDocs()
     },
-    hideCalendar() {
-      const calendar = document.querySelector('.account-form__calendar')
+    hideCalendarDocs() {
+      const calendar = document.getElementById('account-form__calendar')
       const self = this
-      function hideOnClickOutside(e) {
+      function hideOnClickOutsideDocs(e) {
         let a = e.target
         let parentsFlag = false
         while (a) {
@@ -158,10 +160,10 @@ export default {
         if(calendar.classList.contains('account-form__calendar_active') && !parentsFlag && !e.target.parentNode.classList.contains('docs-block__block__calendar') && !e.target.classList.contains('docs-block__block__calendar')) {
           calendar.classList.remove('account-form__calendar_active')
           self.isChoosingDate = false
-          document.removeEventListener('click', hideOnClickOutside)
+          document.removeEventListener('click', hideOnClickOutsideDocs)
         }
       }
-      document.addEventListener('click', hideOnClickOutside)
+      document.addEventListener('click', hideOnClickOutsideDocs)
     },
     checkInput() {
       const input = document.getElementById('orders-date')
@@ -169,6 +171,97 @@ export default {
         this.calendarDate.selectedDate = this.formatDateCalendar(input.value)
       else
         this.calendarDate.selectedDate = ''
+    },
+    showCalendar(id) {
+      const calendar = document.getElementById(`account-form__calendar-${id}`)
+      calendar.classList.add('account-form__calendar_active')
+      this.hideCalendar(id)
+    },
+    hideCalendar(id) {
+      const calendar = document.getElementById(`account-form__calendar-${id}`)
+      function hideOnClickOutside(e) {
+        let a = e.target
+        let parentsFlag = false
+        while (a) {
+          if (a == calendar) {
+            parentsFlag = true
+            break
+          }
+          a = a.parentNode
+        }
+        if(calendar.classList.contains('account-form__calendar_active') && !parentsFlag && !e.target.parentNode.parentNode.classList.contains(`account-form__block__calendar-${id}`) && !e.target.parentNode.classList.contains(`account-form__block__calendar-${id}`) && !e.target.classList.contains(`account-form__block__calendar-${id}`)) {
+          calendar.classList.remove('account-form__calendar_active')
+          document.removeEventListener('click', hideOnClickOutside)
+        }
+      }
+      document.addEventListener('click', hideOnClickOutside)
+    },
+    checkInputs(id) {
+      const startInput = document.getElementById(`account-date-start-${id}`)
+      const endInput = document.getElementById(`account-date-end-${id}`)
+      // let user
+      // for (let i = 0; i < this.users.length; i++) {
+      //   if (this.users[i].id == id) {
+      //     user = this.users[i]
+      //     break
+      //   }
+      // }
+      // if (startInput.value.length == 10) {
+      //   user.orderDates.dateRange.start.date = this.formatDateCalendar(startInput.value)
+      // } else {
+      //   user.orderDates.dateRange.start.date = false
+      //   // this.$store.dispatch('SET_ERROR', { type: 'dates', msg: 'wrong' })
+      //   // this.calendarError = 'Дни отмены заказа не выбраны'
+      // }
+      // if (endInput.value.length == 10) {
+      //   user.orderDates.dateRange.end.date = this.formatDateCalendar(endInput.value)
+      // } else {
+      //   user.orderDates.dateRange.end.date = false
+      //   // this.$store.dispatch('SET_ERROR', { type: 'dates', msg: 'wrong' })
+      //   // this.calendarError = 'Дни отмены заказа не выбраны'
+      // }
+
+      if (startInput.value.length == 10 && endInput.value.length == 10) {
+        // this.$store.dispatch('CLEAR_ERRORS', 'dates')
+        // this.calendarError = ''
+        const startDateArr = startInput.value.split('.')
+        const endDateArr = endInput.value.split('.')
+        if (parseInt(startDateArr[2]) > parseInt(endDateArr[2])) {
+          let temp = startInput.value
+          startInput.value = endInput.value
+          endInput.value = temp
+          this.swapDates(id)
+        } else if (parseInt(startDateArr[1]) > parseInt(endDateArr[1])) {
+          let temp = startInput.value
+          startInput.value = endInput.value
+          endInput.value = temp
+          this.swapDates(id)
+        } else if (parseInt(startDateArr[0]) > parseInt(endDateArr[0])) {
+          let temp = startInput.value
+          startInput.value = endInput.value
+          endInput.value = temp
+          this.swapDates(id)
+        }
+      }
+    },
+    swapDates(id) {
+      let user
+      for (let i = 0; i < this.users.length; i++) {
+        if (this.users[i].id == id) {
+          user = this.users[i]
+          break
+        }
+      }
+      const inputsTemp = user.orderDates.start.date
+      user.orderDates.start.date = user.orderDates.end.date
+      user.orderDates.end.date = inputsTemp
+      // const calendarTemp = this.calendarDates.dateRange.start.date
+      // this.calendarDates.dateRange.start.date = this.calendarDates.dateRange.end.date
+      // this.calendarDates.dateRange.end.date = calendarTemp
+    },
+    getTodayDate() {
+      const date = new Date()
+      return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
     },
     formatDateInputs(dateStr) {
       let dateArr = dateStr.split('.')
@@ -246,6 +339,9 @@ export default {
         months.push({ name: month + ' ' + currentYear })
       }
       return months
+    },
+    users() {
+      return this.$store.getters.users
     }
   },
   watch: {
@@ -259,6 +355,39 @@ export default {
       },
       deep: true
     },
+    // calendarDate: {
+    //   handler (oldVal, newVal) {
+    //     newVal = { selectedDate:  this.formatDateInputs(oldVal.selectedDate) }
+    //     if (newVal.selectedDate == '')
+    //       this.inputDate = ''
+    //     else
+    //       this.inputDate = newVal.selectedDate
+    //   },
+    //   deep: true
+    // },
+    // users: {
+    //   handler (oldVal, newVal) {
+    //     let newUsers = oldVal.slice()
+    //     newUsers.forEach(user => {
+    //       // let newUser = Object.assign({}, user)
+    //       if (user.orderDates.dateRange.start.date == false)
+    //         user.orderDates.dateRange.start.date = ''
+    //       if (user.orderDates.dateRange.end.date == false)
+    //         user.orderDates.dateRange.end.date = ''
+    //     })
+    //     newVal = newUsers
+    //     // let newUsers = []
+    //     // oldVal.forEach(user => {
+    //     //   let newUser = Object.assign({}, user)
+    //     //   if (user.orderDates.dateRange.start.date == false)
+    //     //     newUser.orderDates.dateRange.start.date = ''
+    //     //   if (user.orderDates.dateRange.end.date == false)
+    //     //     newUser.orderDates.dateRange.end.date = ''
+    //     //   newUsers.push(newUser)
+    //     // })
+    //   },
+    //   deep: true
+    // },
   }
 }
 </script>

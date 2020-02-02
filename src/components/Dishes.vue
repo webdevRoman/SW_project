@@ -55,10 +55,10 @@ export default {
   methods: {
     toggleFavourite(dish) {
       if (!dish.elect) {
-        this.$store.dispatch('ADD_FAVOURITE', dish)
+        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: false })
         dish.elect = true
       } else {
-        this.$store.dispatch('REMOVE_FAVOURITE', dish)
+        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: true })
         dish.elect = false
       }
     },
