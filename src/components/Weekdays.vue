@@ -41,6 +41,10 @@ export default {
         .catch((error) => {
           console.log("Error on loading favourites: " + error.message)
         })
+        this.$store.dispatch('LOAD_CART', date)
+        .catch(error => {
+          console.log("Error on loading cart " + error.message)
+        })
       },
       error => {
         this.categories = []
@@ -51,7 +55,7 @@ export default {
         })
         console.log("Error on loading dishes: " + error.message)
       })
-      
+      this.$store.dispatch('SET_DATE', this.currentDate)
     }
   },
   computed: {
@@ -147,8 +151,11 @@ export default {
     .catch(error => {
       console.log("Error on loading favourites: " + error.message)
     })
-
-    // this.$store.dispatch('TOGGLE_FAVOURITE', { dish: { id: 3 }, remove: false })
+    this.$store.dispatch('LOAD_CART', this.currentDate)
+    .catch(error => {
+      console.log("Error on loading cart " + error.message)
+    })
+    this.$store.dispatch('SET_DATE', this.currentDate)
   }
 }
 </script>

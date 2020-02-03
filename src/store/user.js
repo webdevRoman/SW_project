@@ -3,6 +3,8 @@ import axios from 'axios'
 
 export default {
   state: {
+    isAuthenticated: false,
+    isAdmin: true,
     token: localStorage.getItem('user-token') || '',
     name: '',
     surname: '',
@@ -13,10 +15,12 @@ export default {
       const username = Vue.$cookies.get('username')
       state.name = username.name
       state.surname = username.surname
+      state.isAuthenticated = true
     },
     SET_USER(state, user) {
       state.name = user.firstname
       state.surname = user.lastname
+      state.isAuthenticated = true
       Vue.$cookies.set('username', { name: user.firstname, surname: user.lastname })
     },
     AUTH_LOGOUT(state) {
@@ -24,7 +28,11 @@ export default {
       state.token = ''
       state.name = ''
       state.surname = ''
+      state.isAuthenticated = false
       Vue.$cookies.remove('username')
+    },
+    SET_AUTHENTICATED(state, data) {
+      state.isAuthenticated = data
     }
   },
   actions: {
@@ -112,11 +120,51 @@ export default {
         }
       })
     },
+    CHECK_AUTHORIZED({commit}) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        if (Vue.$cookies.get('username') != null) {
+          commit('SET_AUTHENTICATED', true)
+          commit('SET_PROCESSING', false)
+          resolve()
+        } else {
+          commit('SET_AUTHENTICATED', false)
+          commit('SET_PROCESSING', false)
+          reject()
+        }
+      })
+    },
+    CHECK_AUTHORIZED_ADMIN({commit, dispatch, getters}) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        dispatch('CHECK_AUTHORIZED')
+        .then(() => {
+          if (getters.isAdmin)
+            resolve()
+          else
+            reject()
+          // if (Vue.$cookies.get('username') != null) {
+          //   commit('SET_AUTHENTICATED', true)
+          //   commit('SET_PROCESSING', false)
+          //   resolve()
+          // } else {
+          //   commit('SET_AUTHENTICATED', false)
+          //   commit('SET_PROCESSING', false)
+          //   reject()
+          // }
+        })
+        .catch(() => {
+          reject()
+        })
+      })
+    }
   },
   getters: {
     name: state => state.name,
     surname: state => state.surname,
     middlename: state => state.middlename,
-    isAuthenticated: state => !!state.token
+    isAuthenticated: state => state.isAuthenticated,
+    // isAuthenticated: state => !!state.token
+    isAdmin: state => state.isAdmin
   }
 }

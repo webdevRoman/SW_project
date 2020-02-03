@@ -63,23 +63,19 @@ export default {
       }
     },
     incrementOrder(dish) {
-      dish.amount++
-      this.$store.dispatch('SET_OREDER', dish)
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount + 1 })
     },
     decrementOrder(dish) {
-      dish.amount--
-      this.$store.dispatch('DECREMENT_OREDER', dish)
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount - 1 })
     },
     checkOrder(dish) {
       if (dish.amount == '' || !dish.amount.match(/\d+/)) {
-        dish.amount = 0
-        this.$store.dispatch('DECREMENT_OREDER', dish)
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
       } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
-        dish.amount = dish.amount[1]
-        dish.amount = parseInt(dish.amount)
-        this.$store.dispatch('SET_OREDER', dish)
+        let tempAmount = parseInt(dish.amount[1])
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: tempAmount })
       } else {
-        this.$store.dispatch('SET_OREDER', dish)
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount })
       }
     },
     showDescr(descr) {
@@ -211,6 +207,9 @@ export default {
               transition: 0.2s
               &:hover
                 transform: scale(1.3)
+              &[disabled]
+                &:hover
+                  transform: scale(1)
             &-number
               display: flex
               align-items: center
@@ -227,6 +226,9 @@ export default {
                   margin-right: 0
                 &:hover
                   transform: scale(1.4)
+                &[disabled]
+                  &:hover
+                    transform: scale(1)
               &__value
                 width: 20px
                 background-color: transparent

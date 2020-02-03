@@ -9,9 +9,9 @@
         .user-triangle
           img(src="../assets/img/triangle-down.svg", alt="Triangle down")
       .user-menu
-        button(@click.prevent="goToAccount()").user-menu__item Личный кабинет
-        router-link(tag="button", to="/admin").user-menu__item Администрирование
-        button(@click.prevent="signout()").user-menu__item Выход
+        button.user-menu__item(@click.prevent="goToAccount()") Личный кабинет
+        router-link.user-menu__item(tag="button", to="/admin", v-if="isAdmin") Администрирование
+        button.user-menu__item(@click.prevent="signout()") Выход
 </template>
 
 <script>
@@ -40,6 +40,9 @@ export default {
     },
     surname() {
       return this.$store.getters.surname
+    },
+    isAdmin() {
+      return this.$store.getters.isAdmin
     }
   },
   created() {

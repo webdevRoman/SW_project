@@ -15,10 +15,10 @@
               .cart-item__price {{ dish.price }} Р
               .cart-item__name {{ dish.name }}
               .cart-item__number
-                button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.order <= 0") -
-                input.cart-number__value(type="text", v-model.trim="dish.order", v-mask="'##'", @focusout="checkOrder(dish)")
-                button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.order >= 99") +
-              button.cart-item__fav(@click.prevent="toggleFavourite(dish)", v-if="dish.favourite")
+                button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0") -
+                input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)")
+                button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99") +
+              button.cart-item__fav(@click.prevent="toggleFavourite(dish)", v-if="dish.elect")
                 .cart-fav__img
                   img(src="../assets/img/star-active.svg", alt="Star image")
                 .cart-fav__text В избранном
@@ -28,7 +28,7 @@
                 .cart-fav__text В избранное
         button.cart-item__delete(@click.prevent="deleteOrder(dish)") &times;
       .cart-item__sum
-        div Всего: <span class="cart-sum__value">{{ dish.price * dish.order }}</span> Р
+        div Всего: <span class="cart-sum__value">{{ dish.price * dish.amount }}</span> Р
   .cart-price(v-if="!isConfirmed")
     .cart-price__line.cart-price__sum
       .cart-price__text Итого
@@ -57,36 +57,31 @@ export default {
       cart.style.display = 'none'
     },
     incrementOrder(dish) {
-      dish.order++
-      this.$store.dispatch('SET_OREDER', dish)
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount + 1 })
     },
     decrementOrder(dish) {
-      dish.order--
-      this.$store.dispatch('DECREMENT_OREDER', dish)
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount - 1 })
     },
     deleteOrder(dish) {
-      dish.order = 0
-      this.$store.dispatch('DECREMENT_OREDER', dish)
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
     },
     checkOrder(dish) {
-      if (dish.order == '' || !dish.order.match(/\d+/)) {
-        dish.order = 0
-        this.$store.dispatch('DECREMENT_OREDER', dish)
-      } else if (dish.order.length > 1 && dish.order[0] == '0') {
-        dish.order = dish.order[1]
-        dish.order = parseInt(dish.order)
-        this.$store.dispatch('SET_OREDER', dish)
+      if (dish.amount == '' || !dish.amount.match(/\d+/)) {
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
+      } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
+        let tempAmount = parseInt(dish.amount[1])
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: tempAmount })
       } else {
-        this.$store.dispatch('SET_OREDER', dish)
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount })
       }
     },
     toggleFavourite(dish) {
       if (!dish.favourite) {
-        this.$store.dispatch('ADD_FAVOURITE', dish)
-        dish.favourite = true
+        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: false })
+        dish.elect = true
       } else {
-        this.$store.dispatch('REMOVE_FAVOURITE', dish)
-        dish.favourite = false
+        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: true })
+        dish.elect = false
       }
     },
     clearCart() {
@@ -117,7 +112,7 @@ export default {
     currentSum() {
       let sum = 0
       for (const key in this.cartItems) {
-        sum += this.cartItems[key].price * this.cartItems[key].order
+        sum += this.cartItems[key].price * this.cartItems[key].amount
       }
       return sum
     }

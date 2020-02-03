@@ -3,6 +3,7 @@ import axios from 'axios'
 
 export default {
   state: {
+    date: '',
     // categories: [{
     //   name: 'Название категории 1',
     //   dishes: [{
@@ -158,6 +159,9 @@ export default {
     cart: {}
   },
   mutations: {
+    SET_DATE(state, date) {
+      state.date = date
+    },
     SET_CATEGORIES(state, data) {
       let categories = []
       if (data != 'err') {
@@ -194,21 +198,39 @@ export default {
       Vue.set(state.favourites, dish.id, null)
       delete newFavs[dish.id]
       state.favourites = newFavs
-    },
-    DECREMENT_OREDER(state, dish) {
-      if (dish.amount < 1) {
-        let newCart = state.cart
-        delete newCart[dish.id]
-        state.cart = newCart
-      } else {
-        Vue.set(state.cart, dish.id, dish)
+      for (let i = 0; i < state.categories.length; i++) {
+        for (let j = 0; j < state.categories[i].dishes.length; j++) {
+          const d = state.categories[i].dishes[j]
+          if (d.id == dish.id)
+            Vue.set(state.categories[i].dishes[j], 'elect', false)
+        }
       }
     },
-    SET_OREDER(state, dish) {
-      Vue.set(state.cart, dish.id, dish)
+    SET_CART(state, data) {
+      if (data != 'err') {
+        data.dishes.forEach(dish => {
+          Vue.set(state.cart, dish.id, dish)
+        })
+      } else {
+        state.cart = {}
+      }
+    },
+    SET_OREDER(state, data) {
+      data.dish.amount = data.amount
+      if (data.amount != 0) {
+        state.cart[data.dish.id] = data.dish
+      } else {
+        let newCart = state.cart
+        delete newCart[data.dish.id]
+        state.cart = newCart
+      }
+      // Vue.set(state.cart, data.dish.id, data.dish)
     }
   },
   actions: {
+    SET_DATE({commit}, date) {
+      commit('SET_DATE', date)
+    },
     LOAD_DISHES({commit}, data) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
@@ -253,7 +275,6 @@ export default {
         }
         axios(requestParams)
         .then(resp => {
-          console.log(resp.data);
           commit('SET_FAVOURITES', resp.data)
           commit('SET_PROCESSING', false)
           resolve()
@@ -267,9 +288,8 @@ export default {
     },
     TOGGLE_FAVOURITE({commit}, data) {
       commit('SET_PROCESSING', true)
-      axios({ url: '/modules/account/edit', data: data.dish.id, method: 'POST' })
+      axios({ url: '/modules/account/edit', data: { id: data.dish.id }, method: 'POST' })
       .then(resp => {
-        console.log(resp)
         if (data.remove)
           commit('REMOVE_FAVOURITE', data.dish)
         else
@@ -277,18 +297,54 @@ export default {
         commit('SET_PROCESSING', false)
       })
       .catch(err => {
-        console.log(err)
         commit('SET_PROCESSING', false)
       })
     },
-    DECREMENT_OREDER({commit}, dish) {
-      commit('DECREMENT_OREDER', dish)
+    LOAD_CART({commit}, date) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        let requestParams = {}
+        const url = '/modules/basket'
+        requestParams = {
+          url: url,
+          method: 'GET',
+          params: { date: date }
+        }
+        axios(requestParams)
+        .then(resp => {
+          commit('SET_CART', resp.data)
+          commit('SET_PROCESSING', false)
+          resolve()
+        })
+        .catch(err => {
+          commit('SET_CART', 'err')
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
+      })
     },
-    SET_OREDER({commit}, dish) {
-      commit('SET_OREDER', dish)
+    SET_OREDER({commit, getters}, data) {
+      commit('SET_PROCESSING', true)
+      let parameters = { data: { date: getters.date, id: data.dish.id }, method: 'POST' }
+      if (data.amount != 0) {
+        parameters.url = '/modules/basket/add'
+        parameters.data.amount = data.amount
+      } else {
+        parameters.url = '/modules/basket/delete'
+      }
+      axios(parameters)
+      .then(resp => {
+        data.dish.amount = data.amount
+        commit('SET_OREDER', data)
+        commit('SET_PROCESSING', false)
+      })
+      .catch(err => {
+        commit('SET_PROCESSING', false)
+      })
     }
   },
   getters: {
+    date: (state) => state.date,
     categories: (state) => state.categories,
     favourites: (state) => state.favourites,
     cart: (state) => state.cart

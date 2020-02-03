@@ -30,8 +30,7 @@
                   input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)")
                   button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99") +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
-                img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
-                img(src="../assets/img/star.svg", alt="Star image", v-else)
+                img(src="../assets/img/star-active.svg", alt="Star image")
     .category(v-if="unavailableFavs.length > 0")
       .title.category-title Недоступные блюда
       .category-dishes
@@ -59,8 +58,7 @@
                   input.cart-number__value(v-model.trim="dish.amount", disabled)
                   button.cart-number__btn(disabled) +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
-                img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.favourite")
-                img(src="../assets/img/star.svg", alt="Star image", v-else)
+                img(src="../assets/img/star-active.svg", alt="Star image")
   .overlay(v-if="showPopup")
     .popup {{ showingDescr }}
       button.popup-close(@click.prevent="hideDescr()") &times;
@@ -76,32 +74,22 @@ export default {
   },
   methods: {
     toggleFavourite(dish) {
-      if (!dish.elect) {
-        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: false })
-        dish.elect = true
-      } else {
-        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: true })
-        dish.elect = false
-      }
+      this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: true })
     },
     incrementOrder(dish) {
-      dish.amount++
-      this.$store.dispatch('SET_OREDER', dish)
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount + 1 })
     },
     decrementOrder(dish) {
-      dish.amount--
-      this.$store.dispatch('DECREMENT_OREDER', dish)
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount - 1 })
     },
     checkOrder(dish) {
       if (dish.amount == '' || !dish.amount.match(/\d+/)) {
-        dish.amount = 0
-        this.$store.dispatch('DECREMENT_OREDER', dish)
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
       } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
-        dish.amount = dish.amount[1]
-        dish.amount = parseInt(dish.amount)
-        this.$store.dispatch('SET_OREDER', dish)
+        let tempAmount = parseInt(dish.amount[1])
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: tempAmount })
       } else {
-        this.$store.dispatch('SET_OREDER', dish)
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount })
       }
     },
     showDescr(descr) {
@@ -240,6 +228,9 @@ export default {
               transition: 0.2s
               &:hover
                 transform: scale(1.3)
+              &[disabled]
+                &:hover
+                  transform: scale(1)
             &-number
               display: flex
               align-items: center
@@ -256,6 +247,9 @@ export default {
                   margin-right: 0
                 &:hover
                   transform: scale(1.4)
+                &[disabled]
+                  &:hover
+                    transform: scale(1)
               &__value
                 width: 20px
                 background-color: transparent

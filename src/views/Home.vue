@@ -62,7 +62,7 @@ export default {
     currentSum() {
       let sum = 0
       for (const key in this.cartItems) {
-        sum += this.cartItems[key].price * this.cartItems[key].order
+        sum += this.cartItems[key].price * this.cartItems[key].amount
       }
       return sum
     }
