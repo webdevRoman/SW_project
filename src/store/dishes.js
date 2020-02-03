@@ -191,7 +191,18 @@ export default {
       }
     },
     ADD_FAVOURITE(state, dish) {
+      dish.active = true
       Vue.set(state.favourites, dish.id, dish)
+      for (let i = 0; i < state.categories.length; i++) {
+        for (let j = 0; j < state.categories[i].dishes.length; j++) {
+          const d = state.categories[i].dishes[j]
+          if (d.id == dish.id)
+            Vue.set(state.categories[i].dishes[j], 'elect', true)
+        }
+      }
+      if (state.cart[dish.id] != undefined)
+        Vue.set(state.cart[dish.id], 'elect', true)
+        // state.cart[dish.id].elect = true
     },
     REMOVE_FAVOURITE(state, dish) {
       let newFavs = state.favourites
@@ -205,6 +216,8 @@ export default {
             Vue.set(state.categories[i].dishes[j], 'elect', false)
         }
       }
+      if (state.cart[dish.id] != undefined)
+        Vue.set(state.cart[dish.id], 'elect', false)
     },
     SET_CART(state, data) {
       if (data != 'err') {
@@ -218,13 +231,21 @@ export default {
     SET_OREDER(state, data) {
       data.dish.amount = data.amount
       if (data.amount != 0) {
-        state.cart[data.dish.id] = data.dish
+        Vue.set(state.cart, data.dish.id, data.dish)
       } else {
         let newCart = state.cart
         delete newCart[data.dish.id]
         state.cart = newCart
       }
-      // Vue.set(state.cart, data.dish.id, data.dish)
+      for (let i = 0; i < state.categories.length; i++) {
+        for (let j = 0; j < state.categories[i].dishes.length; j++) {
+          const d = state.categories[i].dishes[j]
+          if (d.id == data.dish.id)
+            Vue.set(state.categories[i].dishes[j], 'amount', data.amount)
+        }
+      }
+      if (state.favourites[data.dish.id] != undefined)
+        Vue.set(state.favourites[data.dish.id], 'amount', data.amount)
     }
   },
   actions: {
@@ -313,6 +334,7 @@ export default {
         axios(requestParams)
         .then(resp => {
           commit('SET_CART', resp.data)
+          commit('SET_LIMIT', resp.data.total + resp.data.balance)
           commit('SET_PROCESSING', false)
           resolve()
         })
@@ -327,7 +349,10 @@ export default {
       commit('SET_PROCESSING', true)
       let parameters = { data: { date: getters.date, id: data.dish.id }, method: 'POST' }
       if (data.amount != 0) {
-        parameters.url = '/modules/basket/add'
+        if (data.amount >= data.dish.amount)
+          parameters.url = '/modules/basket/add'
+        else
+          parameters.url = '/modules/basket/reduce'
         parameters.data.amount = data.amount
       } else {
         parameters.url = '/modules/basket/delete'

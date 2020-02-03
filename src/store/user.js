@@ -9,6 +9,7 @@ export default {
     name: '',
     surname: '',
     middlename: '',
+    limit: 0
   },
   mutations: {
     LOAD_USERNAME(state) {
@@ -33,6 +34,9 @@ export default {
     },
     SET_AUTHENTICATED(state, data) {
       state.isAuthenticated = data
+    },
+    SET_LIMIT(state, limit) {
+      Vue.set(state, 'limit', limit)
     }
   },
   actions: {
@@ -165,6 +169,7 @@ export default {
     middlename: state => state.middlename,
     isAuthenticated: state => state.isAuthenticated,
     // isAuthenticated: state => !!state.token
-    isAdmin: state => state.isAdmin
+    isAdmin: state => state.isAdmin,
+    limit: state => state.limit,
   }
 }

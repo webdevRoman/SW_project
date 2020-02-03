@@ -77,10 +77,10 @@ export default {
       this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: true })
     },
     incrementOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount + 1 })
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) + 1 })
     },
     decrementOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount - 1 })
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) - 1 })
     },
     checkOrder(dish) {
       if (dish.amount == '' || !dish.amount.match(/\d+/)) {

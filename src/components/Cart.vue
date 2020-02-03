@@ -47,7 +47,6 @@
 export default {
   data() {
     return {
-      priceLimit: 200,
       isConfirmed: false
     }
   },
@@ -56,11 +55,20 @@ export default {
       const cart = document.querySelector('.cart-popup')
       cart.style.display = 'none'
     },
+    toggleFavourite(dish) {
+      if (!dish.elect) {
+        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: false })
+        dish.elect = true
+      } else {
+        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: true })
+        dish.elect = false
+      }
+    },
     incrementOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount + 1 })
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) + 1 })
     },
     decrementOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount - 1 })
+      this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) - 1 })
     },
     deleteOrder(dish) {
       this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
@@ -75,20 +83,11 @@ export default {
         this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount })
       }
     },
-    toggleFavourite(dish) {
-      if (!dish.favourite) {
-        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: false })
-        dish.elect = true
-      } else {
-        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: true })
-        dish.elect = false
-      }
-    },
     clearCart() {
       for (const key in this.cartItems) {
         const dish = this.cartItems[key]
         dish.order = 0
-        this.$store.dispatch('DECREMENT_OREDER', dish)
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
       }
     },
     confirmOrder() {
@@ -115,6 +114,9 @@ export default {
         sum += this.cartItems[key].price * this.cartItems[key].amount
       }
       return sum
+    },
+    priceLimit() {
+      return this.$store.getters.limit
     }
   }
 }
