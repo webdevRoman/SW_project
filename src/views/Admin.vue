@@ -36,7 +36,7 @@
                 span.select-option {{ option.name }}
           button.form-submit(type="submit") Скачать
   .admin-main.admin-users(v-if="chosenSection == 'users'")
-    form.users-container(action="#")
+    form.users-container(action="#", @submit.prevent="saveChanges()")
       .users-title Управление пользователями
       table.users-table
         tr.users-table__header
@@ -60,27 +60,25 @@
                 template(v-slot:option="option")
                   span.select-option {{ option.name }}
           td.limit
-            input.form-input(type="text", v-model="user.limit")
+            input.form-input(type="text", v-model="user.limit", v-mask="'####'")
           td.no-order.form-block.account-form__block.account-form__block__checkbox
-            input.form-input.account-form__checkbox(type="checkbox", :id="`account-checkbox-${user.id}`", v-model="user.order", @change="toggleCalendar(user.id)")
-            label.form-label(for="account-checkbox") Не заказывать
-          td.no-order.form-block.account-form__block.account-form__block__calendar(:class="`account-form__block__calendar-${user.id}`")
-            label.form-label(@click.prevent="showCalendar(user.id)") Начало и окончание периода
+            input.form-input.account-form__checkbox(type="checkbox", :id="`account-checkbox-${user.id}`", v-model="user.order", @change="toggleCalendar(user)")
+            label.form-label(:for="`account-checkbox-${user.id}`") Не заказывать
+          td.no-order.form-block.account-form__block.account-form__block__calendar(:class="[calendarClass(user.id), {'form-block_disabled': !user.order}]")
+            label.form-label(@click.prevent="showCalendar(user)") Начало и окончание периода
             .inputs-container
-              //- input.form-input(type="text", :id="`account-date-start-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.orderDates.dateRange.start.date", @focus="showCalendar(user.id)", @change="checkInputs(user.id)")
-              input.form-input(type="text", :id="`account-date-start-${user.id}`", v-model.trim="user.orderDates.dateRange.start.date", @focus="showCalendar(user.id)", @change="checkInputs(user.id)")
+              input.form-input(type="text", :id="`account-date-start-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.inputsDates.start", @focus="showCalendar(user)", @focusout="checkInputs(user)", , :disabled="!user.order")
               .account-form__separator
-              //- input.form-input(type="text", :id="`account-date-end-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.orderDates.dateRange.end.date", @focus="showCalendar(user.id)", @change="checkInputs(user.id)")
-              input.form-input(type="text", :id="`account-date-end-${user.id}`", v-model.trim="user.orderDates.dateRange.end.date", @focus="showCalendar(user.id)", @change="checkInputs(user.id)")
-            FunctionalCalendar.calendar.account-form__calendar(:id="`account-form__calendar-${user.id}`", v-model="user.orderDates", :configs="calendarConfig2")
+              input.form-input(type="text", :id="`account-date-end-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.inputsDates.end", @focus="showCalendar(user)", @focusout="checkInputs(user)", , :disabled="!user.order")
+            FunctionalCalendar.calendar.account-form__calendar(:id="`account-form__calendar-${user.id}`", v-model="user.calendarDates", :configs="calendarConfig2")
           td.delete
-            button.btn Удалить
+            button.btn(@click.prevent="deleteUser(user.id)") Удалить
       .users-btn +
       .users-bottom
         .form-block
           label.form-label(for="users-limit") Установить лимит всем пользователями
           .form-block__line
-            input.form-input(type="text")
+            input.form-input(type="text", v-model="limit", @change="setAllLimit()")
             span Р
         button.form-submit(type="submit") Сохранить изменения
 </template>
@@ -117,21 +115,7 @@ export default {
       roles: ['Пользователь', 'Администратор'],
       selectedStatus: '',
       statuses: ['Не подтвержден', 'Подтвержден'],
-      // calendarDates: {
-      //   dateRange: {
-      //     start: {
-      //       date: false
-      //     },
-      //     end: {
-      //       date: false
-      //     }
-      //   }
-      // },
-      // inputsDates: {
-      //   start: '',
-      //   end: ''
-      // },
-      isChoosingDate: false
+      limit: ''
     }
   },
   methods: {
@@ -172,13 +156,68 @@ export default {
       else
         this.calendarDate.selectedDate = ''
     },
-    showCalendar(id) {
-      const calendar = document.getElementById(`account-form__calendar-${id}`)
-      calendar.classList.add('account-form__calendar_active')
-      this.hideCalendar(id)
+    // checkChange(user) {
+    //   console.log(this.users);
+    //   console.log(user.limit);
+    // },
+    toggleCalendar(user) {
+      const calendar = document.getElementById(`account-form__calendar-${user.id}`)
+      const startInput = document.getElementById(`account-date-start-${user.id}`)
+      if (user.order) {
+        this.showCalendar(user)
+        startInput.focus()
+        const date = new Date()
+        date.setDate(date.getDate() + 1)
+        let dateStr = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
+        user.calendarDates = {
+          dateRange: {
+            start: {
+              date: dateStr
+            },
+            end: {
+              date: dateStr
+            }
+          }
+        }
+        user.inputsDates.start = this.formatDateInputs(dateStr)
+        user.inputsDates.end = this.formatDateInputs(dateStr)
+      } else {
+        user.calendarDates = {
+          dateRange: {
+            start: {
+              date: false
+            },
+            end: {
+              date: false
+            }
+          }
+        }
+        user.inputsDates.start = ''
+        user.inputsDates.end = ''
+        // this.$store.dispatch('CLEAR_ERRORS', 'dates')
+        // this.calendarError = ''
+        calendar.classList.remove('account-form__calendar_active')
+      }
     },
-    hideCalendar(id) {
-      const calendar = document.getElementById(`account-form__calendar-${id}`)
+    calendarClass(id) {
+      return `account-form__block__calendar-${id}`
+    },
+    setAllLimit() {
+      if (this.limit != '')
+        for (let i = 0; i < this.users.length; i++)
+          this.users[i].limit = parseInt(this.limit)
+    },
+    showCalendar(user) {
+      if (user.order) {
+        user.calendarDates = JSON.parse(JSON.stringify(user.calendarDates))
+        const calendar = document.getElementById(`account-form__calendar-${user.id}`)
+        calendar.classList.add('account-form__calendar_active')
+        this.hideCalendar(user)
+      }
+    },
+    hideCalendar(user) {
+      const calendar = document.getElementById(`account-form__calendar-${user.id}`)
+      const self = this
       function hideOnClickOutside(e) {
         let a = e.target
         let parentsFlag = false
@@ -189,37 +228,39 @@ export default {
           }
           a = a.parentNode
         }
-        if(calendar.classList.contains('account-form__calendar_active') && !parentsFlag && !e.target.parentNode.parentNode.classList.contains(`account-form__block__calendar-${id}`) && !e.target.parentNode.classList.contains(`account-form__block__calendar-${id}`) && !e.target.classList.contains(`account-form__block__calendar-${id}`)) {
+        if(calendar.classList.contains('account-form__calendar_active') && !parentsFlag && !e.target.parentNode.parentNode.classList.contains(`account-form__block__calendar-${user.id}`) && !e.target.parentNode.classList.contains(`account-form__block__calendar-${user.id}`) && !e.target.classList.contains(`account-form__block__calendar-${user.id}`)) {
+          if (user.calendarDates.dateRange.start.date.length >= 8 && user.calendarDates.dateRange.start.date.length <= 10)
+            user.inputsDates.start = self.formatDateInputs(user.calendarDates.dateRange.start.date)
+          if (user.calendarDates.dateRange.end.date.length >= 8 && user.calendarDates.dateRange.end.date.length <= 10)
+            user.inputsDates.end = self.formatDateInputs(user.calendarDates.dateRange.end.date)
           calendar.classList.remove('account-form__calendar_active')
           document.removeEventListener('click', hideOnClickOutside)
         }
       }
       document.addEventListener('click', hideOnClickOutside)
     },
-    checkInputs(id) {
-      const startInput = document.getElementById(`account-date-start-${id}`)
-      const endInput = document.getElementById(`account-date-end-${id}`)
-      // let user
-      // for (let i = 0; i < this.users.length; i++) {
-      //   if (this.users[i].id == id) {
-      //     user = this.users[i]
-      //     break
-      //   }
-      // }
-      // if (startInput.value.length == 10) {
-      //   user.orderDates.dateRange.start.date = this.formatDateCalendar(startInput.value)
-      // } else {
-      //   user.orderDates.dateRange.start.date = false
-      //   // this.$store.dispatch('SET_ERROR', { type: 'dates', msg: 'wrong' })
-      //   // this.calendarError = 'Дни отмены заказа не выбраны'
-      // }
-      // if (endInput.value.length == 10) {
-      //   user.orderDates.dateRange.end.date = this.formatDateCalendar(endInput.value)
-      // } else {
-      //   user.orderDates.dateRange.end.date = false
-      //   // this.$store.dispatch('SET_ERROR', { type: 'dates', msg: 'wrong' })
-      //   // this.calendarError = 'Дни отмены заказа не выбраны'
-      // }
+    checkInputs(user) {
+      const startInput = document.getElementById(`account-date-start-${user.id}`)
+      const endInput = document.getElementById(`account-date-end-${user.id}`)
+      if (startInput.value.length == 10) {
+        user.calendarDates.dateRange.start.date = this.formatDateCalendar(startInput.value)
+      } else {
+        // Doesn't work ???
+        user.inputsDates.start = endInput.value
+        user.inputsDates.end = ''
+        user.calendarDates.dateRange.start.date = this.formatDateCalendar(endInput.value)
+        user.calendarDates.dateRange.end.date = false
+        // user.calendarDates.dateRange.start.date = false
+        // this.$store.dispatch('SET_ERROR', { type: 'dates', msg: 'wrong' })
+        // this.calendarError = 'Дни отмены заказа не выбраны'
+      }
+      if (endInput.value.length == 10) {
+        user.calendarDates.dateRange.end.date = this.formatDateCalendar(endInput.value)
+      } else {
+        user.calendarDates.dateRange.end.date = false
+        // this.$store.dispatch('SET_ERROR', { type: 'dates', msg: 'wrong' })
+        // this.calendarError = 'Дни отмены заказа не выбраны'
+      }
 
       if (startInput.value.length == 10 && endInput.value.length == 10) {
         // this.$store.dispatch('CLEAR_ERRORS', 'dates')
@@ -230,34 +271,30 @@ export default {
           let temp = startInput.value
           startInput.value = endInput.value
           endInput.value = temp
-          this.swapDates(id)
+          this.swapDates(user)
         } else if (parseInt(startDateArr[1]) > parseInt(endDateArr[1])) {
           let temp = startInput.value
           startInput.value = endInput.value
           endInput.value = temp
-          this.swapDates(id)
+          this.swapDates(user)
         } else if (parseInt(startDateArr[0]) > parseInt(endDateArr[0])) {
           let temp = startInput.value
           startInput.value = endInput.value
           endInput.value = temp
-          this.swapDates(id)
+          this.swapDates(user)
         }
       }
     },
-    swapDates(id) {
-      let user
-      for (let i = 0; i < this.users.length; i++) {
-        if (this.users[i].id == id) {
-          user = this.users[i]
-          break
-        }
-      }
-      const inputsTemp = user.orderDates.start.date
-      user.orderDates.start.date = user.orderDates.end.date
-      user.orderDates.end.date = inputsTemp
-      // const calendarTemp = this.calendarDates.dateRange.start.date
-      // this.calendarDates.dateRange.start.date = this.calendarDates.dateRange.end.date
-      // this.calendarDates.dateRange.end.date = calendarTemp
+    swapDates(user) {
+      const inputsTemp = user.inputsDates.start
+      user.inputsDates.start = user.inputsDates.end
+      user.inputsDates.end = inputsTemp
+      const calendarTemp = user.calendarDates.dateRange.start.date
+      user.calendarDates.dateRange.start.date = user.calendarDates.dateRange.end.date
+      user.calendarDates.dateRange.end.date = calendarTemp
+    },
+    deleteUser(id) {
+      this.$store.dispatch('DELETE_USER', id)
     },
     getTodayDate() {
       const date = new Date()
@@ -278,6 +315,9 @@ export default {
       if (dateArr[1].length == 2 && dateArr[1][0] == '0')
         dateArr[1] = dateArr[1][1]
       return dateArr.join('.')
+    },
+    saveChanges() {
+      this.$store.dispatch('SAVE_CHANGES')
     }
   },
   computed: {
@@ -354,40 +394,7 @@ export default {
           this.inputDate = this.formatDateInputs(value.selectedDate)
       },
       deep: true
-    },
-    // calendarDate: {
-    //   handler (oldVal, newVal) {
-    //     newVal = { selectedDate:  this.formatDateInputs(oldVal.selectedDate) }
-    //     if (newVal.selectedDate == '')
-    //       this.inputDate = ''
-    //     else
-    //       this.inputDate = newVal.selectedDate
-    //   },
-    //   deep: true
-    // },
-    // users: {
-    //   handler (oldVal, newVal) {
-    //     let newUsers = oldVal.slice()
-    //     newUsers.forEach(user => {
-    //       // let newUser = Object.assign({}, user)
-    //       if (user.orderDates.dateRange.start.date == false)
-    //         user.orderDates.dateRange.start.date = ''
-    //       if (user.orderDates.dateRange.end.date == false)
-    //         user.orderDates.dateRange.end.date = ''
-    //     })
-    //     newVal = newUsers
-    //     // let newUsers = []
-    //     // oldVal.forEach(user => {
-    //     //   let newUser = Object.assign({}, user)
-    //     //   if (user.orderDates.dateRange.start.date == false)
-    //     //     newUser.orderDates.dateRange.start.date = ''
-    //     //   if (user.orderDates.dateRange.end.date == false)
-    //     //     newUser.orderDates.dateRange.end.date = ''
-    //     //   newUsers.push(newUser)
-    //     // })
-    //   },
-    //   deep: true
-    // },
+    }
   }
 }
 </script>
@@ -495,6 +502,7 @@ export default {
         width: 170px
       .email
         width: 140px
+        text-align: center
       .role
         width: 140px
       .status

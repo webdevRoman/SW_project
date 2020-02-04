@@ -137,7 +137,7 @@ body, button, input, a
 .v-select
   cursor: pointer
   position: relative
-  z-index: 5
+  // z-index: 5
   .vs__search
     opacity: 0
     // visibility: hidden
@@ -150,6 +150,7 @@ body, button, input, a
     justify-content: space-between
     align-items: center
     border: 3px solid $c-middle
+    z-index: 3
   .select-arrow
     transition: 0.2s
     width: 14px
@@ -176,6 +177,7 @@ body, button, input, a
         position: absolute
         top: 100%
         left: 0
+        z-index: 5
         &::-webkit-scrollbar
           width: 4px
         &::-webkit-scrollbar-button

@@ -262,12 +262,14 @@ export default {
       return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
     },
     showCalendar() {
-      // const checkbox = document.querySelector('.account-form__checkbox')
-      const calendar = document.querySelector('.account-form__calendar')
-      // checkbox.checked = true
-      calendar.classList.add('account-form__calendar_active')
-      // this.isChoosingDate = true
-      this.hideCalendar()
+      if (this.calendarCheckbox) {
+        // const checkbox = document.querySelector('.account-form__checkbox')
+        const calendar = document.querySelector('.account-form__calendar')
+        // checkbox.checked = true
+        calendar.classList.add('account-form__calendar_active')
+        // this.isChoosingDate = true
+        this.hideCalendar()
+      }
     },
     hideCalendar() {
       const calendar = document.querySelector('.account-form__calendar')

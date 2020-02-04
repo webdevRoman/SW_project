@@ -10,18 +10,22 @@ export default {
       status: 'Подтвержден',
       limit: 200,
       order: true,
-      orderDates: {
+      calendarDates: {
         dateRange: {
           start: {
-            date: '10.02.2020'
+            date: '10.2.2020'
           },
           end: {
-            date: '16.02.2020'
+            date: '17.2.2020'
           }
         }
+      },
+      inputsDates: {
+        start: '10.02.2020',
+        end: '17.02.2020'
       }
       // start: '10/02/2020',
-      // end: '16/02/2020'
+      // end: '17/02/2020'
     }, {
       id: 2,
       firstname: 'Петр',
@@ -32,15 +36,19 @@ export default {
       status: 'Подтвержден',
       limit: 200,
       order: false,
-      orderDates: {
+      calendarDates: {
         dateRange: {
           start: {
-            date: ''
+            date: false
           },
           end: {
-            date: ''
+            date: false
           }
         }
+      },
+      inputsDates: {
+        start: '',
+        end: ''
       }
       // start: '',
       // end: ''
@@ -54,25 +62,52 @@ export default {
       status: 'Не подтвержден',
       limit: 200,
       order: false,
-      orderDates: {
+      calendarDates: {
         dateRange: {
           start: {
-            date: ''
+            date: false
           },
           end: {
-            date: ''
+            date: false
           }
         }
+      },
+      inputsDates: {
+        start: '',
+        end: ''
       }
       // start: '',
       // end: ''
     }]
   },
   mutations: {
-    
+    // SET_ALL_LIMIT(state, limit) {
+    //   if (limit != '')
+    //     for (let i = 0; i < state.users.length; i++) {
+    //       state.users[i].limit = parseInt(limit)
+    //     }
+    // }
+    DELETE_USER(state, id) {
+      let arrIndex
+      for (let i = 0; i < state.users.length; i++) {
+        if (state.users[i].id == id) {
+          arrIndex = i
+          break
+        }
+      }
+      state.users.splice(arrIndex, 1)
+    }
   },
   actions: {
-    
+    // SET_ALL_LIMIT({commit}, limit) {
+    //   commit('SET_ALL_LIMIT', limit)
+    // },
+    DELETE_USER({commit}, id) {
+      commit('DELETE_USER', id)
+    },
+    SAVE_CHANGES({getters}) {
+      console.log(getters.users);
+    }
   },
   getters: {
     users: state => state.users
