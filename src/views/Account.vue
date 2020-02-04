@@ -7,14 +7,14 @@
         img(src="../assets/img/user.svg", alt="User icon")
     form.form.account-form(action="#", @submit.prevent="checkForm()")
       .account-form__inputs
-        .form-block.account-form__block(:class="{'form-block_error': nameError != ''}")
-          label.form-label(for="account-name") Имя
-          input.form-input(type="text", id="account-name", v-model.trim="name", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkName()")
-          .form-error(v-if="nameError != ''") {{ nameError }}
         .form-block.account-form__block(:class="{'form-block_error': surnameError != ''}")
           label.form-label(for="account-surname") Фамилия
           input.form-input(type="text", id="account-surname", v-model.trim="surname", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkSurname()")
           .form-error(v-if="surnameError != ''") {{ surnameError }}
+        .form-block.account-form__block(:class="{'form-block_error': nameError != ''}")
+          label.form-label(for="account-name") Имя
+          input.form-input(type="text", id="account-name", v-model.trim="name", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkName()")
+          .form-error(v-if="nameError != ''") {{ nameError }}
         .form-block.account-form__block(:class="{'form-block_error': middlenameError != ''}")
           label.form-label(for="account-middlename") Отчество (не обязательно)
           input.form-input(type="text", id="account-middlename", v-model.trim="middlename", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkMiddlename()")
@@ -116,8 +116,7 @@ export default {
       inputsDates: {
         start: '',
         end: ''
-      },
-      // isChoosingDate: false
+      }
     }
   },
   methods: {
@@ -130,8 +129,18 @@ export default {
       this.checkSurname()
       this.checkMiddlename()
       this.checkOldPassword()
-      if (!this.errors)
-        this.$router.push('/')
+      if (!this.errors) {
+        this.$store.dispatch('UPDATE_USER', { firstname: this.name, lastname: this.surname, midname: this.middlename, currentPassword: this.oldPassword, password: this.password, password_2: this.passwordRepeat, order: !this.calendarCheckbox, start: this.inputsDates.start == '' ? null : this.inputsDates.start.split('.').join('/'), end: this.inputsDates.end == '' ? null : this.inputsDates.end.split('.').join('/') })
+        .then(() => {
+          alert('Данные успешно обновлены')
+          this.oldPassword = ''
+          this.password = ''
+          this.passwordRepeat = ''
+        })
+        .catch(err => {
+          console.log('Error on updating user data: ' + err)
+        })
+      }
     },
     checkName() {
       this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1).toLowerCase()
@@ -403,15 +412,6 @@ export default {
     }
   },
   computed: {
-    oldName() {
-      return this.$store.getters.name
-    },
-    oldSurname() {
-      return this.$store.getters.surname
-    },
-    oldMiddlename() {
-      return this.$store.getters.middlename
-    },
     errors() {
       const errors = this.$store.getters.errors
       if (errors.oldPassword != undefined || errors.password != undefined || errors.passwordRepeat != undefined || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined || errors.dates != undefined)
@@ -442,17 +442,6 @@ export default {
       else
         this.passwordRepeatFocus = false
     },
-    // calendarCheckbox(value) {
-    //   console.log(value)
-    // },
-    // isChoosingDate(value) {
-    //   const checkbox = document.querySelector('.account-form__checkbox')
-    //   if (!value && (this.calendarDates.dateRange.start.date == false || this.calendarDates.dateRange.end.date == false)) {
-    //     checkbox.checked = false
-    //   } else {
-    //     checkbox.checked = true
-    //   }
-    // },
     calendarDates: {
       handler (value) {
         value = {
@@ -478,9 +467,32 @@ export default {
     },
   },
   created() {
-    this.name = this.oldName
-    this.surname = this.oldSurname
-    this.changingMiddlename = this.oldMiddlename
+    this.$store.dispatch('LOAD_ACCOUNT')
+    .then(() => {
+      this.name = this.$store.getters.name
+      this.surname = this.$store.getters.surname
+      this.middlename = this.$store.getters.middlename
+      this.calendarCheckbox = !this.$store.getters.order
+      const start = this.$store.getters.start
+      const end = this.$store.getters.end
+      if (start != null) {
+        this.calendarDates.dateRange.start.date = this.formatDateCalendar(start)
+        this.inputsDates.start = start
+      } else {
+        this.calendarDates.dateRange.start.date = false
+        this.inputsDates.start = ''
+      }
+      if (end != null) {
+        this.calendarDates.dateRange.end.date = this.formatDateCalendar(end)
+        this.inputsDates.end = end
+      } else {
+        this.calendarDates.dateRange.end.date = false
+        this.inputsDates.end = ''
+      }
+    })
+    .catch(err => {
+      console.log('Error on loading account: ' + err)
+    })
   }
 }
 </script>

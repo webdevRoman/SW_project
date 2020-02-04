@@ -9,7 +9,8 @@
         .user-triangle
           img(src="../assets/img/triangle-down.svg", alt="Triangle down")
       .user-menu
-        button.user-menu__item(@click.prevent="goToAccount()") Личный кабинет
+        //- button.user-menu__item(@click.prevent="goToAccount()") Личный кабинет
+        router-link.user-menu__item(tag="button", to="/account") Личный кабинет
         router-link.user-menu__item(tag="button", to="/admin", v-if="isAdmin") Администрирование
         button.user-menu__item(@click.prevent="signout()") Выход
 </template>
@@ -21,12 +22,12 @@ export default {
       const menuBtn = document.querySelector('.header-container')
       menuBtn.classList.contains('header-container_active') ? menuBtn.classList.remove('header-container_active') : menuBtn.classList.add('header-container_active')
     },
-    goToAccount() {
-      this.$store.dispatch('LOAD_ACCOUNT')
-      .then(() => {
-        this.$router.push('/account')
-      })
-    },
+    // goToAccount() {
+    //   this.$store.dispatch('LOAD_ACCOUNT')
+    //   .then(() => {
+    //     this.$router.push('/account')
+    //   })
+    // },
     signout() {
       this.$store.dispatch('AUTH_LOGOUT')
       .then(() => {

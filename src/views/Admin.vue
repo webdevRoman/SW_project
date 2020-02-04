@@ -62,14 +62,15 @@
           td.limit
             input.form-input(type="text", v-model="user.limit", v-mask="'####'")
           td.no-order.form-block.account-form__block.account-form__block__checkbox
-            input.form-input.account-form__checkbox(type="checkbox", :id="`account-checkbox-${user.id}`", v-model="user.order", @change="toggleCalendar(user)")
-            label.form-label(:for="`account-checkbox-${user.id}`") Не заказывать
-          td.no-order.form-block.account-form__block.account-form__block__calendar(:class="[calendarClass(user.id), {'form-block_disabled': !user.order}]")
+            //- input.form-input.account-form__checkbox(type="checkbox", :id="`account-checkbox-${user.id}`", v-model="!user.order", @change="toggleCalendar(user)")
+            input.form-input.account-form__checkbox(type="checkbox", :id="`account-checkbox-${user.id}`", @change.prevent="toggleCalendar(user)")
+            label.form-label(:for="`account-checkbox-${user.id}`", :class="{'form-label__checkbox_active': !user.order}") Не заказывать
+          td.no-order.form-block.account-form__block.account-form__block__calendar(:class="[calendarClass(user.id), {'form-block_disabled': user.order}]")
             label.form-label(@click.prevent="showCalendar(user)") Начало и окончание периода
             .inputs-container
-              input.form-input(type="text", :id="`account-date-start-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.inputsDates.start", @focus="showCalendar(user)", @focusout="checkInputs(user)", , :disabled="!user.order")
+              input.form-input(type="text", :id="`account-date-start-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.inputsDates.start", @focus="showCalendar(user)", @focusout="checkInputs(user)", , :disabled="user.order")
               .account-form__separator
-              input.form-input(type="text", :id="`account-date-end-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.inputsDates.end", @focus="showCalendar(user)", @focusout="checkInputs(user)", , :disabled="!user.order")
+              input.form-input(type="text", :id="`account-date-end-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.inputsDates.end", @focus="showCalendar(user)", @focusout="checkInputs(user)", , :disabled="user.order")
             FunctionalCalendar.calendar.account-form__calendar(:id="`account-form__calendar-${user.id}`", v-model="user.calendarDates", :configs="calendarConfig2")
           td.delete
             button.btn(@click.prevent="deleteUser(user.id)") Удалить
@@ -162,8 +163,11 @@ export default {
     // },
     toggleCalendar(user) {
       const calendar = document.getElementById(`account-form__calendar-${user.id}`)
+      const checkbox = document.getElementById(`account-checkbox-${user.id}`)
       const startInput = document.getElementById(`account-date-start-${user.id}`)
-      if (user.order) {
+      user.order = !user.order
+      checkbox.checked = !checkbox.checked
+      if (!user.order) {
         this.showCalendar(user)
         startInput.focus()
         const date = new Date()
@@ -208,7 +212,7 @@ export default {
           this.users[i].limit = parseInt(this.limit)
     },
     showCalendar(user) {
-      if (user.order) {
+      if (!user.order) {
         user.calendarDates = JSON.parse(JSON.stringify(user.calendarDates))
         const calendar = document.getElementById(`account-form__calendar-${user.id}`)
         calendar.classList.add('account-form__calendar_active')
@@ -574,6 +578,9 @@ export default {
             transition: 0.1s
           .account-form__checkbox:checked + label:after
             opacity: 1
+          label.form-label__checkbox_active
+            &:after
+              opacity: 1
         .account-form__block__calendar
           padding-left: 4px
           .form-label

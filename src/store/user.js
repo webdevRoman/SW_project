@@ -9,9 +9,15 @@ export default {
     name: '',
     surname: '',
     middlename: '',
-    limit: 0
+    limit: 0,
+    order: true,
+    start: null,
+    end: null
   },
   mutations: {
+    SET_AUTHENTICATED(state, data) {
+      state.isAuthenticated = data
+    },
     LOAD_USERNAME(state) {
       const username = Vue.$cookies.get('username')
       state.name = username.name
@@ -32,14 +38,57 @@ export default {
       state.isAuthenticated = false
       Vue.$cookies.remove('username')
     },
-    SET_AUTHENTICATED(state, data) {
-      state.isAuthenticated = data
+    SET_USER_ACCOUNT(state, data) {
+      state.name = data.firstname
+      state.surname = data.lastname
+      state.middlename = data.midname
+      state.order = data.order
+      state.start = data.start != null ? data.start.split('/').join('.') : data.start
+      state.end = data.end != null ? data.end.split('/').join('.') : data.end
     },
     SET_LIMIT(state, limit) {
       Vue.set(state, 'limit', limit)
     }
   },
   actions: {
+    CHECK_AUTHORIZED({commit}) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        if (Vue.$cookies.get('username') != null) {
+          commit('SET_AUTHENTICATED', true)
+          commit('SET_PROCESSING', false)
+          resolve()
+        } else {
+          commit('SET_AUTHENTICATED', false)
+          commit('SET_PROCESSING', false)
+          reject()
+        }
+      })
+    },
+    CHECK_AUTHORIZED_ADMIN({commit, dispatch, getters}) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        dispatch('CHECK_AUTHORIZED')
+        .then(() => {
+          if (getters.isAdmin)
+            resolve()
+          else
+            reject()
+          // if (Vue.$cookies.get('username') != null) {
+          //   commit('SET_AUTHENTICATED', true)
+          //   commit('SET_PROCESSING', false)
+          //   resolve()
+          // } else {
+          //   commit('SET_AUTHENTICATED', false)
+          //   commit('SET_PROCESSING', false)
+          //   reject()
+          // }
+        })
+        .catch(() => {
+          reject()
+        })
+      })
+    },
     LOAD_USERNAME({commit}) {
       commit('LOAD_USERNAME')
     },
@@ -66,22 +115,6 @@ export default {
         axios({ url: url, method: 'POST' })
         .then(resp => {
           commit('AUTH_LOGOUT')
-          commit('SET_PROCESSING', false)
-          resolve()
-        })
-        .catch(err => {
-          commit('SET_PROCESSING', false)
-          reject(err)
-        })
-      })
-    },
-    LOAD_ACCOUNT({commit}) {
-      return new Promise((resolve, reject) => {
-        commit('SET_PROCESSING', true)
-        const url = '/modules/account'
-        axios({ url: url, method: 'GET' })
-        .then(resp => {
-          console.log(resp.data)
           commit('SET_PROCESSING', false)
           resolve()
         })
@@ -124,41 +157,37 @@ export default {
         }
       })
     },
-    CHECK_AUTHORIZED({commit}) {
+    LOAD_ACCOUNT({commit}) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        if (Vue.$cookies.get('username') != null) {
-          commit('SET_AUTHENTICATED', true)
+        const url = '/modules/account'
+        axios({ url: url, method: 'GET' })
+        .then(resp => {
+          commit('SET_USER_ACCOUNT', resp.data)
           commit('SET_PROCESSING', false)
           resolve()
-        } else {
-          commit('SET_AUTHENTICATED', false)
+        })
+        .catch(err => {
           commit('SET_PROCESSING', false)
-          reject()
-        }
+          reject(err)
+        })
       })
     },
-    CHECK_AUTHORIZED_ADMIN({commit, dispatch, getters}) {
+    UPDATE_USER({commit}, data) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        dispatch('CHECK_AUTHORIZED')
-        .then(() => {
-          if (getters.isAdmin)
-            resolve()
-          else
-            reject()
-          // if (Vue.$cookies.get('username') != null) {
-          //   commit('SET_AUTHENTICATED', true)
-          //   commit('SET_PROCESSING', false)
-          //   resolve()
-          // } else {
-          //   commit('SET_AUTHENTICATED', false)
-          //   commit('SET_PROCESSING', false)
-          //   reject()
-          // }
+        const url = '/modules/auth/update'
+        axios({ url: url, data: data, method: 'POST' })
+        .then((resp) => {
+          console.log(resp.data);
+          commit('SET_USER_ACCOUNT', data)
+          commit('SET_PROCESSING', false)
+          resolve()
         })
-        .catch(() => {
-          reject()
+        .catch(err => {
+          console.log(err);
+          commit('SET_PROCESSING', false)
+          reject(err)
         })
       })
     }
@@ -171,5 +200,8 @@ export default {
     // isAuthenticated: state => !!state.token
     isAdmin: state => state.isAdmin,
     limit: state => state.limit,
+    order: state => state.order,
+    start: state => state.start,
+    end: state => state.end,
   }
 }

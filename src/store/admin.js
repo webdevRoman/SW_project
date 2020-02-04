@@ -9,7 +9,7 @@ export default {
       role: 'Пользователь',
       status: 'Подтвержден',
       limit: 200,
-      order: true,
+      order: false,
       calendarDates: {
         dateRange: {
           start: {
@@ -35,7 +35,7 @@ export default {
       role: 'Администратор',
       status: 'Подтвержден',
       limit: 200,
-      order: false,
+      order: true,
       calendarDates: {
         dateRange: {
           start: {
@@ -61,7 +61,7 @@ export default {
       role: 'Пользователь',
       status: 'Не подтвержден',
       limit: 200,
-      order: false,
+      order: true,
       calendarDates: {
         dateRange: {
           start: {
