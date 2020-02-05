@@ -130,7 +130,7 @@ export default {
       this.checkMiddlename()
       this.checkOldPassword()
       if (!this.errors) {
-        this.$store.dispatch('UPDATE_USER', { firstname: this.name, lastname: this.surname, midname: this.middlename, currentPassword: this.oldPassword, password: this.password, password_2: this.passwordRepeat, order: !this.calendarCheckbox, start: this.inputsDates.start == '' ? null : this.inputsDates.start.split('.').join('/'), end: this.inputsDates.end == '' ? null : this.inputsDates.end.split('.').join('/') })
+        this.$store.dispatch('UPDATE_USER', { firstname: this.name, lastname: this.surname, midname: this.middlename, current_password: this.oldPassword, password: this.password, password_2: this.passwordRepeat, order: this.calendarCheckbox ? 0 : 1, start: this.inputsDates.start == '' ? null : this.inputsDates.start.split('.').join('/'), end: this.inputsDates.end == '' ? null : this.inputsDates.end.split('.').join('/') })
         .then(() => {
           alert('Данные успешно обновлены')
           this.oldPassword = ''

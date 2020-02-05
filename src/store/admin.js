@@ -96,6 +96,26 @@ export default {
         }
       }
       state.users.splice(arrIndex, 1)
+    },
+    ADD_USER(state, user) {
+      user.id = 999
+      user.status = 'Не подтвержден'
+      user.order = true
+      user.calendarDates = {
+        dateRange: {
+          start: {
+            date: false
+          },
+          end: {
+            date: false
+          }
+        }
+      }
+      user.inputsDates = {
+        start: '',
+        end: ''
+      }
+      state.users.push(user)
     }
   },
   actions: {
@@ -107,6 +127,10 @@ export default {
     },
     SAVE_CHANGES({getters}) {
       console.log(getters.users);
+    },
+    ADD_USER({commit}, user) {
+      // send to server
+      commit('ADD_USER', user)
     }
   },
   getters: {

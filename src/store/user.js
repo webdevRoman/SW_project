@@ -176,16 +176,14 @@ export default {
     UPDATE_USER({commit}, data) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/modules/auth/update'
+        const url = '/modules/account/update'
         axios({ url: url, data: data, method: 'POST' })
-        .then((resp) => {
-          console.log(resp.data);
+        .then(() => {
           commit('SET_USER_ACCOUNT', data)
           commit('SET_PROCESSING', false)
           resolve()
         })
         .catch(err => {
-          console.log(err);
           commit('SET_PROCESSING', false)
           reject(err)
         })

@@ -62,7 +62,6 @@
           td.limit
             input.form-input(type="text", v-model="user.limit", v-mask="'####'")
           td.no-order.form-block.account-form__block.account-form__block__checkbox
-            //- input.form-input.account-form__checkbox(type="checkbox", :id="`account-checkbox-${user.id}`", v-model="!user.order", @change="toggleCalendar(user)")
             input.form-input.account-form__checkbox(type="checkbox", :id="`account-checkbox-${user.id}`", @change.prevent="toggleCalendar(user)")
             label.form-label(:for="`account-checkbox-${user.id}`", :class="{'form-label__checkbox_active': !user.order}") Не заказывать
           td.no-order.form-block.account-form__block.account-form__block__calendar(:class="[calendarClass(user.id), {'form-block_disabled': user.order}]")
@@ -74,14 +73,59 @@
             FunctionalCalendar.calendar.account-form__calendar(:id="`account-form__calendar-${user.id}`", v-model="user.calendarDates", :configs="calendarConfig2")
           td.delete
             button.btn(@click.prevent="deleteUser(user.id)") Удалить
-      .users-btn +
+      button.users-btn(@click.prevent="showPopup = true") +
       .users-bottom
         .form-block
           label.form-label(for="users-limit") Установить лимит всем пользователями
           .form-block__line
-            input.form-input(type="text", v-model="limit", @change="setAllLimit()")
+            input.form-input(type="text", v-model.trim="allLimit", v-mask="'#####'", @change="setAllLimit()")
             span Р
         button.form-submit(type="submit") Сохранить изменения
+
+  .overlay(v-if="showPopup")
+    form.form.popup.popup-admin(action="#", @submit.prevent="checkForm()")
+      .form-title Добавление пользователя
+      .form-inputs
+        .form-block(:class="{'form-block_error': surnameError != ''}")
+          label.form-label(for="account-surname") Фамилия
+          input.form-input(type="text", id="account-surname", v-model.trim="surname", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkSurname()")
+          .form-error(v-if="surnameError != ''") {{ surnameError }}
+        .form-block(:class="{'form-block_error': nameError != ''}")
+          label.form-label(for="account-name") Имя
+          input.form-input(type="text", id="account-name", v-model.trim="name", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkName()")
+          .form-error(v-if="nameError != ''") {{ nameError }}
+        .form-block(:class="{'form-block_error': middlenameError != ''}")
+          label.form-label(for="account-middlename") Отчество (не обязательно)
+          input.form-input(type="text", id="account-middlename", v-model.trim="middlename", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkMiddlename()")
+          .form-error(v-if="middlenameError != ''") {{ middlenameError }}
+        .form-block.form-block-line(:class="{'form-block_error': limitError != ''}")
+          .form-block__item
+            label.form-label Роль пользователя
+            .select-container
+              v-select.select(v-model="role", label="name", index="name", :options="roles", :clearable="false", :searchable="false")
+                template(v-slot:option="option")
+                  span.select-option {{ option.name }}
+          .form-block__item
+            label.form-label(for="account-limit") Лимит заказа
+            .form-block__line
+              input.form-input(type="text", id="account-limit", v-model.trim="limit", v-mask="'#####'", @focusout="checkLimit()")
+              span Р
+          .form-error(v-if="limitError != ''") {{ limitError }}
+        .form-block(:class="{'form-block_error': emailError != ''}")
+          label.form-label(for="account-email") Корпоративная почта SmartWorld
+          input.form-input(type="text", id="account-email", placeholder="@smartworld.team", v-model.trim="email", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkEmail()")
+          .form-error(v-if="emailError != ''") {{ emailError }}
+        .form-block(:class="{'form-block_error': passwordError != ''}")
+          label.form-label(for="account-password") Пароль
+          .form-password
+            input.form-input(type="password", id="account-password", v-model.trim="password", @focusout="checkPassword()")
+            button.form-password__eye(v-if="passwordFocus && !passwordShow", @click.prevent="togglePasswordShow()")
+              img(src="../assets/img/eye.svg", alt="Eye")
+            button.form-password__eye(v-if="passwordFocus && passwordShow", @click.prevent="togglePasswordShow()")
+              img(src="../assets/img/eye-closed.svg", alt="Closed eye")
+          .form-error(v-if="passwordError != ''") {{ passwordError }}
+      button.form-submit(type="submit", :disabled="errors") Добавить пользователя
+      button.popup-close(@click.prevent="hidePopup()") &times;
 </template>
 
 <script>
@@ -116,7 +160,23 @@ export default {
       roles: ['Пользователь', 'Администратор'],
       selectedStatus: '',
       statuses: ['Не подтвержден', 'Подтвержден'],
-      limit: ''
+      allLimit: '',
+      showPopup: false,
+      name: '',
+      nameError: '',
+      surname: '',
+      surnameError: '',
+      middlename: '',
+      middlenameError: '',
+      email: '',
+      emailError: '',
+      password: '',
+      passwordError: '',
+      passwordFocus: false,
+      passwordShow: false,
+      role: 'Пользователь',
+      limit: '',
+      limitError: ''
     }
   },
   methods: {
@@ -207,9 +267,9 @@ export default {
       return `account-form__block__calendar-${id}`
     },
     setAllLimit() {
-      if (this.limit != '')
+      if (this.allLimit != '')
         for (let i = 0; i < this.users.length; i++)
-          this.users[i].limit = parseInt(this.limit)
+          this.users[i].limit = parseInt(this.allLimit)
     },
     showCalendar(user) {
       if (!user.order) {
@@ -322,6 +382,147 @@ export default {
     },
     saveChanges() {
       this.$store.dispatch('SAVE_CHANGES')
+    },
+
+    checkName() {
+      this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1).toLowerCase()
+      this.$store.dispatch('CHECK_NAME', { type: 'name', data: this.name })
+      .then(
+        result => {
+          if (result == 'empty')
+            this.nameError = 'Заполните имя'
+          else if (result == 'long')
+            this.nameError = 'Имя должно содержать не более 35 символов'
+          else if (result == 'wrong')
+            this.nameError = 'Имя должно состоять только из букв русского алфавита'
+          else
+            this.nameError = ''
+        },
+        error => console.log("Name checker rejected: " + error.message)
+      )
+    },
+    checkSurname() {
+      this.surname = this.surname.charAt(0).toUpperCase() + this.surname.slice(1).toLowerCase()
+      this.$store.dispatch('CHECK_NAME', { type: 'surname', data: this.surname })
+      .then(
+        result => {
+          if (result == 'empty')
+            this.surnameError = 'Заполните фамилию'
+          else if (result == 'long')
+            this.surnameError = 'Фамилия должна содержать не более 35 символов'
+          else if (result == 'wrong')
+            this.surnameError = 'Фамилия должна состоять только из букв русского алфавита'
+          else
+            this.surnameError = ''
+        },
+        error => console.log("Name checker rejected: " + error.message)
+      )
+    },
+    checkMiddlename() {
+      this.middlename = this.middlename.charAt(0).toUpperCase() + this.middlename.slice(1).toLowerCase()
+      this.$store.dispatch('CHECK_NAME', { type: 'middlename', data: this.middlename })
+      .then(
+        result => {
+          if (result == 'long')
+            this.middlenameError = 'Отчество должно содержать не более 35 символов'
+          else if (result == 'wrong')
+            this.middlenameError = 'Отчество должно состоять только из букв русского алфавита'
+          else
+            this.middlenameError = ''
+        },
+        error => console.log("Name checker rejected: " + error.message)
+      )
+    },
+    checkEmail() {
+      const emailArr = this.email.split('@')
+      if (this.email != '' && emailArr[1] == undefined)
+        this.email = emailArr[0] + '@smartworld.team'
+      this.$store.dispatch('CHECK_EMAIL', this.email)
+      .then(
+        result => {
+          if (result == 'empty')
+            this.emailError = 'Заполните e-mail'
+          else if (result == 'long')
+            this.emailError = 'E-mail должен содержать не более 50 символов'
+          // else if (result == 'wrong')
+          //   this.emailError = 'Невалидный e-mail'
+          else {
+            this.emailError = ''
+            this.$store.dispatch('CLEAR_ERRORS', 'email')
+          }
+        },
+        error => console.log("Email checker rejected: " + error.message)
+      )
+    },
+    checkPassword() {
+      this.$store.dispatch('CHECK_PASSWORD', this.password)
+      .then(
+        result => {
+          if (result == 'empty')
+            this.passwordError = 'Заполните пароль'
+          else if (result == 'short')
+            this.passwordError = 'Пароль должен содержать не менее 6 символов'
+          else if (result == 'long')
+            this.passwordError = 'Пароль должен содержать не более 25 символов'
+          else if (result == 'wrong')
+            this.passwordError = 'Пароль должен состоять только из латинских букв и цифр'
+          else
+            this.passwordError = ''
+        },
+        error => console.log("Password checker rejected: " + error.message)
+      )
+    },
+    checkLimit() {
+      if (this.limit == '')
+        this.limitError = 'Заполните лимит'
+      else
+        this.limitError = ''
+    },
+    togglePasswordShow() {
+      const passwordInput = document.getElementById('account-password')
+      if (passwordInput.type == 'password')
+        passwordInput.type = 'text'
+      else
+        passwordInput.type = 'password'
+      this.passwordShow = !this.passwordShow
+    },
+    checkForm() {
+      this.checkName()
+      this.checkSurname()
+      this.checkMiddlename()
+      this.checkEmail()
+      this.checkPassword()
+      this.checkLimit()
+      if (!this.errors) {
+        this.$store.dispatch('ADD_USER', { email: this.email, firstname: this.name, lastname: this.surname, midname: this.middlename, password: this.password, role: this.role, limit: this.limit })
+        .then(() => {
+          this.hidePopup()
+        },
+        error => {
+          // this.$store.dispatch('SET_ERROR', { type: 'email', msg: 'reserved' })
+          // this.emailError = 'Данная почта уже занята'
+          console.log('Error from server: ' + error)
+        })
+      }
+    },
+    hidePopup() {
+      this.$store.dispatch('CLEAR_ERRORS', 'all')
+      this.name = ''
+      this.nameError = ''
+      this.surname = ''
+      this.surnameError = ''
+      this.middlename = ''
+      this.middlenameError = ''
+      this.email = ''
+      this.emailError = ''
+      this.password = ''
+      this.passwordError = ''
+      this.passwordFocus = false
+      this.passwordShow = false
+      this.role = 'Пользователь'
+      this.limit = ''
+      this.limitError = '',
+      this.showPopup = false
     }
   },
   computed: {
@@ -386,7 +587,14 @@ export default {
     },
     users() {
       return this.$store.getters.users
-    }
+    },
+    errors() {
+      const errors = this.$store.getters.errors
+      if (errors.email != undefined && errors.email != 'wrong' || errors.password != undefined || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined || this.limit == '')
+        return true
+      else
+        return false
+    },
   },
   watch: {
     calendarDate: {
@@ -398,6 +606,12 @@ export default {
           this.inputDate = this.formatDateInputs(value.selectedDate)
       },
       deep: true
+    },
+    password(value) {
+      if (value != '')
+        this.passwordFocus = true
+      else
+        this.passwordFocus = false
     }
   }
 }
@@ -641,4 +855,73 @@ export default {
       .form-submit
         flex-basis: 220px
         padding: 20px 0
+.overlay
+  display: flex
+  justify-content: center
+  align-items: center
+  width: 100vw
+  min-height: 100vh // change!
+  background-color: rgba(0, 0, 0, 0.5)
+  position: fixed
+  top: 0
+  left: 0
+  .popup
+    width: 700px
+    padding: 60px 45px 45px 45px
+    background-color: $c-bg
+    box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.35)
+    margin: 0 auto
+    position: relative
+    .form
+      &-title
+        font-weight: bold
+        font-size: 24px
+        text-align: center
+        text-transform: uppercase
+        margin-bottom: 50px
+      &-inputs
+        display: flex
+        justify-content: space-between
+        flex-wrap: wrap
+        margin-bottom: 45px
+      &-block
+        flex-basis: 262px
+        margin-right: 80px
+        margin-bottom: 28px
+        &:nth-child(2n)
+          margin-right: 0
+        &_error
+          margin-bottom: 50px
+        &-line
+          display: flex
+          justify-content: space-between
+        &__item
+          &:first-child
+            margin-right: 20px
+            .form-label
+              margin-bottom: 10px
+        &__line
+          display: flex
+          align-items: center
+          .form-input
+            width: 85px
+          span
+            font-weight: 500
+            font-size: 18px
+            margin-left: 2px
+        .select
+          width: 140px
+          font-size: 12px
+          &-container
+            margin-bottom: 0
+      &-submit
+        width: 262px
+        margin: 0 auto
+    &-close
+      font-size: 38px
+      font-weight: 100
+      color: $c-dark
+      position: absolute
+      top: 5px
+      right: 18px
 </style>
