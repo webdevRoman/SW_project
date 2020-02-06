@@ -24,7 +24,7 @@
         div
           .form-block.docs-block__block.docs-block__block__calendar
             label.form-label(@click.prevent="showCalendarDocs()") Выберите дату
-            input.form-input(type="text", id="orders-date", v-mask="'##.##.####'", v-model.trim="inputDate", @focus="showCalendarDocs()", @change="checkInput()")
+            input.form-input(type="text", id="orders-date", v-mask="'##.##.####'", v-model.trim="inputDate", @focus="showCalendarDocs()", @focusout="checkInput()")
             FunctionalCalendar.calendar.account-form__calendar(id="account-form__calendar", v-model="calendarDate", :configs="calendarConfig")
           button.form-submit(type="submit") Скачать
       form.docs-block(action="#")
@@ -212,9 +212,29 @@ export default {
     },
     checkInput() {
       const input = document.getElementById('orders-date')
-      if (input.value.length == 10)
+      if (input.value.length == 10) {
+        let inputArr = input.value.split('.')
+        let endDate = new Date()
+        let startDate = new Date(endDate.getFullYear(), endDate.getMonth() - 1, endDate.getDate())
+        if (parseInt(inputArr[2]) < startDate.getFullYear())
+          inputArr[2] = startDate.getFullYear()
+        if (parseInt(inputArr[2]) > endDate.getFullYear())
+          inputArr[2] = endDate.getFullYear()
+        if (parseInt(inputArr[1]) < startDate.getMonth() + 1)
+          inputArr[1] = startDate.getMonth() + 1
+        if (parseInt(inputArr[1]) > endDate.getMonth() + 1)
+          inputArr[1] = endDate.getMonth() + 1
+        if (inputArr[1].toString().length < 2)
+          inputArr[1] = '0' + inputArr[1].toString()
+        if (parseInt(inputArr[0]) < startDate.getDate())
+          inputArr[0] = startDate.getDate()
+        if (parseInt(inputArr[0]) > endDate.getDate())
+          inputArr[0] = endDate.getDate()
+        if (inputArr[0].toString().length < 2)
+          inputArr[0] = '0' + inputArr[0].toString()
+        input.value = inputArr.join('.')
         this.calendarDate.selectedDate = this.formatDateCalendar(input.value)
-      else
+      } else
         this.calendarDate.selectedDate = ''
     },
     // checkChange(user) {
@@ -307,6 +327,29 @@ export default {
       const startInput = document.getElementById(`account-date-start-${user.id}`)
       const endInput = document.getElementById(`account-date-end-${user.id}`)
       if (startInput.value.length == 10) {
+        let startInputArr = startInput.value.split('.')
+        let date = new Date()
+        if (parseInt(startInputArr[2]) < date.getFullYear())
+          startInputArr[2] = date.getFullYear()
+        date.setFullYear(startInputArr[2])
+        if (parseInt(startInputArr[1]) < date.getMonth() + 1) {
+          startInputArr[1] = date.getMonth() + 1
+          if (startInputArr[1].toString().length < 2)
+            startInputArr[1] = '0' + startInputArr[1].toString()
+        }
+        if (parseInt(startInputArr[1]) > 12)
+          startInputArr[1] = 12
+        date.setMonth(parseInt(startInputArr[1]) - 1)
+        const lastDay = new Date(parseInt(startInputArr[2]), parseInt(startInputArr[1]), 0)
+        if (parseInt(startInputArr[0]) < date.getDate() + 1) {
+          startInputArr[0] = date.getDate() + 1
+          if (startInputArr[0].toString().length < 2)
+            startInputArr[0] = '0' + startInputArr[0].toString()
+        }
+        if (parseInt(startInputArr[0]) > lastDay.getDate())
+          startInputArr[0] = lastDay.getDate()
+        date.setDate(parseInt(startInputArr[0]))
+        startInput.value = startInputArr.join('.')
         user.calendarDates.dateRange.start.date = this.formatDateCalendar(startInput.value)
       } else {
         // Doesn't work ???
@@ -319,6 +362,29 @@ export default {
         // this.calendarError = 'Дни отмены заказа не выбраны'
       }
       if (endInput.value.length == 10) {
+        let endInputArr = endInput.value.split('.')
+        let date = new Date()
+        if (parseInt(endInputArr[2]) < date.getFullYear())
+          endInputArr[2] = date.getFullYear()
+        date.setFullYear(endInputArr[2])
+        if (parseInt(endInputArr[1]) < date.getMonth() + 1) {
+          endInputArr[1] = date.getMonth() + 1
+          if (endInputArr[1].toString().length < 2)
+            endInputArr[1] = '0' + endInputArr[1].toString()
+        }
+        if (parseInt(endInputArr[1]) > 12)
+          endInputArr[1] = 12
+        date.setMonth(parseInt(endInputArr[1]) - 1)
+        const lastDay = new Date(parseInt(endInputArr[2]), parseInt(endInputArr[1]), 0)
+        if (parseInt(endInputArr[0]) < date.getDate() + 1) {
+          endInputArr[0] = date.getDate() + 1
+          if (endInputArr[0].toString().length < 2)
+            endInputArr[0] = '0' + endInputArr[0].toString()
+        }
+        if (parseInt(endInputArr[0]) > lastDay.getDate())
+          endInputArr[0] = lastDay.getDate()
+        date.setDate(parseInt(endInputArr[0]))
+        endInput.value = endInputArr.join('.')
         user.calendarDates.dateRange.end.date = this.formatDateCalendar(endInput.value)
       } else {
         user.calendarDates.dateRange.end.date = false

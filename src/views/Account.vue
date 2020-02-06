@@ -349,6 +349,29 @@ export default {
       const startInput = document.getElementById('account-date-start')
       const endInput = document.getElementById('account-date-end')
       if (startInput.value.length == 10) {
+        let startInputArr = startInput.value.split('.')
+        let date = new Date()
+        if (parseInt(startInputArr[2]) < date.getFullYear())
+          startInputArr[2] = date.getFullYear()
+        date.setFullYear(startInputArr[2])
+        if (parseInt(startInputArr[1]) < date.getMonth() + 1) {
+          startInputArr[1] = date.getMonth() + 1
+          if (startInputArr[1].toString().length < 2)
+            startInputArr[1] = '0' + startInputArr[1].toString()
+        }
+        if (parseInt(startInputArr[1]) > 12)
+          startInputArr[1] = 12
+        date.setMonth(parseInt(startInputArr[1]) - 1)
+        const lastDay = new Date(parseInt(startInputArr[2]), parseInt(startInputArr[1]), 0)
+        if (parseInt(startInputArr[0]) < date.getDate() + 1) {
+          startInputArr[0] = date.getDate() + 1
+          if (startInputArr[0].toString().length < 2)
+            startInputArr[0] = '0' + startInputArr[0].toString()
+        }
+        if (parseInt(startInputArr[0]) > lastDay.getDate())
+          startInputArr[0] = lastDay.getDate()
+        date.setDate(parseInt(startInputArr[0]))
+        startInput.value = startInputArr.join('.')
         this.calendarDates.dateRange.start.date = this.formatDateCalendar(startInput.value)
       } else {
         this.calendarDates.dateRange.start.date = false
@@ -356,6 +379,29 @@ export default {
         this.calendarError = 'Дни отмены заказа не выбраны'
       }
       if (endInput.value.length == 10) {
+        let endInputArr = endInput.value.split('.')
+        let date = new Date()
+        if (parseInt(endInputArr[2]) < date.getFullYear())
+          endInputArr[2] = date.getFullYear()
+        date.setFullYear(endInputArr[2])
+        if (parseInt(endInputArr[1]) < date.getMonth() + 1) {
+          endInputArr[1] = date.getMonth() + 1
+          if (endInputArr[1].toString().length < 2)
+            endInputArr[1] = '0' + endInputArr[1].toString()
+        }
+        if (parseInt(endInputArr[1]) > 12)
+          endInputArr[1] = 12
+        date.setMonth(parseInt(endInputArr[1]) - 1)
+        const lastDay = new Date(parseInt(endInputArr[2]), parseInt(endInputArr[1]), 0)
+        if (parseInt(endInputArr[0]) < date.getDate() + 1) {
+          endInputArr[0] = date.getDate() + 1
+          if (endInputArr[0].toString().length < 2)
+            endInputArr[0] = '0' + endInputArr[0].toString()
+        }
+        if (parseInt(endInputArr[0]) > lastDay.getDate())
+          endInputArr[0] = lastDay.getDate()
+        date.setDate(parseInt(endInputArr[0]))
+        endInput.value = endInputArr.join('.')
         this.calendarDates.dateRange.end.date = this.formatDateCalendar(endInput.value)
       } else {
         this.calendarDates.dateRange.end.date = false

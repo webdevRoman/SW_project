@@ -28,7 +28,7 @@ export default {
       state.name = user.firstname
       state.surname = user.lastname
       state.isAuthenticated = true
-      Vue.$cookies.set('username', { name: user.firstname, surname: user.lastname })
+      Vue.$cookies.set('username', { name: user.firstname, surname: user.lastname }, '1m')
     },
     AUTH_LOGOUT(state) {
       state.status = ''
@@ -45,6 +45,7 @@ export default {
       state.order = data.order
       state.start = data.start != null ? data.start.split('/').join('.') : data.start
       state.end = data.end != null ? data.end.split('/').join('.') : data.end
+      Vue.$cookies.set('username', { name: data.firstname, surname: data.lastname }, '1m')
     },
     SET_LIMIT(state, limit) {
       Vue.set(state, 'limit', limit)
@@ -130,7 +131,7 @@ export default {
         const url = '/modules/auth/signup'
         axios({ url: url, data: user, method: 'POST' })
         .then(() => {
-          Vue.$cookies.set('email', user.email)
+          Vue.$cookies.set('email', user.email, '1m')
           commit('SET_PROCESSING', false)
           resolve()
         })
