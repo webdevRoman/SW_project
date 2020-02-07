@@ -33,13 +33,6 @@ export default {
       if (password.length == 0) {
         Vue.set(state.errors, 'oldPassword', 'empty')
       }
-      // } else if (password.length < 6) {
-      //   Vue.set(state.errors, 'oldPassword', 'short')
-      // } else if (password.length > 25) {
-      //   Vue.set(state.errors, 'oldPassword', 'long')
-      // } else if (!password.match(state.passwordMask)) {
-      //   Vue.set(state.errors, 'oldPassword', 'wrong')
-      // }
     },
     CHECK_PASSWORD(state, password) {
       Vue.set(state.errors, 'password', undefined)

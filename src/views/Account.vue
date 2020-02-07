@@ -95,12 +95,12 @@ export default {
       newPasswordEnabled: false,
       calendarConfig: {
         isDateRange: true,
-        dateFormat: 'dd.mm.yyyy',
+        dateFormat: 'yyyy.mm.dd',
         disabledDayNames: ['Вс'],
         disabledDates: ['beforeToday'],
         monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
         shortMonthNames: ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
-        limits: { min: this.getTodayDate(), max: '31.12.3030' },
+        limits: { min: this.getTodayDate(), max: '3030.12.31' },
         applyStylesheet: false
       },
       calendarDates: {
@@ -130,6 +130,9 @@ export default {
       this.checkMiddlename()
       this.checkOldPassword()
       if (!this.errors) {
+
+        // format start and end dates
+
         this.$store.dispatch('UPDATE_USER', { firstname: this.name, lastname: this.surname, midname: this.middlename, current_password: this.oldPassword, password: this.password, password_2: this.passwordRepeat, order: this.calendarCheckbox ? 0 : 1, start: this.inputsDates.start == '' ? null : this.inputsDates.start.split('.').join('/'), end: this.inputsDates.end == '' ? null : this.inputsDates.end.split('.').join('/') })
         .then(() => {
           alert('Данные успешно обновлены')
@@ -268,15 +271,12 @@ export default {
     },
     getTodayDate() {
       const date = new Date()
-      return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
+      return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
     },
     showCalendar() {
       if (this.calendarCheckbox) {
-        // const checkbox = document.querySelector('.account-form__checkbox')
         const calendar = document.querySelector('.account-form__calendar')
-        // checkbox.checked = true
         calendar.classList.add('account-form__calendar_active')
-        // this.isChoosingDate = true
         this.hideCalendar()
       }
     },
@@ -295,7 +295,6 @@ export default {
         }
         if(calendar.classList.contains('account-form__calendar_active') && !parentsFlag && !e.target.parentNode.classList.contains('account-form__block__calendar') && !e.target.classList.contains('account-form__block__calendar')) {
           calendar.classList.remove('account-form__calendar_active')
-          // self.isChoosingDate = false
           self.checkInputs()
           document.removeEventListener('click', hideOnClickOutside)
         }
@@ -304,15 +303,13 @@ export default {
     },
     toggleCalendar() {
       const calendar = document.querySelector('.account-form__calendar')
-      // const checkbox = document.querySelector('.account-form__checkbox')
       const startInput = document.getElementById('account-date-start')
-      // if (checkbox.checked) {
       if (this.calendarCheckbox) {
         this.showCalendar()
         startInput.focus()
         const date = new Date()
         date.setDate(date.getDate() + 1)
-        let dateStr = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
+        let dateStr = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
         this.calendarDates = {
           dateRange: {
             start: {
@@ -325,7 +322,6 @@ export default {
         }
         this.inputsDates.start = this.formatDateInputs(dateStr)
         this.inputsDates.end = this.formatDateInputs(dateStr)
-        // this.isChoosingDate = true
       } else {
         this.calendarDates = {
           dateRange: {
@@ -342,7 +338,6 @@ export default {
         this.$store.dispatch('CLEAR_ERRORS', 'dates')
         this.calendarError = ''
         calendar.classList.remove('account-form__calendar_active')
-        // this.isChoosingDate = false
       }
     },
     checkInputs() {
@@ -442,11 +437,11 @@ export default {
     },
     formatDateInputs(dateStr) {
       let dateArr = dateStr.split('.')
-      if (dateArr[0].length < 2)
-        dateArr[0] = '0' + dateArr[0]
+      if (dateArr[2].length < 2)
+        dateArr[2] = '0' + dateArr[0]
       if (dateArr[1].length < 2)
         dateArr[1] = '0' + dateArr[1]
-      return dateArr.join('.')
+      return dateArr[2] + '.' + dateArr[1] + '.' + dateArr[0]
     },
     formatDateCalendar(dateStr) {
       let dateArr = dateStr.split('.')
@@ -454,7 +449,7 @@ export default {
         dateArr[0] = dateArr[0][1]
       if (dateArr[1].length == 2 && dateArr[1][0] == '0')
         dateArr[1] = dateArr[1][1]
-      return dateArr.join('.')
+      return dateArr[2] + '.' + dateArr[1] + '.' + dateArr[0]
     }
   },
   computed: {
@@ -522,15 +517,15 @@ export default {
       const start = this.$store.getters.start
       const end = this.$store.getters.end
       if (start != null) {
-        this.calendarDates.dateRange.start.date = this.formatDateCalendar(start)
-        this.inputsDates.start = start
+        this.calendarDates.dateRange.start.date = start
+        this.inputsDates.start = this.formatDateInputs(start)
       } else {
         this.calendarDates.dateRange.start.date = false
         this.inputsDates.start = ''
       }
       if (end != null) {
-        this.calendarDates.dateRange.end.date = this.formatDateCalendar(end)
-        this.inputsDates.end = end
+        this.calendarDates.dateRange.end.date = end
+        this.inputsDates.end = this.formatDateInputs(end)
       } else {
         this.calendarDates.dateRange.end.date = false
         this.inputsDates.end = ''

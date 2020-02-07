@@ -7,8 +7,8 @@
       .category-dishes
         .dish(v-for="dish in availableFavs")
           .dish-top
-            .dish-img
-              img(src="../assets/img/dish.svg", alt="Dish image")
+            .dish-img(:style="{'background-image': `url(http://edatomsk.ru${dish.image})`}")
+              //- img(src="../assets/img/dish.svg", alt="Dish image")
             .dish-title {{ dish.name }}
             .dish-descr {{ dish.description }}
           .dish-bottom
@@ -34,10 +34,9 @@
     .category(v-if="unavailableFavs.length > 0")
       .title.category-title Недоступные блюда
       .category-dishes
-        .dish(v-for="dish in unavailableFavs")
+        .dish.dish_inactive(v-for="dish in unavailableFavs")
           .dish-top
-            .dish-img
-              img(src="../assets/img/dish.svg", alt="Dish image")
+            .dish-img(:style="{'background-image': `url(http://edatomsk.ru${dish.image})`}")
             .dish-title {{ dish.name }}
             .dish-descr {{ dish.description }}
           .dish-bottom
@@ -86,8 +85,7 @@ export default {
       if (dish.amount == '' || !dish.amount.match(/\d+/)) {
         this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
       } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
-        let tempAmount = parseInt(dish.amount[1])
-        this.$store.dispatch('SET_OREDER', { dish: dish, amount: tempAmount })
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount[1]) })
       } else {
         this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount })
       }
@@ -162,16 +160,19 @@ export default {
       margin-right: 30px
       margin-bottom: 30px
       transition: 0.2s
+      &_inactive
+        opacity: 0.5
       &:nth-child(4n)
         margin-right: 0
       &:hover
         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1)
       &-img
-        padding: 13px
+        height: 200px
         border-bottom: 2px solid $c-middle
+        background-repeat: no-repeat
+        background-position: center
+        background-size: cover
         margin-bottom: 12px
-        img
-          width: 140px
       &-title
         width: 90%
         font-weight: bold

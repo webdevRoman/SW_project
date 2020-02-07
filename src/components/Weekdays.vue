@@ -30,8 +30,7 @@ export default {
         day = '0' + day.toString()
       if (month.toString().length < 2)
         month = '0' + month.toString()
-      // return `${day}/${month}/${year.toString().slice(2)}`
-      return `${day}/${month}/${year.toString()}`
+      return `${year.toString()}.${month}.${day}`
     },
     chooseDate(date) {
       this.$store.dispatch('LOAD_DISHES', { date: date, category: 'all', page: 1 })
@@ -55,7 +54,6 @@ export default {
         })
         console.log("Error on loading dishes: " + error.message)
       })
-      this.$store.dispatch('SET_DATE', this.currentDate)
     }
   },
   computed: {

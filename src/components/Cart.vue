@@ -2,7 +2,7 @@
 .cart-popup
   .cart-close
     button.cart-close__btn(@click.prevent="hideCart()") &times;
-  .cart-items__confirmed(v-if="isConfirmed") Заказ подтвержден
+  .cart-items__confirmed(v-if="acceptOrder") Заказ подтвержден
   .cart-items__no(v-else-if="Object.keys(cartItems).length < 1") Ваша корзина пуста
   .cart-items(v-else)
     .cart-item(v-for="dish in cartItems")
@@ -29,7 +29,7 @@
         button.cart-item__delete(@click.prevent="deleteOrder(dish)") &times;
       .cart-item__sum
         div Всего: <span class="cart-sum__value">{{ dish.price * dish.amount }}</span> Р
-  .cart-price(v-if="!isConfirmed")
+  .cart-price(v-if="!acceptOrder")
     .cart-price__line.cart-price__sum
       .cart-price__text Итого
       .cart-price__value <span class="cart-value__value">{{ currentSum }}</span> Р
@@ -38,18 +38,14 @@
       .cart-price__text(v-else) Оставшийся лимит
       .cart-price__value(v-if="currentSum > priceLimit") <span class="cart-value__value">{{ currentSum - priceLimit }}</span> Р
       .cart-price__value(v-else) <span class="cart-value__value">{{ priceLimit - currentSum }}</span> Р
-  .cart-buttons(v-if="!isConfirmed")
+  .cart-buttons(v-if="!acceptOrder")
     button.btn.btn_o(@click.prevent="clearCart()", :disabled="Object.keys(cartItems).length < 1") Очистить корзину
-    button.btn(@click.prevent="confirmOrder()", :disabled="Object.keys(cartItems).length < 1") Подтвердить заказ
+    button.btn(@click.prevent="confirmOrder()", :disabled="Object.keys(cartItems).length < 1 || refuseOrder") Подтвердить заказ
+    .error(v-if="refuseOrder") Вы отказались от заказа на этот день
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      isConfirmed: false
-    }
-  },
   methods: {
     hideCart() {
       const cart = document.querySelector('.cart-popup')
@@ -77,8 +73,7 @@ export default {
       if (dish.amount == '' || !dish.amount.match(/\d+/)) {
         this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
       } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
-        let tempAmount = parseInt(dish.amount[1])
-        this.$store.dispatch('SET_OREDER', { dish: dish, amount: tempAmount })
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount[1]) })
       } else {
         this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount })
       }
@@ -92,12 +87,12 @@ export default {
     },
     confirmOrder() {
       // dispatch some confirming method
-      this.isConfirmed = true
-      for (const key in this.cartItems) {
-        const dish = this.cartItems[key]
-        dish.order = 0
-        this.$store.dispatch('DECREMENT_OREDER', dish)
-      }
+      // acceptOrder = true !!!
+      // for (const key in this.cartItems) {
+      //   const dish = this.cartItems[key]
+      //   dish.order = 0
+      //   this.$store.dispatch('DECREMENT_OREDER', dish)
+      // }
       const cart = document.querySelector('.cart-popup')
       setTimeout(() => {
         cart.style.display = 'none'        
@@ -117,6 +112,12 @@ export default {
     },
     priceLimit() {
       return this.$store.getters.limit
+    },
+    refuseOrder() {
+      return this.$store.getters.refuseOrder
+    },
+    acceptOrder() {
+      return this.$store.getters.acceptOrder
     }
   }
 }
@@ -288,8 +289,16 @@ export default {
     display: flex
     justify-content: center
     align-items: center
+    position: relative
     .btn:first-child
       margin-right: 20px
+.error
+  position: absolute
+  left: 38px
+  bottom: 15px
+  font-weight: 500
+  font-size: 13px
+  color: $c-warning
 
 @media(max-width: 992px)
   html

@@ -11,12 +11,13 @@
       .title.category-title {{ category.name }}
       .title.favourites-no(v-if="category.dishes.length == 0") В этой категории нет блюд
       .category-dishes(v-else)
-        .dish(v-for="dish in category.dishes")
+        .dish(v-for="dish in category.dishes", :class="{'dish_inactive': dish.hide == 1}")
           .dish-top
-            .dish-img
-              img(src="../assets/img/dish.svg", alt="Dish image")
+            .dish-img(:style="{'background-image': `url(http://edatomsk.ru${dish.image})`}")
+              //- img(src="../assets/img/dish.svg", alt="Dish image")
             .dish-title {{ dish.name }}
-            .dish-descr {{ dish.description }}
+            //- .dish-descr {{ dish.description }}
+            .dish-descr(v-html="formatDescr(dish.description)")
           .dish-bottom
             .dish-info
               .dish-info__text
@@ -28,13 +29,13 @@
                 .dish-info__dot
             .dish-footer
               div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.amount > 0}")
-                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount > 0")
+                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount > 0 || dish.hide == 1")
                   img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.amount > 0")
                   img(src="../assets/img/cart.svg", alt="Cart image", v-else)
                 div(:class="{'cart-number': true, 'cart-number_active': dish.amount > 0}")
-                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0") -
-                  input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)")
-                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99") +
+                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0 || dish.hide == 1") -
+                  input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)", :disabled="dish.hide == 1")
+                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99 || dish.hide == 1") +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
                 img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.elect")
                 img(src="../assets/img/star.svg", alt="Star image", v-else)
@@ -53,6 +54,9 @@ export default {
     }
   },
   methods: {
+    formatDescr(text) {
+      return text.split('\n').join('<br>')
+    },
     toggleFavourite(dish) {
       if (!dish.elect) {
         this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: false })
@@ -72,8 +76,7 @@ export default {
       if (dish.amount == '' || !dish.amount.match(/\d+/)) {
         this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
       } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
-        let tempAmount = parseInt(dish.amount[1])
-        this.$store.dispatch('SET_OREDER', { dish: dish, amount: tempAmount })
+        this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount[1]) })
       } else {
         this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount })
       }
@@ -141,16 +144,21 @@ export default {
       margin-right: 30px
       margin-bottom: 30px
       transition: 0.2s
+      &_inactive
+        opacity: 0.5
       &:nth-child(4n)
         margin-right: 0
       &:hover
         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1)
       &-img
-        padding: 13px
+        height: 200px
         border-bottom: 2px solid $c-middle
+        background-repeat: no-repeat
+        background-position: center
+        background-size: cover
         margin-bottom: 12px
-        img
-          width: 140px
+        // img
+        //   width: 140px
       &-title
         width: 90%
         font-weight: bold

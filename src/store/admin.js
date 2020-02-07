@@ -13,10 +13,10 @@ export default {
       calendarDates: {
         dateRange: {
           start: {
-            date: '10.2.2020'
+            date: '2020.2.10'
           },
           end: {
-            date: '17.2.2020'
+            date: '2020.2.17'
           }
         }
       },
@@ -24,8 +24,6 @@ export default {
         start: '10.02.2020',
         end: '17.02.2020'
       }
-      // start: '10/02/2020',
-      // end: '17/02/2020'
     }, {
       id: 2,
       firstname: 'Петр',
@@ -50,8 +48,6 @@ export default {
         start: '',
         end: ''
       }
-      // start: '',
-      // end: ''
     }, {
       id: 3,
       firstname: 'Волк',
@@ -76,17 +72,9 @@ export default {
         start: '',
         end: ''
       }
-      // start: '',
-      // end: ''
     }]
   },
   mutations: {
-    // SET_ALL_LIMIT(state, limit) {
-    //   if (limit != '')
-    //     for (let i = 0; i < state.users.length; i++) {
-    //       state.users[i].limit = parseInt(limit)
-    //     }
-    // }
     DELETE_USER(state, id) {
       let arrIndex
       for (let i = 0; i < state.users.length; i++) {
@@ -119,9 +107,6 @@ export default {
     }
   },
   actions: {
-    // SET_ALL_LIMIT({commit}, limit) {
-    //   commit('SET_ALL_LIMIT', limit)
-    // },
     DELETE_USER({commit}, id) {
       commit('DELETE_USER', id)
     },

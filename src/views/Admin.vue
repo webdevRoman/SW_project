@@ -135,7 +135,7 @@ export default {
       chosenSection: 'docs',
       calendarConfig: {
         isDatePicker: true,
-        dateFormat: 'dd.mm.yyyy',
+        dateFormat: 'yyyy.mm.dd',
         disabledDayNames: ['Вс'],
         disabledDates: ['afterToday'],
         monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
@@ -145,12 +145,12 @@ export default {
       },
       calendarConfig2: {
         isDateRange: true,
-        dateFormat: 'dd.mm.yyyy',
+        dateFormat: 'yyyy.mm.dd',
         disabledDayNames: ['Вс'],
         disabledDates: ['beforeToday'],
         monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
         shortMonthNames: ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
-        limits: { min: this.getTodayDate(), max: '31.12.3030' },
+        limits: { min: this.getTodayDate(), max: '3030.12.31' },
         applyStylesheet: false
       },
       inputDate: '',
@@ -182,7 +182,7 @@ export default {
   methods: {
     getLimitDates() {
       const date = new Date()
-      return { min: `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`, max: `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}` }
+      return { min: `${date.getFullYear()}.${date.getMonth()}.${date.getDate()}`, max: `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}` }
     },
     showCalendarDocs() {
       const calendar = document.getElementById('account-form__calendar')
@@ -191,7 +191,6 @@ export default {
     },
     hideCalendarDocs() {
       const calendar = document.getElementById('account-form__calendar')
-      const self = this
       function hideOnClickOutsideDocs(e) {
         let a = e.target
         let parentsFlag = false
@@ -204,7 +203,6 @@ export default {
         }
         if(calendar.classList.contains('account-form__calendar_active') && !parentsFlag && !e.target.parentNode.classList.contains('docs-block__block__calendar') && !e.target.classList.contains('docs-block__block__calendar')) {
           calendar.classList.remove('account-form__calendar_active')
-          self.isChoosingDate = false
           document.removeEventListener('click', hideOnClickOutsideDocs)
         }
       }
@@ -237,10 +235,6 @@ export default {
       } else
         this.calendarDate.selectedDate = ''
     },
-    // checkChange(user) {
-    //   console.log(this.users);
-    //   console.log(user.limit);
-    // },
     toggleCalendar(user) {
       const calendar = document.getElementById(`account-form__calendar-${user.id}`)
       const checkbox = document.getElementById(`account-checkbox-${user.id}`)
@@ -252,7 +246,7 @@ export default {
         startInput.focus()
         const date = new Date()
         date.setDate(date.getDate() + 1)
-        let dateStr = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
+        let dateStr = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
         user.calendarDates = {
           dateRange: {
             start: {
@@ -428,15 +422,31 @@ export default {
     },
     getTodayDate() {
       const date = new Date()
-      return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
+      return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
     },
+    // formatDateInputs(dateStr) {
+    //   let dateArr = dateStr.split('.')
+    //   if (dateArr[0].length < 2)
+    //     dateArr[0] = '0' + dateArr[0]
+    //   if (dateArr[1].length < 2)
+    //     dateArr[1] = '0' + dateArr[1]
+    //   return dateArr.join('.')
+    // },
+    // formatDateCalendar(dateStr) {
+    //   let dateArr = dateStr.split('.')
+    //   if (dateArr[0].length == 2 && dateArr[0][0] == '0')
+    //     dateArr[0] = dateArr[0][1]
+    //   if (dateArr[1].length == 2 && dateArr[1][0] == '0')
+    //     dateArr[1] = dateArr[1][1]
+    //   return dateArr.join('.')
+    // },
     formatDateInputs(dateStr) {
       let dateArr = dateStr.split('.')
-      if (dateArr[0].length < 2)
-        dateArr[0] = '0' + dateArr[0]
+      if (dateArr[2].length < 2)
+        dateArr[2] = '0' + dateArr[0]
       if (dateArr[1].length < 2)
         dateArr[1] = '0' + dateArr[1]
-      return dateArr.join('.')
+      return dateArr[2] + '.' + dateArr[1] + '.' + dateArr[0]
     },
     formatDateCalendar(dateStr) {
       let dateArr = dateStr.split('.')
@@ -444,7 +454,7 @@ export default {
         dateArr[0] = dateArr[0][1]
       if (dateArr[1].length == 2 && dateArr[1][0] == '0')
         dateArr[1] = dateArr[1][1]
-      return dateArr.join('.')
+      return dateArr[2] + '.' + dateArr[1] + '.' + dateArr[0]
     },
     saveChanges() {
       this.$store.dispatch('SAVE_CHANGES')

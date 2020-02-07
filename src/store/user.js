@@ -5,7 +5,6 @@ export default {
   state: {
     isAuthenticated: false,
     isAdmin: true,
-    token: localStorage.getItem('user-token') || '',
     name: '',
     surname: '',
     middlename: '',
@@ -75,15 +74,6 @@ export default {
             resolve()
           else
             reject()
-          // if (Vue.$cookies.get('username') != null) {
-          //   commit('SET_AUTHENTICATED', true)
-          //   commit('SET_PROCESSING', false)
-          //   resolve()
-          // } else {
-          //   commit('SET_AUTHENTICATED', false)
-          //   commit('SET_PROCESSING', false)
-          //   reject()
-          // }
         })
         .catch(() => {
           reject()
@@ -196,7 +186,6 @@ export default {
     surname: state => state.surname,
     middlename: state => state.middlename,
     isAuthenticated: state => state.isAuthenticated,
-    // isAuthenticated: state => !!state.token
     isAdmin: state => state.isAdmin,
     limit: state => state.limit,
     order: state => state.order,

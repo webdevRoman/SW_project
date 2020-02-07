@@ -156,28 +156,47 @@ export default {
     meta: {},
     links: {},
     favourites: {},
-    cart: {}
+    cart: {},
+    refuseOrder: false,
+    acceptOrder: false
   },
   mutations: {
     SET_DATE(state, date) {
       state.date = date
     },
     SET_CATEGORIES(state, data) {
+      function checkCategories(categories, id) {
+        for (let i = 0; i < categories.length; i++) {
+          if (categories[i].id == id) {
+            return i
+          }
+        }
+        return -1
+      }
       let categories = []
       if (data != 'err') {
-        data.categories.forEach(cat => {
-          categories.push({ id: cat.id, name: cat.name, dishes: [] })
-        })
+        // data.categories.forEach(cat => {
+        //   categories.push({ id: cat.id, name: cat.name, dishes: [] })
+        // })
+        // data.dishes.forEach(dish => {
+        //   for (let i = 0; i < categories.length; i++) {
+        //     if (dish.category == categories[i].name) {
+        //       categories[i].dishes.push(dish)
+        //       break
+        //     }
+        //   }
+        // })
+        // state.meta = data._meta
+        // state.links = data._links
         data.dishes.forEach(dish => {
-          for (let i = 0; i < categories.length; i++) {
-            if (dish.category == categories[i].name) {
-              categories[i].dishes.push(dish)
-              break
-            }
+          let index = checkCategories(categories, dish.group_id)
+          if (index == -1) {
+            categories.push({ id: dish.group_id, name: dish.group_id, dishes: [] })
+            categories[categories.length - 1].dishes.push(dish)
+          } else {
+            categories[index].dishes.push(dish)
           }
         })
-        state.meta = data._meta
-        state.links = data._links
       }
       state.categories = categories
     },
@@ -202,7 +221,6 @@ export default {
       }
       if (state.cart[dish.id] != undefined)
         Vue.set(state.cart[dish.id], 'elect', true)
-        // state.cart[dish.id].elect = true
     },
     REMOVE_FAVOURITE(state, dish) {
       let newFavs = state.favourites
@@ -220,12 +238,13 @@ export default {
         Vue.set(state.cart[dish.id], 'elect', false)
     },
     SET_CART(state, data) {
+      state.refuseOrder = data.refuse
+      state.acceptOrder = data.accept
+      state.cart = {}
       if (data != 'err') {
         data.dishes.forEach(dish => {
           Vue.set(state.cart, dish.id, dish)
         })
-      } else {
-        state.cart = {}
       }
     },
     SET_OREDER(state, data) {
@@ -235,6 +254,7 @@ export default {
       } else {
         let newCart = state.cart
         delete newCart[data.dish.id]
+        state.cart = {}
         state.cart = newCart
       }
       for (let i = 0; i < state.categories.length; i++) {
@@ -252,9 +272,10 @@ export default {
     SET_DATE({commit}, date) {
       commit('SET_DATE', date)
     },
-    LOAD_DISHES({commit}, data) {
+    LOAD_DISHES({commit, dispatch}, data) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
+        dispatch('SET_DATE', data.date)
         let requestParams = {}
         // if (data.link == undefined) {
           const url = '/modules/menu'
@@ -276,17 +297,18 @@ export default {
           commit('SET_CATEGORIES', resp.data)
           commit('SET_PROCESSING', false)
           resolve()
-        })
-        .catch(err => {
+        },
+        err => {
           commit('SET_CATEGORIES', 'err')
           commit('SET_PROCESSING', false)
           reject(err)
         })
       })
     },
-    LOAD_FAVOURITES({commit}, date) {
+    LOAD_FAVOURITES({commit, dispatch}, date) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
+        dispatch('SET_DATE', date)
         let requestParams = {}
         const url = '/modules/account/elect'
         requestParams = {
@@ -321,9 +343,10 @@ export default {
         commit('SET_PROCESSING', false)
       })
     },
-    LOAD_CART({commit}, date) {
+    LOAD_CART({commit, dispatch}, date) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
+        dispatch('SET_DATE', date)
         let requestParams = {}
         const url = '/modules/basket'
         requestParams = {
@@ -372,6 +395,8 @@ export default {
     date: (state) => state.date,
     categories: (state) => state.categories,
     favourites: (state) => state.favourites,
-    cart: (state) => state.cart
+    cart: (state) => state.cart,
+    refuseOrder: (state) => state.refuseOrder,
+    acceptOrder: (state) => state.acceptOrder
   }
 }
