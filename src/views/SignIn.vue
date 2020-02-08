@@ -22,6 +22,13 @@
         .form-error(v-if="authError != ''") {{ authError }}
       button.form-submit(type="submit", :disabled="errors") Войти
       button.signin-form__signup(@click.prevent="goToSignup()") Еще нет аккаунта?
+  .notification-popup(v-if="notification.msg != ''")
+    .notification-info {{ notification.msg }}
+    .notification-img(v-if="notification.err")
+      img(src="../assets/img/cross.svg", alt="Cross")
+    .notification-img(v-else)
+      img(src="../assets/img/tick-success.svg", alt="Tick")
+    button.notification-close(@click.prevent="closeNotification()") &times;
   .processing-overlay(v-if="processing")
     .processing-indicator
 </template>
@@ -53,12 +60,20 @@ export default {
       this.checkPassword()
       if (!this.errors || (this.email != '' && this.password != '')) {
         this.$store.dispatch('AUTH_REQUEST', { email: this.email, rememberMe: 1, password: this.password })
-        .then(result => {
+        .then(resp => {
           this.$router.push('/')
         },
-        error => {
-          this.$store.dispatch('SET_ERROR', { type: 'auth', msg: 'wrong' })
-          this.authError = 'Неверная почта или пароль'
+        err => {
+          if (err == 'password') {
+            this.$store.dispatch('SET_ERROR', { type: 'auth', msg: 'wrong' })
+            this.authError = 'Неверная почта или пароль'
+          } else {
+            console.log('Error on signing in: ' + err)
+            this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+            setTimeout(() => {
+              this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+            }, 5000)
+          }
         })
       }
     },
@@ -108,6 +123,9 @@ export default {
       else
         passwordInput.type = 'password'
       this.passwordShow = !this.passwordShow
+    },
+    closeNotification() {
+      this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
     }
   },
   computed: {
@@ -120,6 +138,9 @@ export default {
     },
     processing() {
       return this.$store.getters.processing
+    },
+    notification() {
+      return this.$store.getters.notification
     }
   },
   watch: {

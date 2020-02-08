@@ -89,9 +89,16 @@ export default {
         const url = '/backend/modules/auth/login'
         axios({ url: url, data: user, method: 'POST' })
         .then(resp => {
-          commit('SET_USER', resp.data)
-          commit('SET_PROCESSING', false)
-          resolve(resp)
+          if (resp.data.firstname != undefined && resp.data.lastname != undefined) {
+            commit('SET_USER', resp.data)
+            commit('SET_PROCESSING', false)
+            resolve()
+          } else if (resp.data.password != undefined) {
+            commit('SET_PROCESSING', false)
+            reject('password')
+          } else {
+            reject()
+          }
         })
         .catch(err => {
           commit('SET_PROCESSING', false)
@@ -116,16 +123,27 @@ export default {
       })
     },
     REG_REQUEST({commit}, user) {
+      console.log(user);
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
         const url = '/backend/modules/auth/signup'
         axios({ url: url, data: user, method: 'POST' })
-        .then(() => {
-          Vue.$cookies.set('email', user.email, '1m')
-          commit('SET_PROCESSING', false)
-          resolve()
-        })
-        .catch(err => {
+        .then(resp => {
+          // console.log(resp.data);
+          if (resp.data == 'success') {
+            Vue.$cookies.set('email', user.email, '1m')
+            commit('SET_PROCESSING', false)
+            resolve()
+          } else if (resp.data == 'email') {
+            commit('SET_PROCESSING', false)
+            reject('email')
+          } else {
+            commit('SET_PROCESSING', false)
+            reject()
+          }
+        },
+        err => {
+          // console.log(err);
           commit('SET_PROCESSING', false)
           reject(err)
         })

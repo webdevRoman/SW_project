@@ -46,6 +46,13 @@
           .form-error(v-if="passwordRepeatError != ''") {{ passwordRepeatError }}
       button.form-submit.signup-form__submit(type="submit", :disabled="errors") Зарегистрироваться
       button.signup-form__signin(@click.prevent="goToSignin()") Уже есть аккаунт?
+  .notification-popup(v-if="notification.msg != ''")
+    .notification-info {{ notification.msg }}
+    .notification-img(v-if="notification.err")
+      img(src="../assets/img/cross.svg", alt="Cross")
+    .notification-img(v-else)
+      img(src="../assets/img/tick-success.svg", alt="Tick")
+    button.notification-close(@click.prevent="closeNotification()") &times;
   .processing-overlay(v-if="processing")
     .processing-indicator
 </template>
@@ -86,15 +93,21 @@ export default {
       this.checkPassword()
       if (!this.errors) {
         this.$store.dispatch('REG_REQUEST', { email: this.email, firstname: this.name, lastname: this.surname, midname: this.middlename, password: this.password, password_2: this.passwordRepeat })
-        .then(() => {
+        .then(resp => {
           this.$router.push('/email-confirmation')
         },
-        error => {
-          this.$store.dispatch('SET_ERROR', { type: 'email', msg: 'reserved' })
-          this.emailError = 'Данная почта уже занята'
-          console.log('Error from server:' + error)
+        err => {
+          if (err == 'email') {
+            this.$store.dispatch('SET_ERROR', { type: 'email', msg: 'reserved' })
+            this.emailError = 'Данная почта уже занята'
+          } else {
+            console.log('Error on checking registration data: ' + err)
+            this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+            setTimeout(() => {
+              this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+            }, 5000)
+          }
         })
-        // this.$router.push('/email-confirmation')
       }
     },
     checkName() {
@@ -220,6 +233,9 @@ export default {
       else
         passwordInput.type = 'password'
       this.passwordRepeatShow = !this.passwordRepeatShow
+    },
+    closeNotification() {
+      this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
     }
   },
   computed: {
@@ -232,6 +248,9 @@ export default {
     },
     processing() {
       return this.$store.getters.processing
+    },
+    notification() {
+      return this.$store.getters.notification
     }
   },
   watch: {

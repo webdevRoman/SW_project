@@ -24,6 +24,13 @@ div
   Favourites(v-if="showFavourites")
   Dishes(v-else)
   Footer
+  .notification-popup(v-if="notification.msg != ''")
+    .notification-info {{ notification.msg }}
+    .notification-img(v-if="notification.err")
+      img(src="../assets/img/cross.svg", alt="Cross")
+    .notification-img(v-else)
+      img(src="../assets/img/tick-success.svg", alt="Tick")
+    button.notification-close(@click.prevent="closeNotification()") &times;
   .processing-overlay(v-if="processing")
     .processing-indicator
 </template>
@@ -55,6 +62,9 @@ export default {
       const navMenu = document.querySelector('.nav')
       navMenu.style.display != 'block' ? burgerBtn.classList.add('nav-burger_active') : burgerBtn.classList.remove('nav-burger_active')
       navMenu.style.display != 'block' ? navMenu.style.display = 'block' : navMenu.style.display = 'none'
+    },
+    closeNotification() {
+      this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
     }
   },
   computed: {
@@ -70,6 +80,9 @@ export default {
     },
     processing() {
       return this.$store.getters.processing
+    },
+    notification() {
+      return this.$store.getters.notification
     }
   },
   watch: {

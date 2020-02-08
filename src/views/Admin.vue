@@ -19,7 +19,7 @@
       </svg>
   .admin-main.admin-docs(v-if="chosenSection == 'docs'")
     .docs-container
-      form.docs-block(action="#")
+      form.docs-block(action="#", @click.prevent="downloadOrders()")
         .docs-block__title Скачать лист заказов
         div
           .form-block.docs-block__block.docs-block__block__calendar
@@ -27,7 +27,7 @@
             input.form-input(type="text", id="orders-date", v-mask="'##.##.####'", v-model.trim="inputDate", @focus="showCalendarDocs()", @focusout="checkInput()")
             FunctionalCalendar.calendar.account-form__calendar(id="account-form__calendar", v-model="calendarDate", :configs="calendarConfig")
           button.form-submit(type="submit") Скачать
-      form.docs-block(action="#")
+      form.docs-block(action="#", @click.prevent="downloadLimits()")
         .docs-block__title Скачать лист превышений лимита
         div
           .select-container
@@ -126,6 +126,13 @@
           .form-error(v-if="passwordError != ''") {{ passwordError }}
       button.form-submit(type="submit", :disabled="errors") Добавить пользователя
       button.popup-close(@click.prevent="hidePopup()") &times;
+  .notification-popup(v-if="notification.msg != ''")
+    .notification-info {{ notification.msg }}
+    .notification-img(v-if="notification.err")
+      img(src="../assets/img/cross.svg", alt="Cross")
+    .notification-img(v-else)
+      img(src="../assets/img/tick-success.svg", alt="Tick")
+    button.notification-close(@click.prevent="closeNotification()") &times;
   .processing-overlay(v-if="processing")
     .processing-indicator
 </template>
@@ -237,6 +244,39 @@ export default {
       } else
         this.calendarDate.selectedDate = ''
     },
+    downloadOrders() {
+      // this.$store.dispatch('DOWNLOAD_ORDERS')
+      // .then(resp => {
+      //   this.$store.dispatch('SET_NOTIFICATION', { msg: 'Скачивание листа заказов', err: false })
+      //   setTimeout(() => {
+      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      //   }, 5000)
+      // },
+      // err => {
+      //   console.log('Error on saving changes in admin panel: ' + err)
+      //   this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+      //   setTimeout(() => {
+      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      //   }, 5000)
+      // })
+    },
+    downloadLimits() {
+      // this.$store.dispatch('DOWNLOAD_LIMITS')
+      // .then(resp => {
+      //   this.$store.dispatch('SET_NOTIFICATION', { msg: 'Скачивание листа превышений лимита', err: false })
+      //   setTimeout(() => {
+      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      //   }, 5000)
+      // },
+      // err => {
+      //   console.log('Error on saving changes in admin panel: ' + err)
+      //   this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+      //   setTimeout(() => {
+      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      //   }, 5000)
+      // })
+    },
+
     toggleCalendar(user) {
       const calendar = document.getElementById(`account-form__calendar-${user.id}`)
       const checkbox = document.getElementById(`account-checkbox-${user.id}`)
@@ -426,22 +466,6 @@ export default {
       const date = new Date()
       return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
     },
-    // formatDateInputs(dateStr) {
-    //   let dateArr = dateStr.split('.')
-    //   if (dateArr[0].length < 2)
-    //     dateArr[0] = '0' + dateArr[0]
-    //   if (dateArr[1].length < 2)
-    //     dateArr[1] = '0' + dateArr[1]
-    //   return dateArr.join('.')
-    // },
-    // formatDateCalendar(dateStr) {
-    //   let dateArr = dateStr.split('.')
-    //   if (dateArr[0].length == 2 && dateArr[0][0] == '0')
-    //     dateArr[0] = dateArr[0][1]
-    //   if (dateArr[1].length == 2 && dateArr[1][0] == '0')
-    //     dateArr[1] = dateArr[1][1]
-    //   return dateArr.join('.')
-    // },
     formatDateInputs(dateStr) {
       let dateArr = dateStr.split('.')
       if (dateArr[2].length < 2)
@@ -460,6 +484,19 @@ export default {
     },
     saveChanges() {
       this.$store.dispatch('SAVE_CHANGES')
+      // .then(resp => {
+      //   this.$store.dispatch('SET_NOTIFICATION', { msg: 'Изменения сохранены', err: false })
+      //   setTimeout(() => {
+      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      //   }, 5000)
+      // },
+      // err => {
+      //   console.log('Error on saving changes in admin panel: ' + err)
+      //   this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+      //   setTimeout(() => {
+      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      //   }, 5000)
+      // })
     },
 
     checkName() {
@@ -601,6 +638,9 @@ export default {
       this.limit = ''
       this.limitError = '',
       this.showPopup = false
+    },
+    closeNotification() {
+      this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
     }
   },
   computed: {
@@ -675,6 +715,9 @@ export default {
     },
     processing() {
       return this.$store.getters.processing
+    },
+    notification() {
+      return this.$store.getters.notification
     }
   },
   watch: {
@@ -694,7 +737,10 @@ export default {
       else
         this.passwordFocus = false
     }
-  }
+  },
+  // created() {
+  //   load users and set notification
+  // }
 }
 </script>
 

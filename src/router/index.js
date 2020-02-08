@@ -15,30 +15,39 @@ Vue.use(VueRouter)
 
 const ifNotAuthenticated = (to, from, next) => {
   Store.dispatch('CHECK_AUTHORIZED')
-  .then(() => {
+  .then(resp => {
     next('/')
-  })
-  .catch(() => {
+  },
+  err => {
     next()
   })
+  // .catch(() => {
+  //   next()
+  // })
 }
 const ifAuthenticated = (to, from, next) => {
   Store.dispatch('CHECK_AUTHORIZED')
-  .then(() => {
+  .then(resp => {
     next()
-  })
-  .catch(() => {
+  },
+  err => {
     next('/signin')
   })
+  // .catch(() => {
+  //   next('/signin')
+  // })
 }
 const ifAuthenticatedAdmin = (to, from, next) => {
   Store.dispatch('CHECK_AUTHORIZED_ADMIN')
-  .then(() => {
+  .then(resp => {
     next()
-  })
-  .catch(() => {
+  },
+  err => {
     next('/signin')
   })
+  // .catch(() => {
+  //   next('/signin')
+  // })
 }
 // const ifNotAuthenticated = (to, from, next) => {
 //   if (!Store.getters.isAuthenticated) {

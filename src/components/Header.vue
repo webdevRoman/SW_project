@@ -23,8 +23,15 @@ export default {
     },
     signout() {
       this.$store.dispatch('AUTH_LOGOUT')
-      .then(() => {
+      .then(resp => {
         this.$router.push('/signin')
+      },
+      err => {
+        console.log('Error on signing out: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
       })
     }
   },

@@ -63,6 +63,13 @@
       .account-form__buttons
         button.btn.btn_o.account-form__btn(@click.prevent="goBack()") Вернуться на сайт
         button.form-submit.account-form__btn.account-form__submit(type="submit", :disabled="errors") Подтвердить
+  .notification-popup(v-if="notification.msg != ''")
+    .notification-info {{ notification.msg }}
+    .notification-img(v-if="notification.err")
+      img(src="../assets/img/cross.svg", alt="Cross")
+    .notification-img(v-else)
+      img(src="../assets/img/tick-success.svg", alt="Tick")
+    button.notification-close(@click.prevent="closeNotification()") &times;
   .processing-overlay(v-if="processing")
     .processing-indicator
 </template>
@@ -132,18 +139,29 @@ export default {
       this.checkMiddlename()
       this.checkOldPassword()
       if (!this.errors) {
-
-        // format start and end dates
-
-        this.$store.dispatch('UPDATE_USER', { firstname: this.name, lastname: this.surname, midname: this.middlename, current_password: this.oldPassword, password: this.password, password_2: this.passwordRepeat, order: this.calendarCheckbox ? 0 : 1, start: this.inputsDates.start == '' ? null : this.inputsDates.start.split('.').join('/'), end: this.inputsDates.end == '' ? null : this.inputsDates.end.split('.').join('/') })
-        .then(() => {
-          alert('Данные успешно обновлены')
+        let startDate, endDate
+        if (this.inputsDates.start != '' && this.inputsDates.end != '') {
+          let startArr = this.inputsDates.start.split('.')
+          startDate = startArr[2] + '.' + startArr[1] + '.' + startArr[0]
+          let endArr = this.inputsDates.end.split('.')
+          endDate = endArr[2] + '.' + endArr[1] + '.' + endArr[0]
+        }
+        this.$store.dispatch('UPDATE_USER', { firstname: this.name, lastname: this.surname, midname: this.middlename, current_password: this.oldPassword, password: this.password, password_2: this.passwordRepeat, order: this.calendarCheckbox ? 0 : 1, start: this.inputsDates.start == '' ? null : startDate, end: this.inputsDates.end == '' ? null : endDate })
+        .then(resp => {
           this.oldPassword = ''
           this.password = ''
           this.passwordRepeat = ''
-        })
-        .catch(err => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: 'Изменения сохранены', err: false })
+          setTimeout(() => {
+            this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+          }, 5000)
+        },
+        err => {
           console.log('Error on updating user data: ' + err)
+          this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+          setTimeout(() => {
+            this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+          }, 5000)
         })
       }
     },
@@ -452,6 +470,9 @@ export default {
       if (dateArr[1].length == 2 && dateArr[1][0] == '0')
         dateArr[1] = dateArr[1][1]
       return dateArr[2] + '.' + dateArr[1] + '.' + dateArr[0]
+    },
+    closeNotification() {
+      this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
     }
   },
   computed: {
@@ -464,6 +485,9 @@ export default {
     },
     processing() {
       return this.$store.getters.processing
+    },
+    notification() {
+      return this.$store.getters.notification
     }
   },
   watch: {
@@ -514,7 +538,7 @@ export default {
   },
   created() {
     this.$store.dispatch('LOAD_ACCOUNT')
-    .then(() => {
+    .then(resp => {
       this.name = this.$store.getters.name
       this.surname = this.$store.getters.surname
       this.middlename = this.$store.getters.middlename
@@ -535,9 +559,13 @@ export default {
         this.calendarDates.dateRange.end.date = false
         this.inputsDates.end = ''
       }
-    })
-    .catch(err => {
+    },
+    err => {
       console.log('Error on loading account: ' + err)
+      this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+      setTimeout(() => {
+        this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      }, 5000)
     })
   }
 }

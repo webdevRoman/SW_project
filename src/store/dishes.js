@@ -330,17 +330,21 @@ export default {
       })
     },
     TOGGLE_FAVOURITE({commit}, data) {
-      commit('SET_PROCESSING', true)
-      axios({ url: '/backend/modules/account/edit', data: { id: data.dish.id }, method: 'POST' })
-      .then(resp => {
-        if (data.remove)
-          commit('REMOVE_FAVOURITE', data.dish)
-        else
-          commit('ADD_FAVOURITE', data.dish)
-        commit('SET_PROCESSING', false)
-      })
-      .catch(err => {
-        commit('SET_PROCESSING', false)
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        axios({ url: '/backend/modules/account/edit', data: { id: data.dish.id }, method: 'POST' })
+        .then(resp => {
+          if (data.remove)
+            commit('REMOVE_FAVOURITE', data.dish)
+          else
+            commit('ADD_FAVOURITE', data.dish)
+          commit('SET_PROCESSING', false)
+          resolve()
+        })
+        .catch(err => {
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
       })
     },
     LOAD_CART({commit, dispatch}, date) {
@@ -369,25 +373,29 @@ export default {
       })
     },
     SET_OREDER({commit, getters}, data) {
-      commit('SET_PROCESSING', true)
-      let parameters = { data: { date: getters.date, id: data.dish.id }, method: 'POST' }
-      if (data.amount != 0) {
-        if (data.amount >= data.dish.amount)
-          parameters.url = '/backend/modules/basket/add'
-        else
-          parameters.url = '/backend/modules/basket/reduce'
-        parameters.data.amount = data.amount
-      } else {
-        parameters.url = '/backend/modules/basket/delete'
-      }
-      axios(parameters)
-      .then(resp => {
-        data.dish.amount = data.amount
-        commit('SET_OREDER', data)
-        commit('SET_PROCESSING', false)
-      })
-      .catch(err => {
-        commit('SET_PROCESSING', false)
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        let parameters = { data: { date: getters.date, id: data.dish.id }, method: 'POST' }
+        if (data.amount != 0) {
+          if (data.amount >= data.dish.amount)
+            parameters.url = '/backend/modules/basket/add'
+          else
+            parameters.url = '/backend/modules/basket/reduce'
+          parameters.data.amount = data.amount
+        } else {
+          parameters.url = '/backend/modules/basket/delete'
+        }
+        axios(parameters)
+        .then(resp => {
+          data.dish.amount = data.amount
+          commit('SET_OREDER', data)
+          commit('SET_PROCESSING', false)
+          resolve()
+        })
+        .catch(err => {
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
       })
     }
   },

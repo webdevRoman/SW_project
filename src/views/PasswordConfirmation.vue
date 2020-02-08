@@ -8,6 +8,13 @@
       .signup-info__title Пожалуйста, проверьте почту
       .signup-info__descr На вашу почту отправлено письмо со ссылкой для подтверждения замены пароля
       button.signup-info__repeat(@click.prevent="sendLink()") Получить новую ссылку
+  .notification-popup(v-if="notification.msg != ''")
+    .notification-info {{ notification.msg }}
+    .notification-img(v-if="notification.err")
+      img(src="../assets/img/cross.svg", alt="Cross")
+    .notification-img(v-else)
+      img(src="../assets/img/tick-success.svg", alt="Tick")
+    button.notification-close(@click.prevent="closeNotification()") &times;
   .processing-overlay(v-if="processing")
     .processing-indicator
 </template>
@@ -17,14 +24,30 @@ export default {
   methods: {
     sendLink() {
       this.$store.dispatch('SEND_PASSWORD_LINK')
-      .then(() => {
-        alert('Новая ссылка отправлена')
+      .then(resp => {
+        this.$store.dispatch('SET_NOTIFICATION', { msg: 'Новая ссылка отправлена', err: false })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      },
+      err => {
+        console.log('Error on sending new link: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
       })
+    },
+    closeNotification() {
+      this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
     }
   },
   computed: {
     processing() {
       return this.$store.getters.processing
+    },
+    notification() {
+      return this.$store.getters.notification
     }
   }
 }

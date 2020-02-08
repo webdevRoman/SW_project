@@ -127,6 +127,30 @@ body, button, input, a
       &:hover
         background-color: $c-active
         border: 1px solid $c-active
+.notification
+  &-popup
+    display: flex
+    justify-content: space-between
+    align-items: center
+    width: 250px
+    padding: 15px
+    background-color: $c-dark
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15)
+    position: fixed
+    bottom: 30px
+    right: 15px
+    z-index: 10
+  &-info
+    font-size: 14px
+    color: $c-light
+    margin-right: 10px
+  &-img
+    width: 20px
+  &-close
+    font-size: 24px
+    position: absolute
+    top: -30px
+    right: 0
 .processing
   &-overlay
     display: flex

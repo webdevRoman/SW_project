@@ -34,25 +34,41 @@ export default {
     },
     chooseDate(date) {
       this.$store.dispatch('LOAD_DISHES', { date: date, category: 'all', page: 1 })
-      .then(result => {
+      .then(resp => {
         this.currentDate = date
         this.$store.dispatch('LOAD_FAVOURITES', date)
-        .catch((error) => {
-          console.log("Error on loading favourites: " + error.message)
+        .catch(err => {
+          console.log("Error on loading favourites: " + err.message)
+          this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+          setTimeout(() => {
+            this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+          }, 5000)
         })
         this.$store.dispatch('LOAD_CART', date)
-        .catch(error => {
-          console.log("Error on loading cart " + error.message)
+        .catch(err => {
+          console.log("Error on loading cart " + err.message)
+          this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+          setTimeout(() => {
+            this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+          }, 5000)
         })
       },
-      error => {
+      err => {
         this.categories = []
         this.currentDate = date
         this.$store.dispatch('LOAD_FAVOURITES', date)
-        .catch((error) => {
-          console.log("Error on loading favourites: " + error.message)
+        .catch(err => {
+          console.log("Error on loading favourites: " + err.message)
+          this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+          setTimeout(() => {
+            this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+          }, 5000)
         })
-        console.log("Error on loading dishes: " + error.message)
+        console.log("Error on loading dishes: " + err.message)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
       })
     }
   },
@@ -142,18 +158,29 @@ export default {
     const date = new Date()
     this.currentDate = this.formatDate(date)
     this.$store.dispatch('LOAD_DISHES', { date: this.currentDate, category: 'all', page: 1 })
-    .catch(error => {
-      console.log("Error on loading dishes: " + error.message)
+    .catch(err => {
+      console.log("Error on loading dishes: " + err.message)
+      this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+      setTimeout(() => {
+        this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      }, 5000)
     })
     this.$store.dispatch('LOAD_FAVOURITES', this.currentDate)
-    .catch(error => {
-      console.log("Error on loading favourites: " + error.message)
+    .catch(err => {
+      console.log("Error on loading favourites: " + err.message)
+      this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+      setTimeout(() => {
+        this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      }, 5000)
     })
     this.$store.dispatch('LOAD_CART', this.currentDate)
-    .catch(error => {
-      console.log("Error on loading cart " + error.message)
+    .catch(err => {
+      console.log("Error on loading cart " + err.message)
+      this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+      setTimeout(() => {
+        this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      }, 5000)
     })
-    this.$store.dispatch('SET_DATE', this.currentDate)
   }
 }
 </script>

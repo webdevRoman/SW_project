@@ -58,28 +58,60 @@ export default {
       return text.split('\n').join('<br>')
     },
     toggleFavourite(dish) {
+      let data = {}
       if (!dish.elect) {
-        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: false })
+        data = { dish: dish, remove: false }
         dish.elect = true
       } else {
-        this.$store.dispatch('TOGGLE_FAVOURITE', { dish: dish, remove: true })
+        data = { dish: dish, remove: true }
         dish.elect = false
       }
+      this.$store.dispatch('TOGGLE_FAVOURITE', data)
+      .catch(err => {
+        console.log('Error on adding or removing favourite dish: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
     },
     incrementOrder(dish) {
       this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) + 1 })
+      .catch(err => {
+        console.log('Error on incrementing dish amount: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
     },
     decrementOrder(dish) {
       this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) - 1 })
+      .catch(err => {
+        console.log('Error on decrementing dish amount: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
     },
     checkOrder(dish) {
+      let data = {}
       if (dish.amount == '' || !dish.amount.match(/\d+/)) {
-        this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
+        data = { dish: dish, amount: 0 }
       } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
-        this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount[1]) })
+        data = { dish: dish, amount: parseInt(dish.amount[1]) }
       } else {
-        this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount })
+        data = { dish: dish, amount: dish.amount }
       }
+      this.$store.dispatch('SET_OREDER', data)
+      .catch(err => {
+        console.log('Error on changing dish amount: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
     },
     showDescr(descr) {
       this.showPopup = true
