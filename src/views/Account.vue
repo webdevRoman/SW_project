@@ -63,6 +63,8 @@
       .account-form__buttons
         button.btn.btn_o.account-form__btn(@click.prevent="goBack()") Вернуться на сайт
         button.form-submit.account-form__btn.account-form__submit(type="submit", :disabled="errors") Подтвердить
+  .processing-overlay(v-if="processing")
+    .processing-indicator
 </template>
 
 <script>
@@ -459,6 +461,9 @@ export default {
         return true
       else
         return false
+    },
+    processing() {
+      return this.$store.getters.processing
     }
   },
   watch: {

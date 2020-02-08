@@ -13,7 +13,7 @@
       .category-dishes(v-else)
         .dish(v-for="dish in category.dishes", :class="{'dish_inactive': dish.hide == 1}")
           .dish-top
-            .dish-img(:style="{'background-image': `url(http://edatomsk.ru${dish.image})`}")
+            .dish-img(:style="{'background-image': `url(https://edatomsk.ru${dish.image})`}")
               //- img(src="../assets/img/dish.svg", alt="Dish image")
             .dish-title {{ dish.name }}
             //- .dish-descr {{ dish.description }}

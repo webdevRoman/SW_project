@@ -126,6 +126,8 @@
           .form-error(v-if="passwordError != ''") {{ passwordError }}
       button.form-submit(type="submit", :disabled="errors") Добавить пользователя
       button.popup-close(@click.prevent="hidePopup()") &times;
+  .processing-overlay(v-if="processing")
+    .processing-indicator
 </template>
 
 <script>
@@ -671,6 +673,9 @@ export default {
       else
         return false
     },
+    processing() {
+      return this.$store.getters.processing
+    }
   },
   watch: {
     calendarDate: {

@@ -22,6 +22,8 @@
         .form-error(v-if="authError != ''") {{ authError }}
       button.form-submit(type="submit", :disabled="errors") Войти
       button.signin-form__signup(@click.prevent="goToSignup()") Еще нет аккаунта?
+  .processing-overlay(v-if="processing")
+    .processing-indicator
 </template>
 
 <script>

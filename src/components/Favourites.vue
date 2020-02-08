@@ -7,7 +7,7 @@
       .category-dishes
         .dish(v-for="dish in availableFavs")
           .dish-top
-            .dish-img(:style="{'background-image': `url(http://edatomsk.ru${dish.image})`}")
+            .dish-img(:style="{'background-image': `url(https://edatomsk.ru${dish.image})`}")
               //- img(src="../assets/img/dish.svg", alt="Dish image")
             .dish-title {{ dish.name }}
             .dish-descr {{ dish.description }}
@@ -36,7 +36,7 @@
       .category-dishes
         .dish.dish_inactive(v-for="dish in unavailableFavs")
           .dish-top
-            .dish-img(:style="{'background-image': `url(http://edatomsk.ru${dish.image})`}")
+            .dish-img(:style="{'background-image': `url(https://edatomsk.ru${dish.image})`}")
             .dish-title {{ dish.name }}
             .dish-descr {{ dish.description }}
           .dish-bottom

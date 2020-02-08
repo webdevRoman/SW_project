@@ -24,6 +24,8 @@ div
   Favourites(v-if="showFavourites")
   Dishes(v-else)
   Footer
+  .processing-overlay(v-if="processing")
+    .processing-indicator
 </template>
 
 <script>
@@ -65,6 +67,9 @@ export default {
         sum += this.cartItems[key].price * this.cartItems[key].amount
       }
       return sum
+    },
+    processing() {
+      return this.$store.getters.processing
     }
   },
   watch: {

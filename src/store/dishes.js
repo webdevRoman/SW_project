@@ -165,9 +165,9 @@ export default {
       state.date = date
     },
     SET_CATEGORIES(state, data) {
-      function checkCategories(categories, id) {
+      function checkCategories(categories, name) {
         for (let i = 0; i < categories.length; i++) {
-          if (categories[i].id == id) {
+          if (categories[i].name == name) {
             return i
           }
         }
@@ -189,9 +189,9 @@ export default {
         // state.meta = data._meta
         // state.links = data._links
         data.dishes.forEach(dish => {
-          let index = checkCategories(categories, dish.group_id)
+          let index = checkCategories(categories, dish.category)
           if (index == -1) {
-            categories.push({ id: dish.group_id, name: dish.group_id, dishes: [] })
+            categories.push({ name: dish.category, dishes: [] })
             categories[categories.length - 1].dishes.push(dish)
           } else {
             categories[index].dishes.push(dish)
@@ -278,7 +278,7 @@ export default {
         dispatch('SET_DATE', data.date)
         let requestParams = {}
         // if (data.link == undefined) {
-          const url = '/modules/menu'
+          const url = '/backend/modules/menu'
           const parameters = {}
           parameters.date = data.date
           if (data.category != 'all')
@@ -310,7 +310,7 @@ export default {
         commit('SET_PROCESSING', true)
         dispatch('SET_DATE', date)
         let requestParams = {}
-        const url = '/modules/account/elect'
+        const url = '/backend/modules/account/elect'
         requestParams = {
           url: url,
           method: 'GET',
@@ -331,7 +331,7 @@ export default {
     },
     TOGGLE_FAVOURITE({commit}, data) {
       commit('SET_PROCESSING', true)
-      axios({ url: '/modules/account/edit', data: { id: data.dish.id }, method: 'POST' })
+      axios({ url: '/backend/modules/account/edit', data: { id: data.dish.id }, method: 'POST' })
       .then(resp => {
         if (data.remove)
           commit('REMOVE_FAVOURITE', data.dish)
@@ -348,7 +348,7 @@ export default {
         commit('SET_PROCESSING', true)
         dispatch('SET_DATE', date)
         let requestParams = {}
-        const url = '/modules/basket'
+        const url = '/backend/modules/basket'
         requestParams = {
           url: url,
           method: 'GET',
@@ -373,12 +373,12 @@ export default {
       let parameters = { data: { date: getters.date, id: data.dish.id }, method: 'POST' }
       if (data.amount != 0) {
         if (data.amount >= data.dish.amount)
-          parameters.url = '/modules/basket/add'
+          parameters.url = '/backend/modules/basket/add'
         else
-          parameters.url = '/modules/basket/reduce'
+          parameters.url = '/backend/modules/basket/reduce'
         parameters.data.amount = data.amount
       } else {
-        parameters.url = '/modules/basket/delete'
+        parameters.url = '/backend/modules/basket/delete'
       }
       axios(parameters)
       .then(resp => {

@@ -86,7 +86,7 @@ export default {
     AUTH_REQUEST({commit}, user) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/modules/auth/login'
+        const url = '/backend/modules/auth/login'
         axios({ url: url, data: user, method: 'POST' })
         .then(resp => {
           commit('SET_USER', resp.data)
@@ -102,7 +102,7 @@ export default {
     AUTH_LOGOUT({commit}) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/modules/auth/logout'
+        const url = '/backend/modules/auth/logout'
         axios({ url: url, method: 'POST' })
         .then(resp => {
           commit('AUTH_LOGOUT')
@@ -118,7 +118,7 @@ export default {
     REG_REQUEST({commit}, user) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/modules/auth/signup'
+        const url = '/backend/modules/auth/signup'
         axios({ url: url, data: user, method: 'POST' })
         .then(() => {
           Vue.$cookies.set('email', user.email, '1m')
@@ -131,27 +131,10 @@ export default {
         })
       })
     },
-    SEND_LINK({commit}) {
-      return new Promise((resolve, reject) => {
-        if (Vue.$cookies.get('email') != null) {
-          commit('SET_PROCESSING', true)
-          const url = '/modules/auth/resend'
-          axios({ url: url, data: Vue.$cookies.get('email'), method: 'POST' })
-          .then(() => {
-            commit('SET_PROCESSING', false)
-            resolve()
-          })
-          .catch(err => {
-            commit('SET_PROCESSING', false)
-            reject(err)
-          })
-        }
-      })
-    },
     LOAD_ACCOUNT({commit}) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/modules/account'
+        const url = '/backend/modules/account'
         axios({ url: url, method: 'GET' })
         .then(resp => {
           commit('SET_USER_ACCOUNT', resp.data)
@@ -167,7 +150,7 @@ export default {
     UPDATE_USER({commit}, data) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/modules/account/update'
+        const url = '/backend/modules/account/update'
         axios({ url: url, data: data, method: 'POST' })
         .then(() => {
           commit('SET_USER_ACCOUNT', data)
@@ -178,6 +161,41 @@ export default {
           commit('SET_PROCESSING', false)
           reject(err)
         })
+      })
+    },
+    SEND_LINK({commit}) {
+      return new Promise((resolve, reject) => {
+        if (Vue.$cookies.get('email') != null) {
+          commit('SET_PROCESSING', true)
+          const url = '/backend/modules/auth/resend'
+          axios({ url: url, data: Vue.$cookies.get('email'), method: 'POST' })
+          .then(() => {
+            commit('SET_PROCESSING', false)
+            resolve()
+          })
+          .catch(err => {
+            commit('SET_PROCESSING', false)
+            reject(err)
+          })
+        }
+      })
+    },
+    SEND_PASSWORD_LINK({commit}) {
+      return new Promise((resolve, reject) => {
+        resolve()
+        // if (Vue.$cookies.get('email') != null) {
+        //   commit('SET_PROCESSING', true)
+        //   const url = '/modules/auth/resend'
+        //   axios({ url: url, data: Vue.$cookies.get('email'), method: 'POST' })
+        //   .then(() => {
+        //     commit('SET_PROCESSING', false)
+        //     resolve()
+        //   })
+        //   .catch(err => {
+        //     commit('SET_PROCESSING', false)
+        //     reject(err)
+        //   })
+        // }
       })
     }
   },

@@ -3,10 +3,10 @@
   .logo
     img(src="../assets/img/logo.png", alt="Logo")
   .signup.container
-    .title.signup-title Регистрация
+    .title.signup-title Замена пароля
     .signup-info
       .signup-info__title Пожалуйста, проверьте почту
-      .signup-info__descr На вашу почту отправлено письмо со ссылкой для подтверждения регистрации
+      .signup-info__descr На вашу почту отправлено письмо со ссылкой для подтверждения замены пароля
       button.signup-info__repeat(@click.prevent="sendLink()") Получить новую ссылку
   .processing-overlay(v-if="processing")
     .processing-indicator
@@ -16,7 +16,7 @@
 export default {
   methods: {
     sendLink() {
-      this.$store.dispatch('SEND_LINK')
+      this.$store.dispatch('SEND_PASSWORD_LINK')
       .then(() => {
         alert('Новая ссылка отправлена')
       })

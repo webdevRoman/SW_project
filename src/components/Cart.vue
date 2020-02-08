@@ -8,8 +8,7 @@
     .cart-item(v-for="dish in cartItems")
       .cart-item__block
         .cart-item__main
-          .cart-item__img
-            img(src="../assets/img/dish.svg", alt="Dish image")
+          .cart-item__img(:style="{'background-image': `url(https://edatomsk.ru${dish.image})`}")
           .cart-item__text
             .cart-item__info
               .cart-item__price {{ dish.price }} Р
@@ -191,10 +190,13 @@ export default {
       display: flex
       margin-bottom: 20px
     &__img
-      box-sizing: border-box
       flex-basis: 134px
-      padding: 20px
-      border: 2px solid $c-middle
+      width: 134px
+      height: 134px
+      // border: 2px solid $c-middle
+      background-repeat: no-repeat
+      background-position: center
+      background-size: cover
       margin-right: 40px
     &__text
       display: flex
@@ -206,7 +208,7 @@ export default {
     &__name
       font-weight: bold
       font-size: 15px
-      margin-bottom: 30px
+      margin-bottom: 25px
     &__number
       display: flex
       align-items: center

@@ -46,6 +46,8 @@
           .form-error(v-if="passwordRepeatError != ''") {{ passwordRepeatError }}
       button.form-submit.signup-form__submit(type="submit", :disabled="errors") Зарегистрироваться
       button.signup-form__signin(@click.prevent="goToSignin()") Уже есть аккаунт?
+  .processing-overlay(v-if="processing")
+    .processing-indicator
 </template>
 
 <script>
@@ -82,7 +84,6 @@ export default {
       this.checkMiddlename()
       this.checkEmail()
       this.checkPassword()
-      this.checkPasswordRepeat()
       if (!this.errors) {
         this.$store.dispatch('REG_REQUEST', { email: this.email, firstname: this.name, lastname: this.surname, midname: this.middlename, password: this.password, password_2: this.passwordRepeat })
         .then(() => {

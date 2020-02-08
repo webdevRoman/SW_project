@@ -21,7 +21,7 @@ body, button, input, a
     align-items: center
     padding: 30px 0
     min-height: 100vh
-    width: 100vw
+    max-width: 100vw
 .logo
   width: 388px
   margin: 0 auto
@@ -127,6 +127,32 @@ body, button, input, a
       &:hover
         background-color: $c-active
         border: 1px solid $c-active
+.processing
+  &-overlay
+    display: flex
+    justify-content: center
+    align-items: center
+    width: 100vw
+    height: 100vh
+    overflow: hodden
+    background-color: rgba(255, 255, 255, 0.7)
+    position: fixed
+    top: 0
+    left: 0
+    z-index: 25
+  &-indicator
+    width: 200px
+    height: 200px
+    background: url("./assets/img/loader.svg") center no-repeat
+    background-size: contain
+    animation: loading  1.5s infinite ease-in-out
+@keyframes loading
+  from
+    transform: scale(1) rotate(0)
+  50%
+    transform: scale(0.5) rotate(180deg)
+  to
+    transform: scale(1) rotate(360deg)
 
 .select-container
   margin-bottom: 50px

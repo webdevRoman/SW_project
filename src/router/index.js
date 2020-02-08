@@ -7,6 +7,7 @@ import SignIn from '../views/SignIn.vue'
 import Password from '../views/Password.vue'
 import SignUp from '../views/SignUp.vue'
 import EmailConfirmation from '../views/EmailConfirmation.vue'
+import PasswordConfirmation from '../views/PasswordConfirmation.vue'
 import Admin from '../views/Admin.vue'
 import Page404 from '../views/404.vue'
 
@@ -91,6 +92,12 @@ const routes = [
     path: '/email-confirmation',
     name: 'email-confirmation',
     component: EmailConfirmation,
+    beforeEnter: ifNotAuthenticated
+  },
+  {
+    path: '/password-confirmation',
+    name: 'password-confirmation',
+    component: PasswordConfirmation,
     beforeEnter: ifNotAuthenticated
   },
   {
