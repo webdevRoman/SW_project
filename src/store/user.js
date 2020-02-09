@@ -99,8 +99,8 @@ export default {
           } else {
             reject()
           }
-        })
-        .catch(err => {
+        },
+        err => {
           commit('SET_PROCESSING', false)
           reject(err)
         })
@@ -123,18 +123,16 @@ export default {
       })
     },
     REG_REQUEST({commit}, user) {
-      console.log(user);
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
         const url = '/backend/modules/auth/signup'
         axios({ url: url, data: user, method: 'POST' })
         .then(resp => {
-          // console.log(resp.data);
           if (resp.data == 'success') {
             Vue.$cookies.set('email', user.email, '1m')
             commit('SET_PROCESSING', false)
             resolve()
-          } else if (resp.data == 'email') {
+          } else if (resp.data.email != undefined) {
             commit('SET_PROCESSING', false)
             reject('email')
           } else {
@@ -143,7 +141,6 @@ export default {
           }
         },
         err => {
-          // console.log(err);
           commit('SET_PROCESSING', false)
           reject(err)
         })
