@@ -1,38 +1,32 @@
 <template lang="pug">
-.container_center.password-container
-  .logo
-    img(src="../assets/img/logo.png", alt="Logo")
-  .password
-    .title.password-title Замена пароля
-    form.form.password-form(action="#", @submit.prevent="checkForm()")
-      //- .form-block(v-if="!isEmailChecked", :class="{'form-block_error': emailError != ''}")
-      .form-block(:class="{'form-block_error': emailError != ''}")
-        label.form-label(for="password-email") Корпоративная почта SmartWorld
-        input.form-input(type="text", id="password-email", placeholder="@smartworld.team", v-model.trim="email", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkEmail()")
-        .form-error(v-if="emailError != ''") {{ emailError }}
-      //- .form-block(v-if="isEmailChecked", :class="{'form-block_error': passwordError != ''}")
-      //-   label.form-label(for="password-password") Новый пароль
-      //-   .form-password
-      //-     input.form-input(type="password", id="password-password", v-model.trim="password", @focusout="checkPassword()")
-      //-     button.form-password__eye(v-if="!passwordsMatch && passwordFocus && !passwordShow", @click.prevent="togglePasswordShow()")
-      //-       img(src="../assets/img/eye.svg", alt="Eye")
-      //-     button.form-password__eye(v-if="!passwordsMatch && passwordFocus && passwordShow", @click.prevent="togglePasswordShow()")
-      //-       img(src="../assets/img/eye-closed.svg", alt="Closed eye")
-      //-     .form-password__eye(v-if="passwordsMatch")
-      //-       img(src="../assets/img/tick-success.svg", alt="Tick")
-      //-   .form-error(v-if="passwordError != ''") {{ passwordError }}
-      //- .form-block(v-if="isEmailChecked", :class="{'form-block_error': passwordRepeatError != ''}")
-      //-   label.form-label(for="password-password-repeat") Повторите новый пароль
-      //-   .form-password
-      //-     input.form-input(type="password", id="signup-password-repeat", v-model.trim="passwordRepeat", @focusout="checkPasswordRepeat()")
-      //-     button.form-password__eye(v-if="!passwordsMatch && passwordRepeatFocus && !passwordRepeatShow", @click.prevent="togglePasswordRepeatShow()")
-      //-       img(src="../assets/img/eye.svg", alt="Eye")
-      //-     button.form-password__eye(v-if="!passwordsMatch && passwordRepeatFocus && passwordRepeatShow", @click.prevent="togglePasswordRepeatShow()")
-      //-       img(src="../assets/img/eye-closed.svg", alt="Closed eye")
-      //-     .form-password__eye(v-if="passwordsMatch")
-      //-       img(src="../assets/img/tick-success.svg", alt="Tick")
-      //-   .form-error(v-if="passwordRepeatError != ''") {{ passwordRepeatError }}
-      button.form-submit(type="submit", :disabled="errors") Подтвердить
+div
+  .container_center.password-container(v-if="!isEmailSent")
+    .logo
+      img(src="../assets/img/logo.png", alt="Logo")
+    .password
+      .title.password-title Замена пароля
+      form.form.password-form(action="#", @submit.prevent="checkForm()")
+        .form-block(:class="{'form-block_error': emailError != ''}")
+          label.form-label(for="password-email") Корпоративная почта SmartWorld
+          input.form-input(type="text", id="password-email", placeholder="@smartworld.team", v-model.trim="email", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkEmail()")
+          .form-error(v-if="emailError != ''") {{ emailError }}
+        button.form-submit(type="submit", :disabled="errors") Подтвердить
+  .container_center.signup-container(v-else)
+    .logo
+      img(src="../assets/img/logo.png", alt="Logo")
+    .signup.container
+      .title.signup-title Замена пароля
+      .signup-info
+        .signup-info__title Пожалуйста, проверьте почту
+        .signup-info__descr На вашу почту отправлено письмо со ссылкой для подтверждения замены пароля
+        //- button.signup-info__repeat(@click.prevent="sendLink()") Получить новую ссылку
+  .notification-popup(v-if="notification.msg != ''")
+    .notification-info {{ notification.msg }}
+    .notification-img(v-if="notification.err")
+      img(src="../assets/img/cross.svg", alt="Cross")
+    .notification-img(v-else)
+      img(src="../assets/img/tick-success.svg", alt="Tick")
+    button.notification-close(@click.prevent="closeNotification()") &times;
   .processing-overlay(v-if="processing")
     .processing-indicator
 </template>
@@ -41,36 +35,27 @@
 export default {
   data() {
     return {
-      // isEmailChecked: false,
       email: '',
       emailError: '',
-      // password: '',
-      // passwordError: '',
-      // passwordFocus: false,
-      // passwordShow: false,
-      // passwordRepeat: '',
-      // passwordRepeatError: '',
-      // passwordRepeatFocus: false,
-      // passwordRepeatShow: false,
-      // passwordsMatch: false
+      isEmailSent: false
     }
   },
   methods: {
     checkForm() {
-      // if (!this.isEmailChecked) {
-        this.checkEmail()
-        if (!this.errors) {
-          // dispatch sth, then
-          // this.isEmailChecked = true
-          this.$router.push('/password-confirmation')
-        }
-      // } else {
-      //   this.checkPassword()
-      //   if (!this.errors) {
-      //     // dispatch sth (send email confirmation), then
-      //     this.$router.push('/password-confirmation')
-      //   }
-      // }
+      this.checkEmail()
+      if (!this.errors) {
+        this.$store.dispatch('SEND_EMAIL', { email: this.email })
+        .then(resp => {
+          this.isEmailSent = true
+        },
+        err => {
+          console.log('Error on sending email: ' + err)
+          this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+          setTimeout(() => {
+            this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+          }, 5000)
+        })
+      }
     },
     checkEmail() {
       const emailArr = this.email.split('@')
@@ -93,65 +78,13 @@ export default {
         error => console.log("Email checker rejected: " + error.message)
       )
     },
-    // checkPassword() {
-    //   this.$store.dispatch('CHECK_PASSWORD', this.password)
-    //   .then(
-    //     result => {
-    //       if (result == 'empty')
-    //         this.passwordError = 'Заполните пароль'
-    //       else if (result == 'short')
-    //         this.passwordError = 'Пароль должен содержать не менее 6 символов'
-    //       else if (result == 'long')
-    //         this.passwordError = 'Пароль должен содержать не более 25 символов'
-    //       else if (result == 'wrong')
-    //         this.passwordError = 'Пароль должен состоять только из латинских букв и цифр'
-    //       else
-    //         this.passwordError = ''
-    //       this.checkPasswordRepeat()
-    //     },
-    //     error => console.log("Password checker rejected: " + error.message)
-    //   )
-    // },
-    // checkPasswordRepeat() {
-    //   this.$store.dispatch('CHECK_PASSWORD_REPEAT', { password: this.password, passwordRepeat: this.passwordRepeat })
-    //   .then(
-    //     result => {
-    //       this.passwordsMatch = false
-    //       if (result == 'empty')
-    //         this.passwordRepeatError = 'Заполните пароль'
-    //       else if (result == 'wrong')
-    //         this.passwordRepeatError = 'Пароли не совпадают'
-    //       else if (this.passwordError != '')
-    //         this.passwordRepeatError = ''
-    //       else {
-    //         this.passwordRepeatError = ''
-    //         this.passwordsMatch = true
-    //       }
-    //     },
-    //     error => console.log("PasswordRepeat checker rejected: " + error.message)
-    //   )
-    // },
-    // togglePasswordShow() {
-    //   const passwordInput = document.getElementById('password-password')
-    //   if (passwordInput.type == 'password')
-    //     passwordInput.type = 'text'
-    //   else
-    //     passwordInput.type = 'password'
-    //   this.passwordShow = !this.passwordShow
-    // },
-    // togglePasswordRepeatShow() {
-    //   const passwordInput = document.getElementById('password-password-repeat')
-    //   if (passwordInput.type == 'password')
-    //     passwordInput.type = 'text'
-    //   else
-    //     passwordInput.type = 'password'
-    //   this.passwordRepeatShow = !this.passwordRepeatShow
-    // }
+    closeNotification() {
+      this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+    }
   },
   computed: {
     errors() {
       const errors = this.$store.getters.errors
-      // if (errors.email != undefined && errors.email != 'wrong' || errors.password != undefined || errors.passwordRepeat != undefined)
       if (errors.email != undefined && errors.email != 'wrong')
         return true
       else
@@ -159,22 +92,11 @@ export default {
     },
     processing() {
       return this.$store.getters.processing
+    },
+    notification() {
+      return this.$store.getters.notification
     }
-  },
-  // watch: {
-  //   password(value) {
-  //     if (value != '')
-  //       this.passwordFocus = true
-  //     else
-  //       this.passwordFocus = false
-  //   },
-  //   passwordRepeat(value) {
-  //     if (value != '')
-  //       this.passwordRepeatFocus = true
-  //     else
-  //       this.passwordRepeatFocus = false
-  //   }
-  // }
+  }
 }
 </script>
 

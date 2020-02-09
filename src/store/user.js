@@ -212,6 +212,38 @@ export default {
         //   })
         // }
       })
+    },
+    SEND_EMAIL({commit}, payload) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        const url = '/backend/modules/auth/reset-request'
+        axios({ url: url, data: payload, method: 'POST' })
+        .then(resp => {
+          console.log(resp.data);
+          commit('SET_PROCESSING', false)
+          resolve()
+        },
+        err => {
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
+      })
+    },
+    SEND_PASSWORDS({commit}, payload) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        const url = '/backend/modules/auth/reset-password'
+        axios({ url: url, data: payload, method: 'POST' })
+        .then(resp => {
+          console.log(resp.data);
+          commit('SET_PROCESSING', false)
+          resolve()
+        },
+        err => {
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
+      })
     }
   },
   getters: {
