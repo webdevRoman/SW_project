@@ -17,7 +17,6 @@
 export default {
   data() {
     return {
-      currentDate: '',
       offset: 0
     }
   },
@@ -35,7 +34,7 @@ export default {
     chooseDate(date) {
       this.$store.dispatch('LOAD_DISHES', { date: date, category: 'all', page: 1 })
       .then(resp => {
-        this.currentDate = date
+        this.$store.dispatch('SET_DATE', date)
         this.$store.dispatch('LOAD_FAVOURITES', date)
         .catch(err => {
           console.log("Error on loading favourites: " + err.message)
@@ -55,7 +54,7 @@ export default {
       },
       err => {
         this.categories = []
-        this.currentDate = date
+        this.$store.dispatch('SET_DATE', date)
         this.$store.dispatch('LOAD_FAVOURITES', date)
         .catch(err => {
           console.log("Error on loading favourites: " + err.message)
@@ -70,85 +69,33 @@ export default {
           this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
         }, 5000)
       })
+    },
+    checkDate() {
+      const date = new Date()
+      let nextDate = new Date()
+      nextDate.setDate(nextDate.getDate() + 1)
+      const curDateStr = this.currentDate
+      let flagNext = false
+      const nextDateStr = this.formatDate(nextDate)
+      const nextDateArr = nextDateStr.split('.')
+      const curDateArr = curDateStr.split('.')
+      const firstDateArr = this.weekdays[0].fullDate.split('.')
+      if (nextDateArr[0] > firstDateArr[0] || nextDateArr[1] > firstDateArr[1] || nextDateArr[2] > firstDateArr[2])
+        flagNext = true
+      if (date.getHours() >= 16 && flagNext) {
+        this.$store.dispatch('SET_WEEKDAYS', nextDate)
+        if (nextDateArr[0] > curDateArr[0] || nextDateArr[1] > curDateArr[1] || nextDateArr[2] > curDateArr[2]) {
+          this.$store.dispatch('SET_DATE', nextDateStr)
+        }
+      }
     }
   },
   computed: {
+    currentDate() {
+      return this.$store.getters.date
+    },
     weekdays() {
-      let weekdays = []
-      for (let i = 0; i < 8; i++) {
-        const nextDay = new Date()
-        nextDay.setDate(nextDay.getDate() + i)
-        let day, date, month, weekdayObj
-        switch (nextDay.getDay()) {
-          case 1:
-            day = 'Понедельник'
-            break;
-          case 2:
-            day = 'Вторник'
-            break;
-          case 3:
-            day = 'Среда'
-            break;
-          case 4:
-            day = 'Четверг'
-            break;
-          case 5:
-            day = 'Пятница'
-            break;
-          case 6:
-            day = 'Суббота'
-            break;
-          case 0:
-            day = 'Воскресенье'
-            break;
-          default:
-            break;
-        }
-        date = nextDay.getDate()
-        switch (nextDay.getMonth()) {
-          case 0:
-            month = 'Января'
-            break;
-          case 1:
-            month = 'Февраля'
-            break;
-          case 2:
-            month = 'Марта'
-            break;
-          case 3:
-            month = 'Апреля'
-            break;
-          case 4:
-            month = 'Мая'
-            break;
-          case 5:
-            month = 'Июня'
-            break;
-          case 6:
-            month = 'Июля'
-            break;
-          case 7:
-            month = 'Августа'
-            break;
-          case 8:
-            month = 'Сентября'
-            break;
-          case 9:
-            month = 'Октября'
-            break;
-          case 10:
-            month = 'Ноября'
-            break;
-          case 11:
-            month = 'Декабря'
-            break;
-          default:
-            break;
-        }
-        weekdayObj = { day: day, date: date, month: month, fullDate: this.formatDate(nextDay) }
-        weekdays.push(weekdayObj)
-      }
-      return weekdays
+      return this.$store.getters.weekdays
     },
     screenWidth() {
       return document.body.clientWidth
@@ -156,8 +103,8 @@ export default {
   },
   created() {
     const date = new Date()
-    this.currentDate = this.formatDate(date)
-    this.$store.dispatch('LOAD_DISHES', { date: this.currentDate, category: 'all', page: 1 })
+    const currentDate = this.formatDate(date)
+    this.$store.dispatch('LOAD_DISHES', { date: currentDate, category: 'all', page: 1 })
     .catch(err => {
       console.log("Error on loading dishes: " + err.message)
       this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
@@ -165,7 +112,7 @@ export default {
         this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
       }, 5000)
     })
-    this.$store.dispatch('LOAD_FAVOURITES', this.currentDate)
+    this.$store.dispatch('LOAD_FAVOURITES', currentDate)
     .catch(err => {
       console.log("Error on loading favourites: " + err.message)
       this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
@@ -173,7 +120,7 @@ export default {
         this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
       }, 5000)
     })
-    this.$store.dispatch('LOAD_CART', this.currentDate)
+    this.$store.dispatch('LOAD_CART', currentDate)
     .catch(err => {
       console.log("Error on loading cart " + err.message)
       this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
@@ -181,6 +128,10 @@ export default {
         this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
       }, 5000)
     })
+    this.$store.dispatch('SET_WEEKDAYS', date)
+    this.$store.dispatch('SET_DATE', currentDate)
+    this.checkDate()
+    window.setInterval(this.checkDate, 300000)
   }
 }
 </script>

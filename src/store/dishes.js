@@ -3,7 +3,6 @@ import axios from 'axios'
 
 export default {
   state: {
-    date: '',
     // categories: [{
     //   name: 'Название категории 1',
     //   dishes: [{
@@ -161,9 +160,6 @@ export default {
     acceptOrder: false
   },
   mutations: {
-    SET_DATE(state, date) {
-      state.date = date
-    },
     SET_CATEGORIES(state, data) {
       function checkCategories(categories, name) {
         for (let i = 0; i < categories.length; i++) {
@@ -210,7 +206,7 @@ export default {
       }
     },
     ADD_FAVOURITE(state, dish) {
-      dish.active = true
+      dish.active = dish.hide == 0 ? true : false
       Vue.set(state.favourites, dish.id, dish)
       for (let i = 0; i < state.categories.length; i++) {
         for (let j = 0; j < state.categories[i].dishes.length; j++) {
@@ -247,43 +243,51 @@ export default {
         })
       }
     },
-    SET_OREDER(state, data) {
-      data.dish.amount = data.amount
-      if (data.amount != 0) {
-        Vue.set(state.cart, data.dish.id, data.dish)
+    SET_OREDER(state, dish) {
+      if (dish.amount != 0) {
+        Vue.set(state.cart, dish.id, dish)
       } else {
         let newCart = state.cart
-        delete newCart[data.dish.id]
+        delete newCart[dish.id]
         state.cart = {}
         state.cart = newCart
       }
       for (let i = 0; i < state.categories.length; i++) {
         for (let j = 0; j < state.categories[i].dishes.length; j++) {
           const d = state.categories[i].dishes[j]
-          if (d.id == data.dish.id)
-            Vue.set(state.categories[i].dishes[j], 'amount', data.amount)
+          if (d.id == dish.id)
+            Vue.set(state.categories[i].dishes[j], 'amount', dish.amount)
         }
       }
-      if (state.favourites[data.dish.id] != undefined)
-        Vue.set(state.favourites[data.dish.id], 'amount', data.amount)
+      if (state.favourites[dish.id] != undefined)
+        Vue.set(state.favourites[dish.id], 'amount', dish.amount)
+    },
+    CONFIRM_ORDER(state) {
+      state.acceptOrder = true
+      state.cart = {}
+      for (const key in state.favourites) {
+        Vue.set(state.favourites[key], 'amount', 0)
+      }
+      for (let i = 0; i < state.categories.length; i++) {
+        for (let j = 0; j < state.categories[i].dishes.length; j++) {
+          Vue.set(state.categories[i].dishes[j], 'amount', 0)
+        }
+      }
     }
   },
   actions: {
-    SET_DATE({commit}, date) {
-      commit('SET_DATE', date)
-    },
     LOAD_DISHES({commit, dispatch}, data) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        dispatch('SET_DATE', data.date)
+        // dispatch('SET_DATE', data.date)
         let requestParams = {}
         // if (data.link == undefined) {
           const url = '/backend/modules/menu'
           const parameters = {}
           parameters.date = data.date
-          if (data.category != 'all')
-            parameters.category = data.category
-          parameters.page = data.page
+          // if (data.category != 'all')
+          //   parameters.category = data.category
+          // parameters.page = data.page
           requestParams = {
             url: url,
             method: 'GET',
@@ -308,7 +312,7 @@ export default {
     LOAD_FAVOURITES({commit, dispatch}, date) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        dispatch('SET_DATE', date)
+        // dispatch('SET_DATE', date)
         let requestParams = {}
         const url = '/backend/modules/account/elect'
         requestParams = {
@@ -331,18 +335,15 @@ export default {
     },
     TOGGLE_FAVOURITE({commit}, data) {
       return new Promise((resolve, reject) => {
-        commit('SET_PROCESSING', true)
         axios({ url: '/backend/modules/account/edit', data: { id: data.dish.id }, method: 'POST' })
         .then(resp => {
           if (data.remove)
             commit('REMOVE_FAVOURITE', data.dish)
           else
             commit('ADD_FAVOURITE', data.dish)
-          commit('SET_PROCESSING', false)
           resolve()
         })
         .catch(err => {
-          commit('SET_PROCESSING', false)
           reject(err)
         })
       })
@@ -350,7 +351,7 @@ export default {
     LOAD_CART({commit, dispatch}, date) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        dispatch('SET_DATE', date)
+        // dispatch('SET_DATE', date)
         let requestParams = {}
         const url = '/backend/modules/basket'
         requestParams = {
@@ -372,35 +373,63 @@ export default {
         })
       })
     },
-    SET_OREDER({commit, getters}, data) {
+    SET_OREDER({commit, getters}, dish) {
       return new Promise((resolve, reject) => {
-        commit('SET_PROCESSING', true)
-        let parameters = { data: { date: getters.date, id: data.dish.id }, method: 'POST' }
-        if (data.amount != 0) {
-          if (data.amount >= data.dish.amount)
-            parameters.url = '/backend/modules/basket/add'
-          else
-            parameters.url = '/backend/modules/basket/reduce'
-          parameters.data.amount = data.amount
+        let parameters = { data: { date: getters.date, id: dish.id }, method: 'POST' }
+        if (dish.amount != 0) {
+          // if (data.prevAmount <= data.dish.amount) {
+          //   parameters.url = '/backend/modules/basket/add'
+          // } else {
+          //   parameters.url = '/backend/modules/basket/reduce'
+          // }
+          parameters.url = '/backend/modules/basket/amount'
+          parameters.data.amount = dish.amount
         } else {
           parameters.url = '/backend/modules/basket/delete'
         }
+        console.log(parameters.data.amount);
         axios(parameters)
         .then(resp => {
-          data.dish.amount = data.amount
-          commit('SET_OREDER', data)
-          commit('SET_PROCESSING', false)
+          console.log(resp.data);
+          commit('SET_OREDER', dish)
           resolve()
         })
         .catch(err => {
-          commit('SET_PROCESSING', false)
           reject(err)
         })
+      })
+    },
+    CONFIRM_ORDER({commit}) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        commit('CONFIRM_ORDER')
+        commit('SET_PROCESSING', false)
+        resolve()
+        // let parameters = { data: { date: getters.date, id: data.dish.id }, method: 'POST' }
+        // if (data.amount != 0) {
+        //   if (data.amount >= data.dish.amount)
+        //     parameters.url = '/backend/modules/basket/add'
+        //   else
+        //     parameters.url = '/backend/modules/basket/reduce'
+        //   parameters.data.amount = data.amount
+        // } else {
+        //   parameters.url = '/backend/modules/basket/delete'
+        // }
+        // axios(parameters)
+        // .then(resp => {
+        //   data.dish.amount = data.amount
+        //   commit('SET_OREDER', data)
+        //   commit('SET_PROCESSING', false)
+        //   resolve()
+        // })
+        // .catch(err => {
+        //   commit('SET_PROCESSING', false)
+        //   reject(err)
+        // })
       })
     }
   },
   getters: {
-    date: (state) => state.date,
     categories: (state) => state.categories,
     favourites: (state) => state.favourites,
     cart: (state) => state.cart,

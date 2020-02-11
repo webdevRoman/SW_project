@@ -23,7 +23,7 @@
               .dish-info__text
                 span.dish-info__price {{ dish.price }} Р
                 span.dish-info__weight {{ dish.weight }} г
-              button.dish-info__show(@click.prevent="showDescr(dish.description)")
+              button.dish-info__show(@click.prevent="showDescr(dish.description)", v-if="dish.description != ''")
                 .dish-info__dot
                 .dish-info__dot
                 .dish-info__dot
@@ -50,7 +50,8 @@ export default {
     return {
       selectCategory: { name: 'Все категории' },
       showPopup: false,
-      showingDescr: ''
+      showingDescr: '',
+      timeoutId: null
     }
   },
   methods: {
@@ -76,37 +77,76 @@ export default {
       })
     },
     incrementOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) + 1 })
-      .catch(err => {
-        console.log('Error on incrementing dish amount: ' + err)
-        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
-        setTimeout(() => {
-          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
-        }, 5000)
-      })
+      dish.amount = parseInt(dish.amount) + 1
+      if (this.timeoutId != null) {
+        clearTimeout(this.timeoutId)
+        this.timeoutId = null
+      }
+      this.timeoutId = setTimeout(this.setOrder, 500, dish)
+      // this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) + 1 })
+      // this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) })
+      // .catch(err => {
+      //   console.log('Error on incrementing dish amount: ' + err)
+      //   this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+      //   setTimeout(() => {
+      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      //   }, 5000)
+      // })
     },
     decrementOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) - 1 })
-      .catch(err => {
-        console.log('Error on decrementing dish amount: ' + err)
-        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
-        setTimeout(() => {
-          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
-        }, 5000)
-      })
+      dish.amount = parseInt(dish.amount) - 1
+      if (this.timeoutId != null) {
+        clearTimeout(this.timeoutId)
+        this.timeoutId = null
+      }
+      this.timeoutId = setTimeout(this.setOrder, 500, dish)
+      // this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) - 1 })
+      // this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) })
+      // .catch(err => {
+      //   console.log('Error on decrementing dish amount: ' + err)
+      //   this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+      //   setTimeout(() => {
+      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      //   }, 5000)
+      // })
     },
     checkOrder(dish) {
-      let data = {}
+      // let data = {}
+      // if (dish.amount == '' || !dish.amount.match(/\d+/)) {
+      //   data = { dish: dish, amount: 0 }
+      // } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
+      //   data = { dish: dish, amount: parseInt(dish.amount[1]) }
+      // } else {
+      //   data = { dish: dish, amount: dish.amount }
+      // }
       if (dish.amount == '' || !dish.amount.match(/\d+/)) {
-        data = { dish: dish, amount: 0 }
+        dish.amount = 0
       } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
-        data = { dish: dish, amount: parseInt(dish.amount[1]) }
-      } else {
-        data = { dish: dish, amount: dish.amount }
+        dish.amount = parseInt(dish.amount[1])
       }
-      this.$store.dispatch('SET_OREDER', data)
+      if (this.timeoutId != null) {
+        clearTimeout(this.timeoutId)
+        this.timeoutId = null
+      }
+      // if (dish.amount > 0) {
+      //   let fakeDish = Object.assign({}, dish)
+      //   fakeDish.amount = 0
+      //   this.setOrder(fakeDish)
+      // }
+      this.timeoutId = setTimeout(this.setOrder, 500, dish)
+      // this.$store.dispatch('SET_OREDER', data)
+      // .catch(err => {
+      //   console.log('Error on changing dish amount: ' + err)
+      //   this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+      //   setTimeout(() => {
+      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+      //   }, 5000)
+      // })
+    },
+    setOrder(dish) {
+      this.$store.dispatch('SET_OREDER', { dish: dish })
       .catch(err => {
-        console.log('Error on changing dish amount: ' + err)
+        console.log('Error on setting order: ' + err)
         this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
         setTimeout(() => {
           this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })

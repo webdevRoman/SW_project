@@ -105,7 +105,7 @@ export default {
       calendarConfig: {
         isDateRange: true,
         dateFormat: 'yyyy.mm.dd',
-        disabledDayNames: ['Вс'],
+        // disabledDayNames: ['Вс'],
         disabledDates: ['beforeToday'],
         monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
         shortMonthNames: ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],

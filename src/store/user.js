@@ -4,7 +4,7 @@ import axios from 'axios'
 export default {
   state: {
     isAuthenticated: false,
-    isAdmin: true,
+    isAdmin: false,
     name: '',
     surname: '',
     middlename: '',
@@ -183,6 +183,7 @@ export default {
         if (Vue.$cookies.get('email') != null) {
           commit('SET_PROCESSING', true)
           const url = '/backend/modules/auth/resend'
+          // axios({ url: url, method: 'POST' })
           axios({ url: url, data: Vue.$cookies.get('email'), method: 'POST' })
           .then(() => {
             commit('SET_PROCESSING', false)
@@ -219,7 +220,6 @@ export default {
         const url = '/backend/modules/auth/reset-request'
         axios({ url: url, data: payload, method: 'POST' })
         .then(resp => {
-          console.log(resp.data);
           commit('SET_PROCESSING', false)
           resolve()
         },
@@ -235,7 +235,6 @@ export default {
         const url = '/backend/modules/auth/reset-password'
         axios({ url: url, data: payload, method: 'POST' })
         .then(resp => {
-          console.log(resp.data);
           commit('SET_PROCESSING', false)
           resolve()
         },

@@ -379,8 +379,8 @@ body, button, input, a
         font-size: 13px
         color: $c-light
         text-align: center
-        &:last-child
-          background-color: lighten($c-dark, 40)
+        // &:last-child
+        //   background-color: lighten($c-dark, 40)
     &-week
       display: flex
       justify-content: space-between

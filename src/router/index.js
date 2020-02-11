@@ -126,7 +126,11 @@ const routes = [
   {
     path: '*',
     component: Page404
-  }
+  },
+  // {
+  //   path: '/backend',
+  //   component: Page404
+  // }
 ]
 
 const router = new VueRouter({

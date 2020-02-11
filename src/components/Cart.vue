@@ -60,42 +60,72 @@ export default {
       }
     },
     incrementOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) + 1 })
+      dish.amount = parseInt(dish.amount) + 1
+      if (this.timeoutId != null) {
+        clearTimeout(this.timeoutId)
+        this.timeoutId = null
+      }
+      this.timeoutId = setTimeout(this.setOrder, 500, dish)
     },
     decrementOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount) - 1 })
-    },
-    deleteOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
+      dish.amount = parseInt(dish.amount) - 1
+      if (this.timeoutId != null) {
+        clearTimeout(this.timeoutId)
+        this.timeoutId = null
+      }
+      this.timeoutId = setTimeout(this.setOrder, 500, dish)
     },
     checkOrder(dish) {
       if (dish.amount == '' || !dish.amount.match(/\d+/)) {
-        this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
+        dish.amount = 0
       } else if (dish.amount.length > 1 && dish.amount[0] == '0') {
-        this.$store.dispatch('SET_OREDER', { dish: dish, amount: parseInt(dish.amount[1]) })
-      } else {
-        this.$store.dispatch('SET_OREDER', { dish: dish, amount: dish.amount })
+        dish.amount = parseInt(dish.amount[1])
       }
+      if (this.timeoutId != null) {
+        clearTimeout(this.timeoutId)
+        this.timeoutId = null
+      }
+      this.timeoutId = setTimeout(this.setOrder, 500, dish)
+    },
+    deleteOrder(dish) {
+      // this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
+      dish.amount = 0
+      this.setOrder(dish)
     },
     clearCart() {
       for (const key in this.cartItems) {
         const dish = this.cartItems[key]
-        dish.order = 0
-        this.$store.dispatch('SET_OREDER', { dish: dish, amount: 0 })
+        dish.amount = 0
+        this.setOrder(dish)
       }
+    },
+    setOrder(dish) {
+      this.$store.dispatch('SET_OREDER', { dish: dish })
+      .catch(err => {
+        console.log('Error on setting order: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
     },
     confirmOrder() {
       // dispatch some confirming method
       // acceptOrder = true !!!
-      // for (const key in this.cartItems) {
-      //   const dish = this.cartItems[key]
-      //   dish.order = 0
-      //   this.$store.dispatch('DECREMENT_OREDER', dish)
-      // }
-      const cart = document.querySelector('.cart-popup')
-      setTimeout(() => {
-        cart.style.display = 'none'        
-      }, 3000)
+      this.$store.dispatch('CONFIRM_ORDER')
+      .then(resp => {
+        const cart = document.querySelector('.cart-popup')
+        setTimeout(() => {
+          cart.style.display = 'none'        
+        }, 3000)
+      },
+      err => {
+        console.log('Error on sending order: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
     }
   },
   computed: {

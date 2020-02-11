@@ -36,7 +36,7 @@ div
       .title.signup-title Замена пароля
       .signup-info
         .signup-info__title Замена пароля успешно завершена
-        a.signup-info__repeat(href="https://pylearn.info/signin") Войти
+        router-link.signup-info__repeat(tag="button", to="/signin") Войти
   .notification-popup(v-if="notification.msg != ''")
     .notification-info {{ notification.msg }}
     .notification-img(v-if="notification.err")

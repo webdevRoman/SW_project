@@ -145,7 +145,7 @@ export default {
       calendarConfig: {
         isDatePicker: true,
         dateFormat: 'yyyy.mm.dd',
-        disabledDayNames: ['Вс'],
+        // disabledDayNames: ['Вс'],
         disabledDates: ['afterToday'],
         monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
         shortMonthNames: ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
@@ -155,7 +155,7 @@ export default {
       calendarConfig2: {
         isDateRange: true,
         dateFormat: 'yyyy.mm.dd',
-        disabledDayNames: ['Вс'],
+        // disabledDayNames: ['Вс'],
         disabledDates: ['beforeToday'],
         monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
         shortMonthNames: ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
@@ -222,7 +222,8 @@ export default {
       if (input.value.length == 10) {
         let inputArr = input.value.split('.')
         let endDate = new Date()
-        let startDate = new Date(endDate.getFullYear(), endDate.getMonth() - 1, endDate.getDate())
+        let startDate = new Date()
+        startDate.setMonth(startDate.getMonth() - 1)
         if (parseInt(inputArr[2]) < startDate.getFullYear())
           inputArr[2] = startDate.getFullYear()
         if (parseInt(inputArr[2]) > endDate.getFullYear())
@@ -469,7 +470,7 @@ export default {
     formatDateInputs(dateStr) {
       let dateArr = dateStr.split('.')
       if (dateArr[2].length < 2)
-        dateArr[2] = '0' + dateArr[0]
+        dateArr[2] = '0' + dateArr[2]
       if (dateArr[1].length < 2)
         dateArr[1] = '0' + dateArr[1]
       return dateArr[2] + '.' + dateArr[1] + '.' + dateArr[0]

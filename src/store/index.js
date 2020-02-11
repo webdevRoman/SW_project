@@ -5,6 +5,7 @@ import dishesModule from './dishes'
 import userModule from './user'
 import validationModule from './validation'
 import adminModule from './admin'
+import datesModule from './dates'
 
 Vue.use(Vuex)
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
     dishesModule,
     userModule,
     validationModule,
-    adminModule
+    adminModule,
+    datesModule
   }
 })
