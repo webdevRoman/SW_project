@@ -287,22 +287,21 @@ body, button, input, a
         padding: 8px 6px
         font-size: 12px
 .popup-admin
-  .select-arrow
-    width: 10px
-    height: 9px
+  // .select-arrow
+  //   width: 10px
+  //   height: 9px
   .vs
     &__dropdown
       &-toggle
         border: 1px solid $c-middle
-        padding: 8px 6px
+        padding: 10px 15px
       &-menu
         overflow-y: visible
         border-left: 1px solid $c-middle
         border-bottom: 1px solid $c-middle
         border-right: 1px solid $c-middle
       &-option
-        padding: 8px 6px
-        font-size: 12px
+        padding: 10px 15px
 
 .calendar
   z-index: 10

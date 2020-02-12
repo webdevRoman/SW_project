@@ -8,7 +8,7 @@
         <path d="M9.58362 21.1406H20.6962C21.2302 21.1406 21.663 20.7078 21.663 20.1738C21.663 19.6398 21.2302 19.207 20.6962 19.207H9.58362C9.04961 19.207 8.61682 19.6398 8.61682 20.1738C8.61682 20.7078 9.04961 21.1406 9.58362 21.1406V21.1406Z" fill="#ffffff"/>
         <path d="M22.0369 23.0742H9.58362C9.04961 23.0742 8.61682 23.507 8.61682 24.041C8.61682 24.575 9.04961 25.0078 9.58362 25.0078H22.0369C22.5707 25.0078 23.0037 24.575 23.0037 24.041C23.0037 23.507 22.5707 23.0742 22.0369 23.0742Z" fill="#ffffff"/>
       </svg>
-    button.admin-sidebar__btn(:class="{'admin-sidebar__btn_active': chosenSection == 'users'}", @click.prevent="chosenSection = 'users'")
+    button.admin-sidebar__btn(:class="{'admin-sidebar__btn_active': chosenSection == 'users'}", @click.prevent="chooseUsersSection()")
       <svg width="29" height="33" viewBox="0 0 29 33" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M14.3803 17.7813C14.4145 17.7813 14.4487 17.7813 14.4897 17.7813C14.5033 17.7813 14.517 17.7813 14.5307 17.7813C14.5512 17.7813 14.5785 17.7813 14.599 17.7813C16.6013 17.7472 18.2209 17.0433 19.4168 15.697C22.0477 12.7312 21.6104 7.64693 21.5626 7.16173C21.3917 3.51936 19.6696 1.77677 18.2482 0.963554C17.189 0.355353 15.9521 0.0273349 14.5717 0H14.5238C14.517 0 14.5033 0 14.4965 0H14.4555C13.697 0 12.2072 0.123007 10.779 0.936219C9.34387 1.74943 7.59444 3.49203 7.4236 7.16173C7.37576 7.64693 6.93841 12.7312 9.56939 15.697C10.7585 17.0433 12.378 17.7472 14.3803 17.7813ZM9.2482 7.33257C9.2482 7.31207 9.25504 7.29157 9.25504 7.2779C9.48055 2.37813 12.9589 1.85194 14.4487 1.85194H14.476C14.4897 1.85194 14.5102 1.85194 14.5307 1.85194C16.3758 1.89294 19.5124 2.64465 19.7243 7.2779C19.7243 7.29841 19.7243 7.31891 19.7311 7.33257C19.738 7.38041 20.2163 12.0273 18.0432 14.4738C17.1821 15.4442 16.0341 15.9226 14.5238 15.9362C14.5102 15.9362 14.5033 15.9362 14.4897 15.9362C14.476 15.9362 14.4692 15.9362 14.4555 15.9362C12.9521 15.9226 11.7972 15.4442 10.943 14.4738C8.77668 12.041 9.24137 7.37358 9.2482 7.33257Z" fill="#ffffff"/>
         <path d="M28.533 26.2141C28.533 26.2072 28.533 26.2004 28.533 26.1936C28.533 26.1389 28.5262 26.0842 28.5262 26.0227C28.4852 24.6696 28.3963 21.5056 25.4305 20.4942C25.41 20.4874 25.3827 20.4806 25.3622 20.4737C22.2802 19.6879 19.7175 17.9111 19.6902 17.8906C19.2733 17.5968 18.6993 17.6993 18.4054 18.1161C18.1116 18.533 18.2141 19.107 18.631 19.4009C18.7471 19.4829 21.4669 21.3758 24.8701 22.2505C26.4624 22.8177 26.6401 24.5193 26.6879 26.0774C26.6879 26.1389 26.6879 26.1936 26.6947 26.2482C26.7016 26.8633 26.6606 27.8132 26.5512 28.3599C25.4442 28.9886 21.1048 31.1617 14.5034 31.1617C7.92936 31.1617 3.56262 28.9817 2.44872 28.353C2.33939 27.8063 2.29155 26.8564 2.30522 26.2414C2.30522 26.1867 2.31205 26.1321 2.31205 26.0706C2.35989 24.5125 2.53756 22.8109 4.12982 22.2437C7.53301 21.369 10.2528 19.4692 10.369 19.394C10.7859 19.1002 10.8884 18.5261 10.5945 18.1093C10.3007 17.6924 9.72663 17.5899 9.30977 17.8838C9.28244 17.9043 6.73346 19.681 3.63779 20.4669C3.61046 20.4737 3.58996 20.4806 3.56945 20.4874C0.603622 21.5056 0.514784 24.6696 0.473782 26.0159C0.473782 26.0774 0.473781 26.1321 0.466948 26.1867C0.466948 26.1936 0.466948 26.2004 0.466948 26.2072C0.460114 26.5626 0.453281 28.3872 0.815467 29.3029C0.883804 29.4806 1.00681 29.6309 1.17082 29.7334C1.37583 29.8701 6.28927 32.9999 14.5102 32.9999C22.7312 32.9999 27.6446 29.8633 27.8496 29.7334C28.0068 29.6309 28.1367 29.4806 28.205 29.3029C28.5467 28.394 28.5398 26.5694 28.533 26.2141Z" fill="#ffffff"/>
@@ -47,7 +47,8 @@
           th.limit Лимит
           th(colspan="3")
         tr.users-table__line(v-for="user in users")
-          td.name {{ user.firstname }} {{ user.midname }} {{ user.lastname }}
+          //- td.name {{ user.firstname }} {{ user.midname }} {{ user.lastname }}
+          td.name {{ user.firstname }} {{ user.lastname }}
           td.email {{ user.email }}
           td.role
             .select-container
@@ -56,7 +57,7 @@
                   span.select-option {{ option.name }}
           td.status
             .select-container
-              v-select.select(v-model="user.status", label="name", index="name", :options="statuses", :clearable="false", :searchable="false")
+              v-select.select(v-model="user.status", label="name", index="name", :options="statuses", :clearable="false", :searchable="false", @input="changeUserStatus(user)", :disabled="user.status == 'Подтвержден'")
                 template(v-slot:option="option")
                   span.select-option {{ option.name }}
           td.limit
@@ -80,7 +81,7 @@
           .form-block__line
             input.form-input(type="text", v-model.trim="allLimit", v-mask="'#####'", @change="setAllLimit()")
             span Р
-        button.form-submit(type="submit") Сохранить изменения
+        //- button.form-submit(type="submit") Сохранить изменения
 
   .overlay(v-if="showPopup")
     form.form.popup.popup-admin(action="#", @submit.prevent="checkForm()")
@@ -98,32 +99,44 @@
           label.form-label(for="account-middlename") Отчество (не обязательно)
           input.form-input(type="text", id="account-middlename", v-model.trim="middlename", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkMiddlename()")
           .form-error(v-if="middlenameError != ''") {{ middlenameError }}
-        .form-block.form-block-line(:class="{'form-block_error': limitError != ''}")
-          .form-block__item
-            label.form-label Роль пользователя
-            .select-container
-              v-select.select(v-model="role", label="name", index="name", :options="roles", :clearable="false", :searchable="false")
-                template(v-slot:option="option")
-                  span.select-option {{ option.name }}
-          .form-block__item
-            label.form-label(for="account-limit") Лимит заказа
-            .form-block__line
-              input.form-input(type="text", id="account-limit", v-model.trim="limit", v-mask="'#####'", @focusout="checkLimit()")
-              span Р
-          .form-error(v-if="limitError != ''") {{ limitError }}
         .form-block(:class="{'form-block_error': emailError != ''}")
           label.form-label(for="account-email") Корпоративная почта SmartWorld
           input.form-input(type="text", id="account-email", placeholder="@smartworld.team", v-model.trim="email", v-mask="'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'", @focusout="checkEmail()")
           .form-error(v-if="emailError != ''") {{ emailError }}
-        .form-block(:class="{'form-block_error': passwordError != ''}")
-          label.form-label(for="account-password") Пароль
-          .form-password
-            input.form-input(type="password", id="account-password", v-model.trim="password", @focusout="checkPassword()")
-            button.form-password__eye(v-if="passwordFocus && !passwordShow", @click.prevent="togglePasswordShow()")
-              img(src="../assets/img/eye.svg", alt="Eye")
-            button.form-password__eye(v-if="passwordFocus && passwordShow", @click.prevent="togglePasswordShow()")
-              img(src="../assets/img/eye-closed.svg", alt="Closed eye")
-          .form-error(v-if="passwordError != ''") {{ passwordError }}
+        .form-block.form-block_last
+          label.form-label.form-label__role Роль пользователя
+          .select-container
+            v-select.select(v-model="role", label="name", index="name", :options="roles", :clearable="false", :searchable="false")
+              template(v-slot:option="option")
+                span.select-option {{ option.name }}
+        .form-block.form-block_last(:class="{'form-block_error': limitError != ''}")
+          label.form-label(for="account-limit") Лимит заказа
+          .form-block__line
+            input.form-input(type="text", id="account-limit", v-model.trim="limit", v-mask="'#####'", @focusout="checkLimit()")
+            span Р
+          .form-error(v-if="limitError != ''") {{ limitError }}
+        //- .form-block.form-block-line(:class="{'form-block_error': limitError != ''}")
+        //-   .form-block__item
+        //-     label.form-label Роль пользователя
+        //-     .select-container
+        //-       v-select.select(v-model="role", label="name", index="name", :options="roles", :clearable="false", :searchable="false")
+        //-         template(v-slot:option="option")
+        //-           span.select-option {{ option.name }}
+        //-   .form-block__item
+        //-     label.form-label(for="account-limit") Лимит заказа
+        //-     .form-block__line
+        //-       input.form-input(type="text", id="account-limit", v-model.trim="limit", v-mask="'#####'", @focusout="checkLimit()")
+        //-       span Р
+        //-   .form-error(v-if="limitError != ''") {{ limitError }}
+        //- .form-block(:class="{'form-block_error': passwordError != ''}")
+        //-   label.form-label(for="account-password") Пароль
+        //-   .form-password
+        //-     input.form-input(type="password", id="account-password", v-model.trim="password", @focusout="checkPassword()")
+        //-     button.form-password__eye(v-if="passwordFocus && !passwordShow", @click.prevent="togglePasswordShow()")
+        //-       img(src="../assets/img/eye.svg", alt="Eye")
+        //-     button.form-password__eye(v-if="passwordFocus && passwordShow", @click.prevent="togglePasswordShow()")
+        //-       img(src="../assets/img/eye-closed.svg", alt="Closed eye")
+        //-   .form-error(v-if="passwordError != ''") {{ passwordError }}
       button.form-submit(type="submit", :disabled="errors") Добавить пользователя
       button.popup-close(@click.prevent="hidePopup()") &times;
   .notification-popup(v-if="notification.msg != ''")
@@ -179,16 +192,28 @@ export default {
       middlenameError: '',
       email: '',
       emailError: '',
-      password: '',
-      passwordError: '',
-      passwordFocus: false,
-      passwordShow: false,
+      // password: '',
+      // passwordError: '',
+      // passwordFocus: false,
+      // passwordShow: false,
       role: 'Пользователь',
       limit: '',
       limitError: ''
     }
   },
   methods: {
+    chooseUsersSection() {
+      this.chosenSection = 'users'
+      this.$store.dispatch('LOAD_USERS')
+      .catch(err => {
+        console.log('Error on loading users: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
+    },
+
     getLimitDates() {
       const date = new Date()
       return { min: `${date.getFullYear()}.${date.getMonth()}.${date.getDate()}`, max: `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}` }
@@ -278,6 +303,16 @@ export default {
       // })
     },
 
+    changeUserStatus(user) {
+      this.$store.dispatch('CHANGE_USER_STATUS', user)
+      .catch(err => {
+        console.log('Error on changing user status: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
+    },
     toggleCalendar(user) {
       const calendar = document.getElementById(`account-form__calendar-${user.id}`)
       const checkbox = document.getElementById(`account-checkbox-${user.id}`)
@@ -483,22 +518,22 @@ export default {
         dateArr[1] = dateArr[1][1]
       return dateArr[2] + '.' + dateArr[1] + '.' + dateArr[0]
     },
-    saveChanges() {
-      this.$store.dispatch('SAVE_CHANGES')
-      // .then(resp => {
-      //   this.$store.dispatch('SET_NOTIFICATION', { msg: 'Изменения сохранены', err: false })
-      //   setTimeout(() => {
-      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
-      //   }, 5000)
-      // },
-      // err => {
-      //   console.log('Error on saving changes in admin panel: ' + err)
-      //   this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
-      //   setTimeout(() => {
-      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
-      //   }, 5000)
-      // })
-    },
+    // saveChanges() {
+    //   this.$store.dispatch('SAVE_CHANGES')
+    //   // .then(resp => {
+    //   //   this.$store.dispatch('SET_NOTIFICATION', { msg: 'Изменения сохранены', err: false })
+    //   //   setTimeout(() => {
+    //   //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+    //   //   }, 5000)
+    //   // },
+    //   // err => {
+    //   //   console.log('Error on saving changes in admin panel: ' + err)
+    //   //   this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+    //   //   setTimeout(() => {
+    //   //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+    //   //   }, 5000)
+    //   // })
+    // },
 
     checkName() {
       this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1).toLowerCase()
@@ -570,44 +605,44 @@ export default {
         error => console.log("Email checker rejected: " + error.message)
       )
     },
-    checkPassword() {
-      this.$store.dispatch('CHECK_PASSWORD', this.password)
-      .then(
-        result => {
-          if (result == 'empty')
-            this.passwordError = 'Заполните пароль'
-          else if (result == 'short')
-            this.passwordError = 'Пароль должен содержать не менее 6 символов'
-          else if (result == 'long')
-            this.passwordError = 'Пароль должен содержать не более 25 символов'
-          else if (result == 'wrong')
-            this.passwordError = 'Пароль должен состоять только из латинских букв и цифр'
-          else
-            this.passwordError = ''
-        },
-        error => console.log("Password checker rejected: " + error.message)
-      )
-    },
+    // checkPassword() {
+    //   this.$store.dispatch('CHECK_PASSWORD', this.password)
+    //   .then(
+    //     result => {
+    //       if (result == 'empty')
+    //         this.passwordError = 'Заполните пароль'
+    //       else if (result == 'short')
+    //         this.passwordError = 'Пароль должен содержать не менее 6 символов'
+    //       else if (result == 'long')
+    //         this.passwordError = 'Пароль должен содержать не более 25 символов'
+    //       else if (result == 'wrong')
+    //         this.passwordError = 'Пароль должен состоять только из латинских букв и цифр'
+    //       else
+    //         this.passwordError = ''
+    //     },
+    //     error => console.log("Password checker rejected: " + error.message)
+    //   )
+    // },
     checkLimit() {
       if (this.limit == '')
         this.limitError = 'Заполните лимит'
       else
         this.limitError = ''
     },
-    togglePasswordShow() {
-      const passwordInput = document.getElementById('account-password')
-      if (passwordInput.type == 'password')
-        passwordInput.type = 'text'
-      else
-        passwordInput.type = 'password'
-      this.passwordShow = !this.passwordShow
-    },
+    // togglePasswordShow() {
+    //   const passwordInput = document.getElementById('account-password')
+    //   if (passwordInput.type == 'password')
+    //     passwordInput.type = 'text'
+    //   else
+    //     passwordInput.type = 'password'
+    //   this.passwordShow = !this.passwordShow
+    // },
     checkForm() {
       this.checkName()
       this.checkSurname()
       this.checkMiddlename()
       this.checkEmail()
-      this.checkPassword()
+      // this.checkPassword()
       this.checkLimit()
       if (!this.errors) {
         this.$store.dispatch('ADD_USER', { email: this.email, firstname: this.name, lastname: this.surname, midname: this.middlename, password: this.password, role: this.role, limit: this.limit })
@@ -709,7 +744,8 @@ export default {
     },
     errors() {
       const errors = this.$store.getters.errors
-      if (errors.email != undefined && errors.email != 'wrong' || errors.password != undefined || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined || this.limit == '')
+      // if (errors.email != undefined && errors.email != 'wrong' || errors.password != undefined || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined || this.limit == '')
+      if (errors.email != undefined && errors.email != 'wrong' || errors.name != undefined || errors.surname != undefined || errors.middlename != undefined || this.limit == '')
         return true
       else
         return false
@@ -732,16 +768,13 @@ export default {
       },
       deep: true
     },
-    password(value) {
-      if (value != '')
-        this.passwordFocus = true
-      else
-        this.passwordFocus = false
-    }
-  },
-  // created() {
-  //   load users and set notification
-  // }
+    // password(value) {
+    //   if (value != '')
+    //     this.passwordFocus = true
+    //   else
+    //     this.passwordFocus = false
+    // }
+  }
 }
 </script>
 
@@ -779,6 +812,7 @@ export default {
     justify-content: center
     align-items: center
     min-height: 100vh
+    padding: 30px 0
   .docs
     &-container
       display: flex
@@ -1020,28 +1054,33 @@ export default {
           margin-right: 0
         &_error
           margin-bottom: 50px
-        &-line
-          display: flex
-          justify-content: space-between
-        &__item
-          &:first-child
-            margin-right: 20px
-            .form-label
-              margin-bottom: 10px
+        &_last
+          margin-bottom: 0
+        // &-line
+        //   display: flex
+        //   justify-content: space-between
+        // &__item
+        //   &:first-child
+        //     margin-right: 20px
+        //     .form-label
+        //       margin-bottom: 10px
         &__line
           display: flex
           align-items: center
-          .form-input
-            width: 85px
+          // .form-input
+          //   width: 85px
           span
             font-weight: 500
             font-size: 18px
-            margin-left: 2px
+            margin-left: 10px
         .select
-          width: 140px
-          font-size: 12px
+          width: 262px
+          // font-size: 12px
           &-container
             margin-bottom: 0
+      &-label
+        &__role
+          margin-bottom: 3px
       &-submit
         width: 262px
         margin: 0 auto

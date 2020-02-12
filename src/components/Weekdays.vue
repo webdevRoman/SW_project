@@ -75,16 +75,37 @@ export default {
       let nextDate = new Date()
       nextDate.setDate(nextDate.getDate() + 1)
       const curDateStr = this.currentDate
-      let flagNext = false
       const nextDateStr = this.formatDate(nextDate)
       const nextDateArr = nextDateStr.split('.')
       const curDateArr = curDateStr.split('.')
       const firstDateArr = this.weekdays[0].fullDate.split('.')
-      if (nextDateArr[0] > firstDateArr[0] || nextDateArr[1] > firstDateArr[1] || nextDateArr[2] > firstDateArr[2])
-        flagNext = true
-      if (date.getHours() >= 16 && flagNext) {
+      if (date.getHours() >= 16 && (nextDateArr[0] > firstDateArr[0] || nextDateArr[1] > firstDateArr[1] || nextDateArr[2] > firstDateArr[2])) {
         this.$store.dispatch('SET_WEEKDAYS', nextDate)
         if (nextDateArr[0] > curDateArr[0] || nextDateArr[1] > curDateArr[1] || nextDateArr[2] > curDateArr[2]) {
+          this.$store.dispatch('LOAD_DISHES', { date: nextDateStr, category: 'all', page: 1 })
+          .catch(err => {
+            console.log("Error on loading dishes: " + err.message)
+            this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+            setTimeout(() => {
+              this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+            }, 5000)
+          })
+          this.$store.dispatch('LOAD_FAVOURITES', nextDateStr)
+          .catch(err => {
+            console.log("Error on loading favourites: " + err.message)
+            this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+            setTimeout(() => {
+              this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+            }, 5000)
+          })
+          this.$store.dispatch('LOAD_CART', nextDateStr)
+          .catch(err => {
+            console.log("Error on loading cart " + err.message)
+            this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+            setTimeout(() => {
+              this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+            }, 5000)
+          })
           this.$store.dispatch('SET_DATE', nextDateStr)
         }
       }
@@ -104,6 +125,8 @@ export default {
   created() {
     const date = new Date()
     const currentDate = this.formatDate(date)
+    this.$store.dispatch('SET_WEEKDAYS', date)
+    this.$store.dispatch('SET_DATE', currentDate)
     this.$store.dispatch('LOAD_DISHES', { date: currentDate, category: 'all', page: 1 })
     .catch(err => {
       console.log("Error on loading dishes: " + err.message)
@@ -128,8 +151,6 @@ export default {
         this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
       }, 5000)
     })
-    this.$store.dispatch('SET_WEEKDAYS', date)
-    this.$store.dispatch('SET_DATE', currentDate)
     this.checkDate()
     window.setInterval(this.checkDate, 300000)
   }

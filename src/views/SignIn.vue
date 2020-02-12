@@ -67,6 +67,9 @@ export default {
           if (err == 'password') {
             this.$store.dispatch('SET_ERROR', { type: 'auth', msg: 'wrong' })
             this.authError = 'Неверная почта или пароль'
+          } else if (err == 'banned') {
+            this.$store.dispatch('SET_ERROR', { type: 'auth', msg: 'banned' })
+            this.authError = 'Пользователь удален'
           } else {
             console.log('Error on signing in: ' + err)
             this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })

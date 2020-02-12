@@ -1,80 +1,75 @@
+import axios from 'axios'
+
 export default {
   state: {
-    users: [{
-      id: 1,
-      firstname: 'Иван',
-      lastname: 'Иванов',
-      midname: 'Иванович',
-      email: 'ivan@email.end',
-      role: 'Пользователь',
-      status: 'Подтвержден',
-      limit: 200,
-      order: false,
-      calendarDates: {
-        dateRange: {
-          start: {
-            date: '2020.2.10'
-          },
-          end: {
-            date: '2020.2.17'
-          }
-        }
-      },
-      inputsDates: {
-        start: '10.02.2020',
-        end: '17.02.2020'
-      }
-    }, {
-      id: 2,
-      firstname: 'Петр',
-      lastname: 'Петров',
-      midname: 'Петрович',
-      email: 'petr@email.end',
-      role: 'Администратор',
-      status: 'Подтвержден',
-      limit: 200,
-      order: true,
-      calendarDates: {
-        dateRange: {
-          start: {
-            date: false
-          },
-          end: {
-            date: false
-          }
-        }
-      },
-      inputsDates: {
-        start: '',
-        end: ''
-      }
-    }, {
-      id: 3,
-      firstname: 'Волк',
-      lastname: 'Волков',
-      midname: 'Волкович',
-      email: 'volk@email.end',
-      role: 'Пользователь',
-      status: 'Не подтвержден',
-      limit: 200,
-      order: true,
-      calendarDates: {
-        dateRange: {
-          start: {
-            date: false
-          },
-          end: {
-            date: false
-          }
-        }
-      },
-      inputsDates: {
-        start: '',
-        end: ''
-      }
-    }]
+    users: []
   },
   mutations: {
+    SET_USERS(state, data) {
+      function formatDateCalendar(dateStr) {
+        let dateArr = dateStr.split('.')
+        if (dateArr[1].length > 1 && dateArr[1][0] == '0') {
+          dateArr[1] = dateArr[1][1]
+        }
+        if (dateArr[2].length > 1 && dateArr[2][0] == '0') {
+          dateArr[2] = dateArr[2][1]
+        }
+        return dateArr.join('.')
+      }
+      function formatDateInputs(dateStr) {
+        let dateArr = dateStr.split('.')
+        return dateArr[2] + '.' + dateArr[1] + '.' + dateArr[0]
+      }
+      let loadedUsers = []
+      data.users.forEach(user => {
+        let newUser = Object.assign({}, user)
+        if (user.role == 'admin') {
+          newUser.role = 'Администратор'
+        } else if (user.role == 'user' || user.role == null) {
+          newUser.role = 'Пользователь'
+        } else if (user.role == 'banned') {
+          newUser.role = 'Удален'
+        }
+        newUser.status = data.statuses[user.status].name
+        if (user.start == null || user.end == null) {
+          newUser.order = true
+          newUser.calendarDates = {
+            dateRange: {
+              start: {
+                date: false
+              },
+              end: {
+                date: false
+              }
+            }
+          }
+          newUser.inputsDates = {
+            start: '',
+            end: ''
+          }
+        } else {
+          newUser.order = false
+          newUser.calendarDates = {
+            dateRange: {
+              start: {
+                date: formatDateCalendar(user.start)
+              },
+              end: {
+                date: formatDateCalendar(user.end)
+              }
+            }
+          }
+          newUser.inputsDates = {
+            start: formatDateInputs(user.start),
+            end: formatDateInputs(user.start)
+          }
+        }
+        delete newUser.start
+        delete newUser.end
+        loadedUsers.push(newUser)
+      })
+      state.users = loadedUsers
+    },
     DELETE_USER(state, id) {
       let arrIndex
       for (let i = 0; i < state.users.length; i++) {
@@ -107,6 +102,36 @@ export default {
     }
   },
   actions: {
+    LOAD_USERS({commit}) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        axios({ url: '/backend/modules/admin/index', method: 'GET' })
+        .then(resp => {
+          commit('SET_USERS', resp.data)
+          commit('SET_PROCESSING', false)
+          resolve()
+        })
+        .catch(err => {
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
+      })
+    },
+    CHANGE_USER_STATUS({commit}, user) {
+      return new Promise((resolve, reject) => {
+        // axios({ url: '/backend/modules/account/edit', data: { id: data.dish.id }, method: 'POST' })
+        // .then(resp => {
+        //   if (data.remove)
+        //     commit('REMOVE_FAVOURITE', data.dish)
+        //   else
+        //     commit('ADD_FAVOURITE', data.dish)
+        //   resolve()
+        // })
+        // .catch(err => {
+        //   reject(err)
+        // })
+      })
+    },
     DELETE_USER({commit}, id) {
       commit('DELETE_USER', id)
     },
@@ -115,7 +140,7 @@ export default {
     },
     ADD_USER({commit}, user) {
       // send to server
-      commit('ADD_USER', user)
+      // commit('ADD_USER', user)
     }
   },
   getters: {

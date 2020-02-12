@@ -21,19 +21,24 @@ export default {
       const username = Vue.$cookies.get('username')
       state.name = username.name
       state.surname = username.surname
+      if (username.role == 'admin')
+        state.isAdmin = true
       state.isAuthenticated = true
     },
     SET_USER(state, user) {
       state.name = user.firstname
       state.surname = user.lastname
+      if (user.role == 'admin')
+        state.isAdmin = true
       state.isAuthenticated = true
-      Vue.$cookies.set('username', { name: user.firstname, surname: user.lastname }, '1m')
+      Vue.$cookies.set('username', { name: user.firstname, surname: user.lastname, role: user.role }, '1m')
     },
     AUTH_LOGOUT(state) {
       state.status = ''
       state.token = ''
       state.name = ''
       state.surname = ''
+      state.isAdmin = false
       state.isAuthenticated = false
       Vue.$cookies.remove('username')
     },
@@ -44,7 +49,7 @@ export default {
       state.order = data.order
       state.start = data.start != null ? data.start.split('/').join('.') : data.start
       state.end = data.end != null ? data.end.split('/').join('.') : data.end
-      Vue.$cookies.set('username', { name: data.firstname, surname: data.lastname }, '1m')
+      Vue.$cookies.set('username', { name: data.firstname, surname: data.lastname, role: state.isAdmin ? 'admin' : 'user' }, '1m')
     },
     SET_LIMIT(state, limit) {
       Vue.set(state, 'limit', limit)
@@ -70,7 +75,7 @@ export default {
         commit('SET_PROCESSING', true)
         dispatch('CHECK_AUTHORIZED')
         .then(() => {
-          if (getters.isAdmin)
+          if (Vue.$cookies.get('username').role == 'admin')
             resolve()
           else
             reject()
@@ -89,14 +94,17 @@ export default {
         const url = '/backend/modules/auth/login'
         axios({ url: url, data: user, method: 'POST' })
         .then(resp => {
-          if (resp.data.firstname != undefined && resp.data.lastname != undefined) {
+          if (resp.data.firstname != undefined && resp.data.lastname != undefined && resp.data.role != 'banned') {
             commit('SET_USER', resp.data)
             commit('SET_PROCESSING', false)
             resolve()
           } else if (resp.data.password != undefined) {
             commit('SET_PROCESSING', false)
             reject('password')
-          } else {
+          } else if (resp.data.role == 'banned') {
+            commit('SET_PROCESSING', false)
+            reject('banned')
+          }else {
             reject()
           }
         },
@@ -183,7 +191,6 @@ export default {
         if (Vue.$cookies.get('email') != null) {
           commit('SET_PROCESSING', true)
           const url = '/backend/modules/auth/resend'
-          // axios({ url: url, method: 'POST' })
           axios({ url: url, data: Vue.$cookies.get('email'), method: 'POST' })
           .then(() => {
             commit('SET_PROCESSING', false)
@@ -194,24 +201,6 @@ export default {
             reject(err)
           })
         }
-      })
-    },
-    SEND_PASSWORD_LINK({commit}) {
-      return new Promise((resolve, reject) => {
-        resolve()
-        // if (Vue.$cookies.get('email') != null) {
-        //   commit('SET_PROCESSING', true)
-        //   const url = '/modules/auth/resend'
-        //   axios({ url: url, data: Vue.$cookies.get('email'), method: 'POST' })
-        //   .then(() => {
-        //     commit('SET_PROCESSING', false)
-        //     resolve()
-        //   })
-        //   .catch(err => {
-        //     commit('SET_PROCESSING', false)
-        //     reject(err)
-        //   })
-        // }
       })
     },
     SEND_EMAIL({commit}, payload) {
