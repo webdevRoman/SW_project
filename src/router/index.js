@@ -15,36 +15,30 @@ Vue.use(VueRouter)
 
 const ifNotAuthenticated = (to, from, next) => {
   Store.dispatch('CHECK_AUTHORIZED')
-  .then(resp => {
-    next('/')
-  },
-  err => {
-    next()
-  })
+  .then(
+    resp => { next('/') },
+    err => { next() }
+  )
   // .catch(() => {
   //   next()
   // })
 }
 const ifAuthenticated = (to, from, next) => {
   Store.dispatch('CHECK_AUTHORIZED')
-  .then(resp => {
-    next()
-  },
-  err => {
-    next('/signin')
-  })
+  .then(
+    resp => { next() },
+    err => { next('/signin') }
+  )
   // .catch(() => {
   //   next('/signin')
   // })
 }
 const ifAuthenticatedAdmin = (to, from, next) => {
   Store.dispatch('CHECK_AUTHORIZED_ADMIN')
-  .then(resp => {
-    next()
-  },
-  err => {
-    next('/signin')
-  })
+  .then(
+    resp => { next() },
+    err => { next('/signin') }
+  )
   // .catch(() => {
   //   next('/signin')
   // })
@@ -115,14 +109,6 @@ const routes = [
     component: Admin,
     beforeEnter: ifAuthenticatedAdmin
   },
-  // {
-  //   path: '/about',
-  //   name: 'about',
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  // },
   {
     path: '*',
     component: Page404

@@ -19,7 +19,7 @@
       </svg>
   .admin-main.admin-docs(v-if="chosenSection == 'docs'")
     .docs-container
-      form.docs-block(action="#", @click.prevent="downloadOrders()")
+      form.docs-block(action="#", @submit.prevent="downloadOrders()")
         .docs-block__title Скачать лист заказов
         div
           .form-block.docs-block__block.docs-block__block__calendar
@@ -27,7 +27,7 @@
             input.form-input(type="text", id="orders-date", v-mask="'##.##.####'", v-model.trim="inputDate", @focus="showCalendarDocs()", @focusout="checkInput()")
             FunctionalCalendar.calendar.account-form__calendar(id="account-form__calendar", v-model="calendarDate", :configs="calendarConfig")
           button.form-submit(type="submit") Скачать
-      form.docs-block(action="#", @click.prevent="downloadLimits()")
+      form.docs-block(action="#", @submit.prevent="downloadLimits()")
         .docs-block__title Скачать лист превышений лимита
         div
           .select-container
@@ -36,7 +36,8 @@
                 span.select-option {{ option.name }}
           button.form-submit(type="submit") Скачать
   .admin-main.admin-users(v-if="chosenSection == 'users'")
-    form.users-container(action="#", @submit.prevent="saveChanges()")
+    //- form.users-container(action="#", @submit.prevent="saveChanges()")
+    .users-container
       .users-title Управление пользователями
       table.users-table
         tr.users-table__header
@@ -52,7 +53,7 @@
           td.email {{ user.email }}
           td.role
             .select-container
-              v-select.select(v-model="user.role", label="name", index="name", :options="roles", :clearable="false", :searchable="false")
+              v-select.select(v-model="user.role", label="name", index="name", :options="roles", :clearable="false", :searchable="false", @input="changeUserRole(user)")
                 template(v-slot:option="option")
                   span.select-option {{ option.name }}
           td.status
@@ -60,18 +61,20 @@
               v-select.select(v-model="user.status", label="name", index="name", :options="statuses", :clearable="false", :searchable="false", @input="changeUserStatus(user)", :disabled="user.status == 'Подтвержден'")
                 template(v-slot:option="option")
                   span.select-option {{ option.name }}
-          td.limit
-            input.form-input(type="text", v-model="user.limit", v-mask="'####'")
+          td.limit(:class="{'form-block_error': userLimitError(user) != ''}")
+            input.form-input(type="text", v-model="user.limit", v-mask="'####'", @focusout="changeUserLimit(user)")
+            .form-error(v-if="userLimitError(user) != ''") {{ userLimitError(user) }}
           td.no-order.form-block.account-form__block.account-form__block__checkbox
             input.form-input.account-form__checkbox(type="checkbox", :id="`account-checkbox-${user.id}`", @change.prevent="toggleCalendar(user)")
             label.form-label(:for="`account-checkbox-${user.id}`", :class="{'form-label__checkbox_active': !user.order}") Не заказывать
-          td.no-order.form-block.account-form__block.account-form__block__calendar(:class="[calendarClass(user.id), {'form-block_disabled': user.order}]")
+          td.no-order.form-block.account-form__block.account-form__block__calendar(:class="[calendarClass(user.id), {'form-block_disabled': user.order, 'form-block_error': calendarError(user) != ''}]")
             label.form-label(@click.prevent="showCalendar(user)") Начало и окончание периода
             .inputs-container
               input.form-input(type="text", :id="`account-date-start-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.inputsDates.start", @focus="showCalendar(user)", @focusout="checkInputs(user)", , :disabled="user.order")
               .account-form__separator
               input.form-input(type="text", :id="`account-date-end-${user.id}`", v-mask="'##.##.####'", v-model.trim="user.inputsDates.end", @focus="showCalendar(user)", @focusout="checkInputs(user)", , :disabled="user.order")
             FunctionalCalendar.calendar.account-form__calendar(:id="`account-form__calendar-${user.id}`", v-model="user.calendarDates", :configs="calendarConfig2")
+            .form-error(v-if="calendarError(user) != ''") {{ calendarError(user) }}
           td.delete
             button.btn(@click.prevent="deleteUser(user.id)") Удалить
       button.users-btn(@click.prevent="showPopup = true") +
@@ -158,7 +161,6 @@ export default {
       calendarConfig: {
         isDatePicker: true,
         dateFormat: 'yyyy.mm.dd',
-        // disabledDayNames: ['Вс'],
         disabledDates: ['afterToday'],
         monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
         shortMonthNames: ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
@@ -168,7 +170,6 @@ export default {
       calendarConfig2: {
         isDateRange: true,
         dateFormat: 'yyyy.mm.dd',
-        // disabledDayNames: ['Вс'],
         disabledDates: ['beforeToday'],
         monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
         shortMonthNames: ['Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
@@ -271,20 +272,20 @@ export default {
         this.calendarDate.selectedDate = ''
     },
     downloadOrders() {
-      // this.$store.dispatch('DOWNLOAD_ORDERS')
-      // .then(resp => {
-      //   this.$store.dispatch('SET_NOTIFICATION', { msg: 'Скачивание листа заказов', err: false })
-      //   setTimeout(() => {
-      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
-      //   }, 5000)
-      // },
-      // err => {
-      //   console.log('Error on saving changes in admin panel: ' + err)
-      //   this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
-      //   setTimeout(() => {
-      //     this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
-      //   }, 5000)
-      // })
+      this.$store.dispatch('DOWNLOAD_ORDERS')
+      .then(resp => {
+        this.$store.dispatch('SET_NOTIFICATION', { msg: 'Скачивание листа заказов', err: false })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      },
+      err => {
+        console.log('Error on downloading orders list: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
     },
     downloadLimits() {
       // this.$store.dispatch('DOWNLOAD_LIMITS')
@@ -303,6 +304,16 @@ export default {
       // })
     },
 
+    changeUserRole(user) {
+      this.$store.dispatch('CHANGE_USER_ROLE', user)
+      .catch(err => {
+        console.log('Error on changing user role: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
+    },
     changeUserStatus(user) {
       this.$store.dispatch('CHANGE_USER_STATUS', user)
       .catch(err => {
@@ -312,6 +323,55 @@ export default {
           this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
         }, 5000)
       })
+    },
+    userLimitError(user) {
+      if (user.limit != '' && parseInt(user.limit) > 0)
+        return ''
+      else
+        return 'Заполните лимит'
+    },
+    changeUserLimit(user) {
+      user.limit = parseInt(user.limit)
+      if (this.userLimitError(user) == '') {
+        this.$store.dispatch('CHANGE_USER_LIMIT', { id: user.id, limit: user.limit })
+        .catch(err => {
+          console.log('Error on changing user limit: ' + err)
+          this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+          setTimeout(() => {
+            this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+          }, 5000)
+        })
+      }
+    },
+    setAllLimit() {
+      if (this.allLimit != '') {
+        this.allLimit = parseInt(this.allLimit)
+        if (this.allLimit != 0) {
+          (async () => {
+            this.$store.dispatch('SET_PROCESSING', true)
+            for (let i = 0; i < this.users.length; i++) {
+              const user = this.users[i]
+              user.limit = this.allLimit
+              await this.$store.dispatch('CHANGE_USER_LIMIT', { id: user.id, limit: this.allLimit })
+              .catch(err => {
+                console.log('Error on changing user limit: ' + err)
+                this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+                setTimeout(() => {
+                  this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+                }, 5000)
+              })
+            }
+            this.allLimit = ''
+            this.$store.dispatch('SET_PROCESSING', false)
+          })()
+        }
+      }
+    },
+    calendarError(user) {
+      if (user.order || (user.calendarDates.dateRange.start.date != false && user.calendarDates.dateRange.end.date != false && user.inputsDates.start != '' && user.inputsDates.end != ''))
+        return ''
+      else
+        return 'Дни отмены заказа не выбраны'
     },
     toggleCalendar(user) {
       const calendar = document.getElementById(`account-form__calendar-${user.id}`)
@@ -337,6 +397,16 @@ export default {
         }
         user.inputsDates.start = this.formatDateInputs(dateStr)
         user.inputsDates.end = this.formatDateInputs(dateStr)
+        const data = { id: user.id, start: this.formatDateRequest(dateStr), end: this.formatDateRequest(dateStr) }
+        this.$store.dispatch('SET_USER_ORDER', data)
+        .catch(err => {
+          console.log('Error on setting user order denial: ' + err)
+          this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+          setTimeout(() => {
+            this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+          }, 5000)
+          this.chooseUsersSection()
+        })
       } else {
         user.calendarDates = {
           dateRange: {
@@ -350,18 +420,21 @@ export default {
         }
         user.inputsDates.start = ''
         user.inputsDates.end = ''
-        // this.$store.dispatch('CLEAR_ERRORS', 'dates')
-        // this.calendarError = ''
         calendar.classList.remove('account-form__calendar_active')
+        const data = { id: user.id, start: null, end: null }
+        this.$store.dispatch('SET_USER_ORDER', data)
+        .catch(err => {
+          console.log('Error on setting user order denial: ' + err)
+          this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+          setTimeout(() => {
+            this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+          }, 5000)
+          this.chooseUsersSection()
+        })
       }
     },
     calendarClass(id) {
       return `account-form__block__calendar-${id}`
-    },
-    setAllLimit() {
-      if (this.allLimit != '')
-        for (let i = 0; i < this.users.length; i++)
-          this.users[i].limit = parseInt(this.allLimit)
     },
     showCalendar(user) {
       if (!user.order) {
@@ -389,6 +462,18 @@ export default {
             user.inputsDates.start = self.formatDateInputs(user.calendarDates.dateRange.start.date)
           if (user.calendarDates.dateRange.end.date.length >= 8 && user.calendarDates.dateRange.end.date.length <= 10)
             user.inputsDates.end = self.formatDateInputs(user.calendarDates.dateRange.end.date)
+          if (user.calendarDates.dateRange.start.date.length >= 8 && user.calendarDates.dateRange.start.date.length <= 10 && user.calendarDates.dateRange.end.date.length >= 8 && user.calendarDates.dateRange.end.date.length <= 10) {
+            const data = { id: user.id, start: self.formatDateRequest(user.calendarDates.dateRange.start.date), end: self.formatDateRequest(user.calendarDates.dateRange.end.date) }
+            self.$store.dispatch('SET_USER_ORDER', data)
+            .catch(err => {
+              console.log('Error on setting user order denial: ' + err)
+              self.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+              setTimeout(() => {
+                self.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+              }, 5000)
+              self.chooseUsersSection()
+            })
+          }
           calendar.classList.remove('account-form__calendar_active')
           document.removeEventListener('click', hideOnClickOutside)
         }
@@ -424,14 +509,13 @@ export default {
         startInput.value = startInputArr.join('.')
         user.calendarDates.dateRange.start.date = this.formatDateCalendar(startInput.value)
       } else {
-        // Doesn't work ???
         user.inputsDates.start = endInput.value
-        user.inputsDates.end = ''
         user.calendarDates.dateRange.start.date = this.formatDateCalendar(endInput.value)
+        user.inputsDates.end = ''
         user.calendarDates.dateRange.end.date = false
+        endInput.value = ''
         // user.calendarDates.dateRange.start.date = false
-        // this.$store.dispatch('SET_ERROR', { type: 'dates', msg: 'wrong' })
-        // this.calendarError = 'Дни отмены заказа не выбраны'
+        // user.inputsDates.start = ''
       }
       if (endInput.value.length == 10) {
         let endInputArr = endInput.value.split('.')
@@ -460,13 +544,10 @@ export default {
         user.calendarDates.dateRange.end.date = this.formatDateCalendar(endInput.value)
       } else {
         user.calendarDates.dateRange.end.date = false
-        // this.$store.dispatch('SET_ERROR', { type: 'dates', msg: 'wrong' })
-        // this.calendarError = 'Дни отмены заказа не выбраны'
+        user.inputsDates.end = ''
       }
 
       if (startInput.value.length == 10 && endInput.value.length == 10) {
-        // this.$store.dispatch('CLEAR_ERRORS', 'dates')
-        // this.calendarError = ''
         const startDateArr = startInput.value.split('.')
         const endDateArr = endInput.value.split('.')
         if (parseInt(startDateArr[2]) > parseInt(endDateArr[2])) {
@@ -497,6 +578,13 @@ export default {
     },
     deleteUser(id) {
       this.$store.dispatch('DELETE_USER', id)
+      .catch(err => {
+        console.log('Error on deleting user: ' + err)
+        this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+        setTimeout(() => {
+          this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+        }, 5000)
+      })
     },
     getTodayDate() {
       const date = new Date()
@@ -517,6 +605,14 @@ export default {
       if (dateArr[1].length == 2 && dateArr[1][0] == '0')
         dateArr[1] = dateArr[1][1]
       return dateArr[2] + '.' + dateArr[1] + '.' + dateArr[0]
+    },
+    formatDateRequest(dateStr) {
+      let dateArr = dateStr.split('.')
+      if (dateArr[1].length == 1)
+        dateArr[1] = '0' + dateArr[1]
+      if (dateArr[2].length == 1)
+        dateArr[2] = '0' + dateArr[2]
+      return dateArr.join('.')
     },
     // saveChanges() {
     //   this.$store.dispatch('SAVE_CHANGES')
@@ -645,14 +741,25 @@ export default {
       // this.checkPassword()
       this.checkLimit()
       if (!this.errors) {
-        this.$store.dispatch('ADD_USER', { email: this.email, firstname: this.name, lastname: this.surname, midname: this.middlename, password: this.password, role: this.role, limit: this.limit })
+        this.$store.dispatch('ADD_USER', { email: this.email, firstname: this.name, lastname: this.surname, midname: this.middlename, role: this.role == 'Администратор' ? 'admin' : 'user', limit: this.limit })
         .then(() => {
           this.hidePopup()
+          this.$store.dispatch('SET_NOTIFICATION', { msg: 'Пользователь добавлен', err: false })
+          setTimeout(() => {
+            this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+          }, 5000)
         },
-        error => {
-          // this.$store.dispatch('SET_ERROR', { type: 'email', msg: 'reserved' })
-          // this.emailError = 'Данная почта уже занята'
-          console.log('Error from server: ' + error)
+        err => {
+          if (err == 'email') {
+            this.$store.dispatch('SET_ERROR', { type: 'email', msg: 'reserved' })
+            this.emailError = 'Данная почта уже занята'
+          } else {
+            console.log('Error on adding user: ' + err)
+            this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
+            setTimeout(() => {
+              this.$store.dispatch('SET_NOTIFICATION', { msg: '', err: false })
+            }, 5000)
+          }
         })
       }
     },
@@ -911,8 +1018,13 @@ export default {
           font-size: 12px
           margin: 0 auto
         .limit
+          position: relative
           .form-input
             text-align: center
+        .limit.form
+          &-block
+            &_error
+              padding-bottom: 47px
         .account-form__block__checkbox
           padding-right: 4px
           .form-label
@@ -983,6 +1095,17 @@ export default {
         .select
           &-container
             margin-bottom: 0
+      .form
+        &-block
+          &_error
+            padding-bottom: 30px
+        &-error
+          width: 100%
+          text-align: center
+          left: 50%
+          transform: translateX(-50%)
+          bottom: 5px
+          top: auto
     &-btn
       display: flex
       justify-content: center

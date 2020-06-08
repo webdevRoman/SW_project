@@ -29,13 +29,13 @@
                 .dish-info__dot
             .dish-footer
               div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.amount > 0}")
-                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount > 0 || dish.hide == 1")
+                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount > 0 || dish.hide == 1 || refuseOrder")
                   img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.amount > 0")
                   img(src="../assets/img/cart.svg", alt="Cart image", v-else)
                 div(:class="{'cart-number': true, 'cart-number_active': dish.amount > 0}")
-                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0 || dish.hide == 1") -
-                  input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)", :disabled="dish.hide == 1")
-                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99 || dish.hide == 1") +
+                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0 || dish.hide == 1 || refuseOrder") -
+                  input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)", :disabled="dish.hide == 1 || refuseOrder")
+                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99 || dish.hide == 1 || refuseOrder") +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
                 img(src="../assets/img/star-active.svg", alt="Star image", v-if="dish.elect")
                 img(src="../assets/img/star.svg", alt="Star image", v-else)
@@ -144,7 +144,7 @@ export default {
       // })
     },
     setOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish })
+      this.$store.dispatch('SET_OREDER', dish)
       .catch(err => {
         console.log('Error on setting order: ' + err)
         this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
@@ -176,6 +176,9 @@ export default {
       let selectCategories = this.categories.slice()
       selectCategories.unshift({ name: 'Все категории' })
       return selectCategories
+    },
+    refuseOrder() {
+      return this.$store.getters.refuseOrder
     }
   },
 }

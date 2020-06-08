@@ -22,13 +22,13 @@
                 .dish-info__dot
             .dish-footer
               div(:class="{'dish-footer__cart': true, 'dish-footer__cart_active': dish.amount > 0}")
-                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount > 0")
+                button.cart-btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount > 0 || refuseOrder")
                   img(src="../assets/img/cart-active.svg", alt="Cart image", v-if="dish.amount > 0")
                   img(src="../assets/img/cart.svg", alt="Cart image", v-else)
                 div(:class="{'cart-number': true, 'cart-number_active': dish.amount > 0}")
-                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0") -
-                  input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)")
-                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99") +
+                  button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0 || refuseOrder") -
+                  input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)", :disabled="refuseOrder")
+                  button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99 || refuseOrder") +
               button.dish-footer__favourite(@click.prevent="toggleFavourite(dish)")
                 img(src="../assets/img/star-active.svg", alt="Star image")
     .category(v-if="unavailableFavs.length > 0")
@@ -111,7 +111,7 @@ export default {
       this.timeoutId = setTimeout(this.setOrder, 500, dish)
     },
     setOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish })
+      this.$store.dispatch('SET_OREDER', dish)
       .catch(err => {
         console.log('Error on setting order: ' + err)
         this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
@@ -150,6 +150,9 @@ export default {
           unavailableFavs.push(el)
       }
       return unavailableFavs
+    },
+    refuseOrder() {
+      return this.$store.getters.refuseOrder
     }
   }
 }

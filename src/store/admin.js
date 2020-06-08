@@ -5,6 +5,18 @@ export default {
     users: []
   },
   mutations: {
+    CHANGE_USER_ROLE(status, user) {
+      if (user.role == 'Пользователь')
+        user.role = 'Администратор'
+      else
+        user.role = 'Пользователь'
+    },
+    CHANGE_USER_STATUS(status, user) {
+      if (user.role == 'Подтвержден')
+        user.role = 'Не подтвержден'
+      else
+        user.role = 'Подтвержден'
+    },
     SET_USERS(state, data) {
       function formatDateCalendar(dateStr) {
         let dateArr = dateStr.split('.')
@@ -61,7 +73,7 @@ export default {
           }
           newUser.inputsDates = {
             start: formatDateInputs(user.start),
-            end: formatDateInputs(user.start)
+            end: formatDateInputs(user.end)
           }
         }
         delete newUser.start
@@ -81,8 +93,11 @@ export default {
       state.users.splice(arrIndex, 1)
     },
     ADD_USER(state, user) {
-      user.id = 999
-      user.status = 'Не подтвержден'
+      if (user.role == 'admin')
+        user.role = 'Администратор'
+      else
+        user.role = 'Пользователь'
+      user.status = 'Подтвержден'
       user.order = true
       user.calendarDates = {
         dateRange: {
@@ -102,10 +117,25 @@ export default {
     }
   },
   actions: {
+    DOWNLOAD_ORDERS({commit}) {
+      return new Promise((resolve, reject) => {
+        // axios({ url: '/backend/modules/admin/report', data: { id: user.id, role: user.role == 'Администратор' ? 'admin' : 'user' }, method: 'POST' })
+        // axios({ url: '/backend/modules/admin/report', method: 'POST' })
+        axios({ url: '/admin/report', method: 'POST' })             // SHOW!!!
+        .then(resp => {
+          console.log(resp.data);
+          resolve()
+        },
+        err => {
+          reject(err)
+        })
+      })
+    },
     LOAD_USERS({commit}) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        axios({ url: '/backend/modules/admin/index', method: 'GET' })
+        // axios({ url: '/backend/modules/admin/index', method: 'GET' })
+        axios({ url: '/admin/index', method: 'GET' })             // SHOW!!!
         .then(resp => {
           commit('SET_USERS', resp.data)
           commit('SET_PROCESSING', false)
@@ -117,28 +147,102 @@ export default {
         })
       })
     },
+    CHANGE_USER_ROLE({commit}, user) {
+      return new Promise((resolve, reject) => {
+        // axios({ url: '/backend/modules/admin/reset-role', data: { id: user.id, role: user.role == 'Администратор' ? 'admin' : 'user' }, method: 'POST' })
+        axios({ url: '/admin/reset-role', data: { id: user.id, role: user.role == 'Администратор' ? 'admin' : 'user' }, method: 'POST' })             // SHOW!!!
+        .then(resp => {
+          resolve()
+        },
+        err => {
+          commit('CHANGE_USER_ROLE', user)
+          reject(err)
+        })
+      })
+    },
     CHANGE_USER_STATUS({commit}, user) {
       return new Promise((resolve, reject) => {
-        // axios({ url: '/backend/modules/account/edit', data: { id: data.dish.id }, method: 'POST' })
-        // .then(resp => {
-        //   if (data.remove)
-        //     commit('REMOVE_FAVOURITE', data.dish)
-        //   else
-        //     commit('ADD_FAVOURITE', data.dish)
-        //   resolve()
-        // })
-        // .catch(err => {
-        //   reject(err)
-        // })
+        if (user.status == 'Подтвержден') {
+          // axios({ url: '/backend/modules/admin/verify', data: { id: user.id }, method: 'POST' })
+          axios({ url: '/admin/verify', data: { id: user.id }, method: 'POST' })             // SHOW!!!
+          .then(resp => {
+            resolve()
+          },
+          err => {
+            commit('CHANGE_USER_STATUS', user)
+            reject(err)
+          })
+        } else {
+          reject()
+        }
+      })
+    },
+    CHANGE_USER_LIMIT({commit}, data) {
+      return new Promise((resolve, reject) => {
+        // axios({ url: '/backend/modules/admin/limit', data: data, method: 'POST' })
+        axios({ url: '/admin/limit', data: data, method: 'POST' })             // SHOW!!!
+        .then(resp => {
+          resolve()
+        },
+        err => {
+          reject(err)
+        })
+      })
+    },
+    SET_USER_ORDER({commit}, data) {
+      return new Promise((resolve, reject) => {
+        // axios({ url: '/backend/modules/admin/order-cancel', data: data, method: 'POST' })
+        axios({ url: '/admin/order-cancel', data: data, method: 'POST' })             // SHOW!!!
+        .then(resp => {
+          if (resp.data == 'success')
+            resolve()
+          else
+            reject(`Изменения не сохранены. ${resp.data.id == undefined ? '' : resp.data.id[0] + ', '}${resp.data.start == undefined ? '' : resp.data.start[0] + ', '}${resp.data.end == undefined ? '' : resp.data.end[0]}.`)
+        },
+        err => {
+          reject('Изменения не сохранены. ' + err)
+        })
       })
     },
     DELETE_USER({commit}, id) {
-      commit('DELETE_USER', id)
-    },
-    SAVE_CHANGES({getters}) {
-      console.log(getters.users);
+      return new Promise((resolve, reject) => {
+        // axios({ url: '/backend/modules/admin/delete', data: { id: id }, method: 'POST' })
+        axios({ url: '/admin/delete', data: { id: id }, method: 'POST' })             // SHOW!!!
+        .then(resp => {
+          commit('DELETE_USER', id)
+          resolve()
+        },
+        err => {
+          reject(err)
+        })
+      })
     },
     ADD_USER({commit}, user) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PROCESSING', true)
+        // const url = '/backend/modules/admin/create'
+        const url = '/admin/create'                         // SHOW!!!
+        axios({ url: url, data: user, method: 'POST' })
+        .then(resp => {
+          console.log(resp.data);
+          if (resp.data.id != undefined) {
+            user.id = resp.data.id
+            commit('ADD_USER', user)
+            commit('SET_PROCESSING', false)
+            resolve()
+          } else if (resp.data.email != undefined) {
+            commit('SET_PROCESSING', false)
+            reject('email')
+          } else {
+            commit('SET_PROCESSING', false)
+            reject()
+          }
+        },
+        err => {
+          commit('SET_PROCESSING', false)
+          reject(err)
+        })
+      })
       // send to server
       // commit('ADD_USER', user)
     }

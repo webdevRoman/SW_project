@@ -282,7 +282,8 @@ export default {
         // dispatch('SET_DATE', data.date)
         let requestParams = {}
         // if (data.link == undefined) {
-          const url = '/backend/modules/menu'
+          // const url = '/backend/modules/menu'
+        const url = '/menu'             // SHOW!!!
           const parameters = {}
           parameters.date = data.date
           // if (data.category != 'all')
@@ -314,7 +315,8 @@ export default {
         commit('SET_PROCESSING', true)
         // dispatch('SET_DATE', date)
         let requestParams = {}
-        const url = '/backend/modules/account/elect'
+        // const url = '/backend/modules/account/elect'
+        const url = '/account/elect'             // SHOW!!!
         requestParams = {
           url: url,
           method: 'GET',
@@ -335,7 +337,8 @@ export default {
     },
     TOGGLE_FAVOURITE({commit}, data) {
       return new Promise((resolve, reject) => {
-        axios({ url: '/backend/modules/account/edit', data: { id: data.dish.id }, method: 'POST' })
+        // axios({ url: '/backend/modules/account/edit', data: { id: data.dish.id }, method: 'POST' })
+        axios({ url: '/account/edit', data: { id: data.dish.id }, method: 'POST' })             // SHOW!!!
         .then(resp => {
           if (data.remove)
             commit('REMOVE_FAVOURITE', data.dish)
@@ -351,9 +354,9 @@ export default {
     LOAD_CART({commit, dispatch}, date) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        // dispatch('SET_DATE', date)
         let requestParams = {}
-        const url = '/backend/modules/basket'
+        // const url = '/backend/modules/basket'
+        const url = '/basket'             // SHOW!!!
         requestParams = {
           url: url,
           method: 'GET',
@@ -377,24 +380,26 @@ export default {
       return new Promise((resolve, reject) => {
         let parameters = { data: { date: getters.date, id: dish.id }, method: 'POST' }
         if (dish.amount != 0) {
-          // if (data.prevAmount <= data.dish.amount) {
-          //   parameters.url = '/backend/modules/basket/add'
-          // } else {
-          //   parameters.url = '/backend/modules/basket/reduce'
-          // }
-          parameters.url = '/backend/modules/basket/amount'
+          // parameters.url = '/backend/modules/basket/amount'
+          parameters.url = '/basket/amount'             // SHOW!!!
           parameters.data.amount = dish.amount
         } else {
-          parameters.url = '/backend/modules/basket/delete'
+          // parameters.url = '/backend/modules/basket/delete'
+          parameters.url = '/basket/delete'             // SHOW!!!
         }
-        console.log(parameters.data.amount);
         axios(parameters)
         .then(resp => {
-          console.log(resp.data);
-          commit('SET_OREDER', dish)
-          resolve()
-        })
-        .catch(err => {
+          if (resp.data == 'success') {
+            commit('SET_OREDER', dish)
+            resolve()
+          } else {
+            let errStr = ''
+            for (const key in resp.data)
+              errStr += resp.data[key] + '. '
+            reject(errStr)
+          }
+        },
+        err => {
           reject(err)
         })
       })

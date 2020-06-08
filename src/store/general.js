@@ -14,6 +14,9 @@ export default {
   actions: {
     SET_NOTIFICATION({commit}, payload) {
       commit('SET_NOTIFICATION', payload)
+    },
+    SET_PROCESSING({commit}, payload) {
+      commit('SET_PROCESSING', payload)
     }
   },
   getters: {

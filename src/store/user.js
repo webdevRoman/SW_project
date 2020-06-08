@@ -91,7 +91,8 @@ export default {
     AUTH_REQUEST({commit}, user) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/backend/modules/auth/login'
+        // const url = '/backend/modules/auth/login'
+        const url = '/auth/login'             // SHOW!!!
         axios({ url: url, data: user, method: 'POST' })
         .then(resp => {
           if (resp.data.firstname != undefined && resp.data.lastname != undefined && resp.data.role != 'banned') {
@@ -117,7 +118,8 @@ export default {
     AUTH_LOGOUT({commit}) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/backend/modules/auth/logout'
+        // const url = '/backend/modules/auth/logout'
+        const url = '/auth/logout'             // SHOW!!!
         axios({ url: url, method: 'POST' })
         .then(resp => {
           commit('AUTH_LOGOUT')
@@ -133,7 +135,8 @@ export default {
     REG_REQUEST({commit}, user) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/backend/modules/auth/signup'
+        // const url = '/backend/modules/auth/signup'
+        const url = '/auth/signup'             // SHOW!!!
         axios({ url: url, data: user, method: 'POST' })
         .then(resp => {
           if (resp.data == 'success') {
@@ -157,7 +160,8 @@ export default {
     LOAD_ACCOUNT({commit}) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/backend/modules/account'
+        // const url = '/backend/modules/account'
+        const url = '/account'             // SHOW!!!
         axios({ url: url, method: 'GET' })
         .then(resp => {
           commit('SET_USER_ACCOUNT', resp.data)
@@ -170,13 +174,15 @@ export default {
         })
       })
     },
-    UPDATE_USER({commit}, data) {
+    UPDATE_USER({commit, dispatch, getters}, data) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/backend/modules/account/update'
+        // const url = '/backend/modules/account/update'
+        const url = '/account/update'             // SHOW!!!
         axios({ url: url, data: data, method: 'POST' })
         .then(() => {
           commit('SET_USER_ACCOUNT', data)
+          dispatch('LOAD_CART', getters.date)
           commit('SET_PROCESSING', false)
           resolve()
         })
@@ -190,7 +196,8 @@ export default {
       return new Promise((resolve, reject) => {
         if (Vue.$cookies.get('email') != null) {
           commit('SET_PROCESSING', true)
-          const url = '/backend/modules/auth/resend'
+          // const url = '/backend/modules/auth/resend'
+          const url = '/auth/resend'             // SHOW!!!
           axios({ url: url, data: Vue.$cookies.get('email'), method: 'POST' })
           .then(() => {
             commit('SET_PROCESSING', false)
@@ -206,7 +213,8 @@ export default {
     SEND_EMAIL({commit}, payload) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/backend/modules/auth/reset-request'
+        // const url = '/backend/modules/auth/reset-request'
+        const url = '/auth/reset-request'             // SHOW!!!
         axios({ url: url, data: payload, method: 'POST' })
         .then(resp => {
           commit('SET_PROCESSING', false)
@@ -221,7 +229,8 @@ export default {
     SEND_PASSWORDS({commit}, payload) {
       return new Promise((resolve, reject) => {
         commit('SET_PROCESSING', true)
-        const url = '/backend/modules/auth/reset-password'
+        // const url = '/backend/modules/auth/reset-password'
+        const url = '/auth/reset-password'             // SHOW!!!
         axios({ url: url, data: payload, method: 'POST' })
         .then(resp => {
           commit('SET_PROCESSING', false)

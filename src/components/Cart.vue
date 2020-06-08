@@ -14,9 +14,9 @@
               .cart-item__price {{ dish.price }} Р
               .cart-item__name {{ dish.name }}
               .cart-item__number
-                button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0") -
-                input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)")
-                button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99") +
+                button.cart-number__btn(@click.prevent="decrementOrder(dish)", :disabled="dish.amount <= 0 || refuseOrder") -
+                input.cart-number__value(type="text", v-model.trim="dish.amount", v-mask="'##'", @focusout="checkOrder(dish)", :disabled="refuseOrder")
+                button.cart-number__btn(@click.prevent="incrementOrder(dish)", :disabled="dish.amount >= 99 || refuseOrder") +
               button.cart-item__fav(@click.prevent="toggleFavourite(dish)", v-if="dish.elect")
                 .cart-fav__img
                   img(src="../assets/img/star-active.svg", alt="Star image")
@@ -100,7 +100,7 @@ export default {
       }
     },
     setOrder(dish) {
-      this.$store.dispatch('SET_OREDER', { dish: dish })
+      this.$store.dispatch('SET_OREDER', dish)
       .catch(err => {
         console.log('Error on setting order: ' + err)
         this.$store.dispatch('SET_NOTIFICATION', { msg: `Ошибка: ${err}`, err: true })
@@ -276,6 +276,8 @@ export default {
         margin-right: 0
       &:hover
         transform: scale(1.4)
+      &[disabled]:hover
+        transform: scale(1)
     &__value
       width: 20px
       background-color: transparent

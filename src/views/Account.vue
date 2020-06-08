@@ -130,6 +130,7 @@ export default {
   },
   methods: {
     goBack() {
+      this.closeNotification()
       this.$store.dispatch('CLEAR_ERRORS', 'all')
       this.$router.push('/')
     },
